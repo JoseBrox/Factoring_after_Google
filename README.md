@@ -1,6 +1,6 @@
 # Factoring after Google
 
-**Integer factoring, supplied-order splitting, and quadratic nonresidues — research by Jose Brox using ChatGPT Astra 6 and 6.2.**
+**Integer factoring, supplied-order splitting, and quadratic nonresidues — research using ChatGPT Astra 6 and 6.2.**
 
 This repository develops and audits improvements to the November 2026 Cogentic factoring manuscripts released by Google Research. It contains readable research manuscripts, explicit algorithm specifications, exact finite verification programs, and pinned source material. The aim is to make every claim easy to locate, reconstruct, and challenge.
 
