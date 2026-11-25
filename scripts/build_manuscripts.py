@@ -21,15 +21,22 @@ def main():
         proc = subprocess.run([tool, "--version" if tool != "latexmk" else "-v"],
                               text=True, capture_output=True, check=True)
         versions[tool] = proc.stdout.splitlines()[:3]
+    (ROOT / "build").mkdir(exist_ok=True)
+    (ROOT / "build" / "tool_versions.json").write_text(json.dumps(versions, indent=2) + "\n")
+    failures = []
     for name in NAMES:
         out = ROOT / "build" / name
         out.mkdir(parents=True, exist_ok=True)
         command = ["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error",
                    "-file-line-error", f"-outdir={out}", f"-jobname={name}",
                    f"manuscripts/{name}/main.tex"]
-        subprocess.run(command, cwd=ROOT, env=env, check=True)
+        result = subprocess.run(command, cwd=ROOT, env=env)
+        if result.returncode:
+            failures.append(name)
+            continue
         shutil.copyfile(out / f"{name}.pdf", ROOT / "papers" / f"{name}.pdf")
-    (ROOT / "build" / "tool_versions.json").write_text(json.dumps(versions, indent=2) + "\n")
+    if failures:
+        raise SystemExit("Manuscript build failed: " + ", ".join(failures))
     print("Compiled all five manuscripts into papers/.")
 
 

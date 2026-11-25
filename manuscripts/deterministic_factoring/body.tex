@@ -65,7 +65,7 @@ does not establish an algorithm with first \(L\)-parameter below \(1/3\).
 The starting point is the deterministic Cogentic manuscript
 \cite{CogDet2026}, frozen at Google Research commit
 \texttt{4a7bc8ab0bc770e71a259b7966c500496b99010a}, file
-\texttt{cogentic\_research\_papers/deterministic\_factoring\_l34/paper.pdf}.
+\path{cogentic_research_papers/deterministic_factoring_l34/paper.pdf}.
 Its Git blob is
 \texttt{973002e0eb92acf3964fc020ca52ba6f1ac384ac}.
 References to source lemma numbers below always mean that version.
@@ -92,6 +92,7 @@ parameter checks are aids to reconstruction.  The source's full Lean
 formalization has not been checked as part of this manuscript.  Pinning
 the source fixes the object being used; it is not itself a mathematical
 correctness certificate.
+Independent external review remains pending.
 \end{remark}
 
 \subsection{The algorithm in one paragraph}
@@ -149,7 +150,7 @@ The letter \(r\) denotes a power in this display; a modular root will
 always be identified by its surrounding notation.  The roles of the
 parameters are as follows.
 \begin{center}
-\begin{tabular}{lll}
+\begin{tabular}{@{}p{.26\textwidth}p{.35\textwidth}p{.29\textwidth}@{}}
 \toprule
 Quantity & Definition up to bounded integer rounding & Leading scale \\
 \midrule
@@ -160,7 +161,7 @@ Smoothness bound & \(B=2^{L^b+O(1)}\) & \(\log B\asymp L^b\) \\
 Evaluation range & \(A=2^{L^c+O(1)}\) & \(\log A\asymp L^c\) \\
 Perturbation width & \(U=2^{L^h+O(1)}\) & \(\log U\asymp L^h\) \\
 Base & \(m=\lceil N^{1/d}\rceil\) & \(\log m=(1+o(1))L^{m_0}\) \\
-Polynomial value scale & \(X_{\rm sc}=c_dA^d\) & \(\log X_{\rm sc}=(\kappa+o(1))L^h\) \\
+Polynomial value scale & \(X_{\rm sc}=c_dA^d\) & \(\log X_{\rm sc}\) \(=(\kappa+o(1))L^h\) \\
 Smoothness parameter & \(u=\log X_{\rm sc}/\log B\) & \(u=(1+o(1))L^r\) \\
 \bottomrule
 \end{tabular}
@@ -203,7 +204,9 @@ Once \(d\ge10\) (otherwise the algorithm uses fallback), put
  \mathcal P_{\rm gen}=\{\ell\text{ prime}:B/2<\ell\le B\}.
 \end{gather*}
 Choose the least positive integer \(j\) such that
-\(3^jP_{\rm odd}A^d\ge6K_1BP_0m\bar u_0\), and define
+\(3^jP_{\rm odd}A^d\ge6K_1BP_0m\bar u_0\), and put
+\(c_d=P_{\rm odd}3^j\).  For all sufficiently large inputs,
+minimality gives the bounds
 \begin{equation}\label{eq:scale}
  c_d=P_{\rm odd}3^j,
  \qquad
@@ -497,17 +500,26 @@ These are the inputs recorded in source Proposition~7.1.
 \(\vartheta(x)=x+O(x\exp(-c\sqrt{\log x}))\).
 Its consequences used below include partial summation for prime powers
 and \(\sum_{p\le x}p^{-1}=\log\log x+C+o(1)\).
-See \cite{PNT}.
+See \cite{LandauPage}.
 \item\label{input:page} There is an effective absolute \(c_{\rm LP}>0\)
 such that the primitive Dirichlet \(L\)-functions of conductor at most
 \(D\) are zero-free in the usual region
 \(\Re s\ge1-c_{\rm LP}/\log(D(|\Im s|+4))\), with at most one
 exceptional primitive real character and one real exceptional zero.
-The explicit formula in that range gives the exceptional character the
-main term \(-x^\beta/\beta\), when its zero \(\beta\) is present;
-the derivative of this main term is nonpositive.  We use the effective
-uniform error stated in source Proposition~7.1(2), at
-\(D=T=\exp(c_{\rm LP}\log B/(800L_2))\).
+For a real primitive character of conductor \(3\le d_0\le x\)
+and \(2\le T\le x\), the explicit formula used is
+\begin{align*}
+ \psi(x,\chi)={}&-\mathbf1_{\{\beta\}}\frac{x^\beta}{\beta}\\
+ &+O\left(x\log^2(d_0x)
+       \exp\left(-\frac{c_{\rm LP}\log x}{\log(d_0(T+4))}\right)
+       +\frac{x\log^2x}{T}+\log^2x\right),
+\end{align*}
+where the indicator is one when the unique simple real zero satisfies
+\(\beta\ge1-c_{\rm LP}/\log(d_0(T+4))\), and zero otherwise.
+The derivative of the displayed main term is nonpositive.  We apply
+this effective bound from source Proposition~7.1(2) at
+\(T=\exp(c_{\rm LP}\log B/(800L_2))\), with conductors at most
+the same quantity and \(\sqrt B\le x\le B\).
 See \cite{LandauPage}.
 \item\label{input:density} For \(4/5\le\sigma\le1\), \(Q\ge1\),
 and \(T\ge2\),
@@ -520,7 +532,7 @@ Here \(N(\sigma,T,\chi)\) counts zeros with real part at least
 \(\sigma\) and imaginary part of absolute value at most \(T\), with
 multiplicity.  This is Montgomery's near-one estimate
 \cite{Montgomery1971}; its exact displayed form is also used in the
-proof of Lemma~5.2 of Ren--Tsang \cite{RenTsang2005}.
+proof of Lemma~5.2 of Ren--Tsang \cite{RenTsang2004}.
 \end{enumerate}
 
 \begin{remark}[Bibliographic precision]
@@ -781,9 +793,16 @@ normalizes its integral.  The derivative bounds
 integration by parts.  These source lemmas are parameter-general;
 our windows satisfy \(K_1^{0.8}\le R\le K_1^{1.7}\).
 
-Let \(I(Y,S;S_{\rm tot})\) be the central Mellin integral with this
-window and Euler product.  The saddle expansion and tail bounds below
-give
+Define the Mellin transform and the full windowed integral by
+\begin{align*}
+ \widetilde M_{Y,S}(s)
+    &=\int_0^\infty\widetilde W_{Y,S}(x)x^{s-1}\,dx,\\
+ I(Y,S;S_{\rm tot})
+    &=\frac1{2\pi}\int_{-\infty}^{\infty}
+       \widetilde M_{Y,S}(\alpha_Y+it)
+       \zeta_{J\setminus S_{\rm tot}}^{\rm sf}(\alpha_Y+it)\,dt.
+\end{align*}
+The saddle expansion and tail bounds below give
 \begin{equation}\label{eq:I-vs-pure}
  I(Y,S;S_{\rm tot})
  =I_{\rm pure}(Y;S_{\rm tot})(1+O(R^{-2})).
@@ -1658,7 +1677,7 @@ has \(j\) entries equal to \(1/\sqrt{j(j+1)}\), followed by
  H^TH=I_d-d^{-1}\mathbf1_d\mathbf1_d^T.
 \]
 Replace the target roots by the actual roots to define
-\(\boldsymbol\ell_i^{\rm true}(a)), and form the reduced vector
+\(\boldsymbol\ell_i^{\rm true}(a)\), and form the reduced vector
 \[
  \mathbf r_{\rm true}(a)=
  (1,(z_{\mathfrak q}(a))_{\mathfrak q\in F^*},
