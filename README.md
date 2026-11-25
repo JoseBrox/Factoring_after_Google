@@ -2,9 +2,9 @@
 
 **Integer factoring, supplied-order splitting, and quadratic nonresidues — research using ChatGPT Astra 6 and 6.2.**
 
-This repository develops and audits improvements to the November 2026 Cogentic factoring manuscripts released by Google Research. It contains readable research manuscripts, explicit algorithm specifications, exact finite verification programs, and pinned source material. The aim is to make every claim easy to locate, reconstruct, and challenge.
+This repository develops and audits improvements to the November 2026 Cogentic factoring manuscripts released by Google Research. It contains readable research manuscripts, explicit algorithm specifications, Lean formalizations of core components, exact finite verification programs, and pinned source material. The aim is to make every claim easy to locate, reconstruct, and challenge.
 
-**Start here:** [results and proof status](docs/proof_status.md) · [manuscripts](manuscripts/README.md) · [reproduce the checks](docs/reproducibility.md) · [sources and comparisons](docs/comparison_sources.md).
+**Start here:** [results and proof status](docs/proof_status.md) · [manuscripts](manuscripts/README.md) · [Lean proofs](lean/README.md) · [reproduce the checks](docs/reproducibility.md) · [sources and comparisons](docs/comparison_sources.md).
 
 ## Results at a glance
 
@@ -58,6 +58,7 @@ For experiments, start with the [quadratic relation example](examples/quadratic_
 | [`papers/`](papers/) | Compiled, searchable PDFs of the manuscripts |
 | [`src/`](src/) | Implemented quadratic-ring relation and chain routines |
 | [`examples/`](examples/) | A small reproducible worked example |
+| [`lean/`](lean/) | Compiled component proofs, pinned Lean/mathlib dependencies, and an axiom audit |
 | [`verification/`](verification/) | Exact rational inequalities, finite-field identities, counterexamples, exhaustive small-input tests, fixed expected outputs |
 | [`references/`](references/) | Immutable upstream identifiers, source attribution, extracted source text, retrieval instructions |
 | [`provenance/`](provenance/) | Frozen working notes explaining where the constructions and corrections came from |
@@ -83,7 +84,23 @@ To rebuild the PDFs with a normal TeX Live installation containing `latexmk`, th
 python3 scripts/build_manuscripts.py
 ```
 
-The GitHub Actions workflows run the checks and compile all manuscripts. Finite computations verify the listed identities and examples; they do not prove asymptotic analytic estimates or certify an entire formal proof.
+The GitHub Actions workflows run the exact checks, compile all manuscripts, and compile and audit the Lean proofs. Finite computations verify the listed identities and examples; they do not prove asymptotic analytic estimates or certify an entire formal proof.
+
+## Lean formalizations
+
+The [Lean guide](lean/README.md) gives the theorem names, assumptions, and reproduction commands. The formalization follows this priority order:
+
+| Priority | Formalized component | Coverage |
+|---|---|---|
+| 1 | Deterministic parameter schedule | All 19 inequalities for every admissible parameter; an admissible rational choice for every positive ε; the affine height-budget constraints. |
+| 2 | Sparse Gram argument | Local positive-semidefinite decompositions, Schur products, and the finite sparse averaging inequality. |
+| 3 | Randomized recursion | Path maxima for all depths; exact margins; finite-threshold recurrence bounds with time/workspace coefficients 91.4 and 19. |
+| 4 | Quadratic relation chain | Ring identities, certified binary powering, reduction compatibility, and proper-divisor soundness of an executable coefficient splitter. |
+| 5 | Square-root extraction | A nontrivial square congruence yields a proper gcd factor, including even moduli and noninvertible roots. |
+
+These are **compiled component theorems**. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
+
+The project pins Lean 4.19.0 and every mathlib dependency revision. Builds treat warnings as errors. The audit inspects compiled logical declarations, including private and generated proofs, and permits only Lean's standard axioms `propext`, `Classical.choice`, and `Quot.sound`. Project proofs contain no `sorry` or `native_decide`.
 
 ## What is reused, and what changes
 
@@ -96,7 +113,7 @@ The retained construction N1101 contributes the quadratic relation chain. Other 
 - Prove the widened arithmetic-progression, fibre, local-moment, and square-certification estimates required by the randomized 91.4/19 theorem.
 - Overcome the large-modulus equidistribution obstruction in the deterministic construction; reducing exponents on a spreadsheet alone does not remove it.
 - Implement and benchmark the complete theoretical factorers, including the exact algebraic subroutines and explicit finite thresholds.
-- Obtain independent mathematical review and, separately, a complete machine-checked development. The source's announced Lean artifacts are not treated here as checked evidence.
+- Obtain independent mathematical review and extend the compiled Lean component proofs to the complete algorithms and analytic complexity bounds. The source's announced Lean artifacts are not treated here as checked evidence.
 - Find a new mechanism that can beat the 1/3 balance in the present randomized architecture. This is an open research objective.
 
 Contributions are welcome: a precise counterexample or a corrected lemma is as useful as a faster algorithm. See [CONTRIBUTING.md](CONTRIBUTING.md).

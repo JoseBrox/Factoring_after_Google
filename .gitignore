@@ -3,6 +3,7 @@ __pycache__/
 build/
 tmp/
 .venv/
+lean/.lake/
 *.aux
 *.bbl
 *.blg

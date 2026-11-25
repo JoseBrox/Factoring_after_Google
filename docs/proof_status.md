@@ -1,6 +1,6 @@
 # Claim and proof-status register
 
-Version: 0.1.0, 25 November 2026. A status describes the evidence in this repository, not acceptance by a journal or certification by a proof assistant.
+Updated 25 November 2026. A status describes the evidence in this repository. The complete algorithmic claims and the Lean-verified components have separate statuses below.
 
 ## Main claims
 
@@ -39,7 +39,19 @@ The committed expected outputs make the performed checks explicit. They do not c
 
 ## Source and formal-proof status
 
-The Google papers are fixed at commit `4a7bc8ab0bc770e71a259b7966c500496b99010a`; their exact PDF Git blob hashes are in [the lock file](../references/sources.lock.json). Their READMEs say that Lean formalizations have been completed and will be released in a companion submission. This repository has not obtained or checked those formal artifacts and makes no claim that the manuscripts here are Lean-verified.
+The Google papers are fixed at commit `4a7bc8ab0bc770e71a259b7966c500496b99010a`; their exact PDF Git blob hashes are in [the lock file](../references/sources.lock.json). Their READMEs say that Lean formalizations have been completed and will be released in a companion submission. This repository has not obtained or checked those upstream formal artifacts.
+
+This repository now has its own [Lean component formalization](../lean/README.md), compiled with Lean 4.19.0 and a pinned mathlib revision. Its scope is:
+
+| Manuscript component | Lean evidence | Still outside the formalization |
+|---|---|---|
+| D: deterministic schedule | All 19 inequalities for every admissible real parameter; auxiliary gates; rational parameter existence for every positive real ε; exact affine minimax bounds | Smoothness and progression estimates, arithmetic construction, source contracts, the algorithm, and the conversion to the stated asymptotic running time |
+| S/Q: sparse Gram argument | Local outer-product identities and positivity, Schur products, stronger positivity for products of local factors, and the finite sparse averaging inequality | Identifying entries with quadratic ideal-character coefficients; compatible character and number-field constructions; enumeration complexity and analytic bounds |
+| R: repaired recursion | Universal path maxima, rational margins, cubic contraction certificates, and finite-threshold time/workspace recurrences with coefficients 91.4 and 19 | Proving the algorithm satisfies the recurrence and initial bounds; analytic and probability contracts; asymptotic transfer |
+| C: quadratic relation chain | Ring identities, certified binary powering, reduction compatibility, two local separation lemmas, and proper-divisor soundness of the executable coefficient splitter | Construction of the supplied exponent parameters, odd-part decomposition, global success probability, and operation count |
+| Square-root extraction | A supplied nontrivial square congruence yields a proper gcd factor, with no oddness or invertibility assumption | Producing the congruence and proving its probability or cost |
+
+The compiled axiom audit covers persistent logical declarations and permits only `propext`, `Classical.choice`, and `Quot.sound`. The project proofs use neither `sorry` nor `native_decide`. All mathematical examples are named theorems so that their proof dependencies remain auditable. These component proofs do not certify the complete complexity bounds in the main table. The sparse-kernel result K remains a written proof with finite computational checks.
 
 Source pinning prevents a version mismatch. Hash verification proves identity of bytes, not correctness of a theorem. Ordinary mathematical dependencies are stated in the manuscripts so an auditor can assess them directly.
 

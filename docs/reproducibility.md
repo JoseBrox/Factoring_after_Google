@@ -1,6 +1,6 @@
 # Reconstructing and verifying the results
 
-There are three different tasks: reproducing finite calculations, rebuilding the manuscripts, and auditing their mathematical arguments. This repository supplies the inputs for each, while keeping their evidential scope explicit.
+Reproduction includes finite calculations, Lean component proofs, manuscript builds, and audits of the remaining mathematical arguments. This repository supplies the inputs for each and states their scope explicitly.
 
 ## 1. Obtain an exact version
 
@@ -26,7 +26,7 @@ The example reports the saturated-exponent case $N=35$, $b=2$, $M=48$: 10 succes
 
 The release's Python and Node.js versions and file hashes are recorded in [release_manifest.json](../verification/release_manifest.json). The exact manuscript source commit, successful workflow run, TeX versions, PDF hashes, page counts, and layout checks are recorded in [build_report.json](../verification/build_report.json). These records document the performed runs. The minimum version requirements above describe the language features needed, not a claim that every future interpreter release has been tested.
 
-To check every recorded file in an unmodified release checkout, run `python3 scripts/verify_release.py`. This includes the manuscripts, verification programs and expected results, original source PDFs, published PDFs, and build records. An intentional source edit or a rebuild with another TeX distribution can change a hash; in that case the report identifies the changed file rather than deciding whether its mathematics is correct.
+To check every file recorded for the initial publication, check out [commit `af09583`](https://github.com/JoseBrox/Factoring_after_Google/tree/af09583053f45e910e865bb6594b2ba0f8706bc2) and run `python3 scripts/verify_release.py`. That manifest describes the initial snapshot. Later editorial changes and the Lean formalization have their own source history and build evidence.
 
 ## 3. Retrieve and verify the primary source manuscripts
 
@@ -63,6 +63,21 @@ For the splitter and nonresidue constructor, check the ramified local PSD identi
 
 For the randomized manuscript, first read the conditional contract. The widened analytic assertions are not consequences of a finite parameter check. The sparse-kernel theorem and recurrence have separate proofs that can be audited without assuming the complete factoring theorem. Replacing the contract by a proved theorem is a substantive open task.
 
+## 6. Compile and audit the Lean component proofs
+
+Use the toolchain named in `lean/lean-toolchain` and the dependency revisions in `lean/lake-manifest.json`. From the repository root:
+
+```sh
+cd lean
+lake exe cache get $(python3 ../scripts/verify_lean.py --imports)
+cd ..
+python3 scripts/verify_lean.py
+```
+
+The verifier checks that the actual dependency checkouts match the manifest and have no tracked or untracked source changes. It checks that every proof module is imported by `Factoring.lean`, compiles the project with warnings treated as errors, and audits compiled logical declarations for unexpected axioms. The allowlist is `propext`, `Classical.choice`, and `Quot.sound`. Source hashes, the complete axiom inventory, compiler versions, and build output are written to `build/lean/`. The [Lean CI workflow](../.github/workflows/lean.yml) repeats these checks in a fresh Ubuntu runner and checksum-verifies the pinned Lean distribution.
+
+See the [Lean guide](../lean/README.md) for theorem names, hypotheses, and remaining bridges, and the [initial build evidence](../verification/lean/README.md) for the preserved receipt and axiom inventory. The universal schedule and recursion proofs strengthen earlier finite checks. The full analytic complexity theorems have not been formalized.
+
 ## What is not supplied
 
-There is no hidden empirical dataset or unpublished timing benchmark. There is no complete implementation of the asymptotic general factorers and no claim of a checked Lean development. The repository supplies mathematical specifications, written proofs and conditional implications, pinned dependencies, and the finite verification actually performed. These are different deliverables and are labeled accordingly.
+There is no hidden empirical dataset or unpublished timing benchmark. There is no complete implementation of the asymptotic general factorers or end-to-end Lean proof of their complexity. The repository supplies mathematical specifications, written proofs and conditional implications, compiled Lean component proofs, pinned dependencies, and reproducible finite checks. Their distinct scopes are recorded in the proof-status register.

@@ -64,7 +64,7 @@ def main():
     links = 0
     pages = [ROOT / "README.md", ROOT / "CONTRIBUTING.md"]
     pages += list((ROOT / "docs").glob("*.md"))
-    pages += [ROOT / d / "README.md" for d in ("manuscripts", "papers", "src", "references", "provenance", "verification")]
+    pages += [ROOT / d / "README.md" for d in ("manuscripts", "papers", "src", "references", "provenance", "verification", "lean")]
     for page in pages:
         for target in re.findall(r"\]\(([^)\s]+)\)", page.read_text()):
             if re.match(r"[a-z]+:", target) or target.startswith("#"):

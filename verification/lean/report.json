@@ -1,0 +1,37 @@
+{
+  "verified_at_utc": "2026-11-25T20:47:31.898487+00:00",
+  "lean": "Lean (version 4.19.0, x86_64-unknown-linux-gnu, commit 6caaee842e94, Release)",
+  "lake": "Lake version 5.0.0-6caaee8 (Lean version 4.19.0)",
+  "mathlib_revision": "c44e0c8ee63ca166450922a373c7409c5d26b00b",
+  "modules": [
+    "Factoring.Deterministic",
+    "Factoring.Gram",
+    "Factoring.Quadratic",
+    "Factoring.Recursion",
+    "Factoring.SquareRoot"
+  ],
+  "declarations_audited": 231,
+  "theorems_audited_including_generated": 169,
+  "audit_roots": "Every persistent logical declaration in the project modules; unsafe compiler runtime objects excluded only as roots.",
+  "allowed_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "warnings_are_errors": true,
+  "sha256": {
+    ".github/workflows/lean.yml": "73811b8737a03f3850970db64eff90b664ddf839328c296aa59a5f16429f7c7e",
+    "lean/Audit.lean": "7ca570ab7364be3ff06b7753478bc27fd899e9d6f70242c2620cc96c1264eb00",
+    "lean/Factoring/Deterministic.lean": "74ae8c03e8125011e0e81718acd140b5a35f4c0ec0eadefbfcf4037832447329",
+    "lean/Factoring/Gram.lean": "4de2b555003d4ae18293b99a00dbbc58fe92d32a518ec88cd9df717c9832c342",
+    "lean/Factoring/Quadratic.lean": "fe8f7d68b2f06a95dafeb2bdb47b9dd3e79c9e43c3212c632c1d0b7bf8227a38",
+    "lean/Factoring/Recursion.lean": "a5a91e0fa02db48c1b106a7ff951a19af14bb52bd366ec8790dc67e3ac7dc1d1",
+    "lean/Factoring/SquareRoot.lean": "b36994a6c2e7617cbefb9c2aad459f6e3752017c5e7739fb35bda2db62815062",
+    "lean/Factoring.lean": "7fa4d69e421be671ee30a4cd43a9fc1674eff514a2673eabfdca07bd6d0e99a6",
+    "lean/lake-manifest.json": "15a8ffb3309ff1fa97ceb254f0cf3c8f4211704f6a2f53ce8f3781cbad974578",
+    "lean/lakefile.toml": "d81854cd12cb36c80dc1015a93f5cf21325d87b496d68dc691831d0136b0dfba",
+    "lean/lean-toolchain": "55e97be96000b5e9e290c9e74482e5e317861499a5540353ce845471bded8cea",
+    "scripts/verify_lean.py": "4b714b89036828af774d7953cceda668201a38f03156cdfdfbe28cfd16977011"
+  },
+  "scope": "Component theorems only; the full analytic factoring bounds are not formalized."
+}
