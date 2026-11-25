@@ -1,0 +1,96 @@
+{
+  "source_commit": "c8b2feae86f98003f3279562928cd95666bf8622",
+  "workflow_run": 45688355921,
+  "artifact_id": 15057587313,
+  "artifact_zip_sha256": "10d196ca7c3a7bb157f51f3890ddcc5495eaaa9256797a6c089e88904a3bdfea",
+  "tool_versions": {
+    "latexmk": [
+      "Latexmk, John Collins, 31 Jan. 2024. Version 4.83"
+    ],
+    "pdflatex": [
+      "pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian)",
+      "kpathsea version 6.3.5",
+      "Copyright 2023 Han The Thanh (pdfTeX) et al."
+    ],
+    "bibtex": [
+      "BibTeX 0.99d (TeX Live 2023/Debian)",
+      "kpathsea version 6.3.5",
+      "Copyright 2023 Oren Patashnik."
+    ]
+  },
+  "papers": [
+    {
+      "path": "papers/deterministic_factoring.pdf",
+      "pages": 33,
+      "bytes": 561888,
+      "sha256": "cabc474492b84aaebd08218bc67a9b165062fcb7ea552c3434bb480f013c456c",
+      "title": "Deterministic integer factoring with exponent 2/3 + epsilon",
+      "author": "Jose Brox",
+      "overfull_boxes": 0,
+      "undefined_refs_or_citations": false,
+      "text_blocks_near_page_edge": [],
+      "bookmarks": 37,
+      "links": 151
+    },
+    {
+      "path": "papers/order_splitting.pdf",
+      "pages": 19,
+      "bytes": 506506,
+      "sha256": "ec344b9519d8cb3b36f2f3deb2119770f1e970bd68bd6eb26c08afe53d766c00",
+      "title": "Sparse Gram methods for deterministic supplied-order splitting",
+      "author": "Jose Brox",
+      "overfull_boxes": 0,
+      "undefined_refs_or_citations": false,
+      "text_blocks_near_page_edge": [],
+      "bookmarks": 23,
+      "links": 96
+    },
+    {
+      "path": "papers/quadratic_nonresidues.pdf",
+      "pages": 18,
+      "bytes": 440219,
+      "sha256": "e9489dcebd4643e69fb9dd414913d1181e684fc67dded7718bf82119e36b3e44",
+      "title": "Deterministic quadratic nonresidue construction",
+      "author": "Jose Brox",
+      "overfull_boxes": 0,
+      "undefined_refs_or_citations": false,
+      "text_blocks_near_page_edge": [],
+      "bookmarks": 21,
+      "links": 86
+    },
+    {
+      "path": "papers/quadratic_relations.pdf",
+      "pages": 8,
+      "bytes": 323305,
+      "sha256": "d555c7058b9f5db3260292c53cb168e887f945c09b7cef72cb46d2ad90f165a9",
+      "title": "Quadratic relation chains for integer splitting",
+      "author": "Jose Brox",
+      "overfull_boxes": 0,
+      "undefined_refs_or_citations": false,
+      "text_blocks_near_page_edge": [],
+      "bookmarks": 9,
+      "links": 37
+    },
+    {
+      "path": "papers/randomized_factoring.pdf",
+      "pages": 25,
+      "bytes": 495781,
+      "sha256": "0c68ca3211f949a01542ff1ebd08eccf2a4827593e7e93b78c0077ef0a31f3a7",
+      "title": "Sparse kernels and a repaired recursion budget for integer factoring",
+      "author": "Jose Brox",
+      "overfull_boxes": 0,
+      "undefined_refs_or_citations": false,
+      "text_blocks_near_page_edge": [],
+      "bookmarks": 32,
+      "links": 83
+    }
+  ],
+  "workflow_url": "https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45688355921",
+  "visual_inspection": {
+    "date": "2026-11-25",
+    "scope": "All 103 pages inspected in rendered contact sheets; representative title, theorem, proof, and table pages also inspected at readable size.",
+    "result": "No clipped text, overlapping content, broken layout, or unresolved reference markers observed.",
+    "limitation": "Layout inspection is not a check of mathematical correctness."
+  },
+  "preserved_build_evidence": "verification/build_evidence/"
+}

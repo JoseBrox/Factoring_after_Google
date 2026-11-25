@@ -1,0 +1,26 @@
+[
+  {
+    "path": "references/upstream/deterministic-paper.pdf",
+    "bytes": 1132128,
+    "git_blob_sha1": "973002e0eb92acf3964fc020ca52ba6f1ac384ac",
+    "sha256": "0ccf115516dab3cbeee15167f2dea62fcb29d03a19224cb4a9ae69a5ce402993"
+  },
+  {
+    "path": "references/upstream/deterministic-README.md",
+    "bytes": 3282,
+    "git_blob_sha1": "0ace537853fa19ebe20edca585a27197d3f6a4a4",
+    "sha256": "22ca183ec37ab19ecdee3798c38015620ea0c4ba6f86099ed56fea7a5f34738e"
+  },
+  {
+    "path": "references/upstream/randomized-paper.pdf",
+    "bytes": 1072968,
+    "git_blob_sha1": "19f36b2f189ed41ec8e112b92aa9b88a96c6bd1e",
+    "sha256": "9ac07593ca90c0f315af0b0214320823a43e7c905e6700948261ebb09a4d537d"
+  },
+  {
+    "path": "references/upstream/randomized-README.md",
+    "bytes": 2333,
+    "git_blob_sha1": "6f5a38e10c3b1ee2d8508e7f37ced5f55c95c2c9",
+    "sha256": "01213d2cb85f4132e3e6b77882a4c4ecd620663daebc65309f1b153475f36b12"
+  }
+]

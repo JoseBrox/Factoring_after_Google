@@ -98,3 +98,9 @@ The [comparison source register](docs/comparison_sources.md) records the exact c
 **Jose Brox.** Cite a specific manuscript and a commit identifier so that the version of the result is unambiguous. [CITATION.cff](CITATION.cff) and [CITATION.bib](CITATION.bib) provide repository-level citation metadata.
 
 Original material in this repository is licensed under **Creative Commons Attribution 4.0 International (CC BY 4.0)**; see [LICENSE](LICENSE). Upstream material retains its own attribution; see [NOTICE](NOTICE). This is an independent research repository, with no claim of Google endorsement. The mathematical investigations and preparation of this collection used AI assistance; authorship, provenance, and the status of each result are stated explicitly.
+
+[D]: https://github.com/google-research/google-research/blob/4a7bc8ab0bc770e71a259b7966c500496b99010a/cogentic_research_papers/deterministic_factoring_l34/paper.pdf
+[R]: https://github.com/google-research/google-research/blob/4a7bc8ab0bc770e71a259b7966c500496b99010a/cogentic_research_papers/integer_factorization/paper.pdf
+[LP]: https://doi.org/10.1090/S0894-0347-1992-1137100-0
+[NFS]: https://doi.org/10.1007/BFb0091539
+[H]: https://github.com/JoseBrox/factoring-algorithms/tree/94d84cf90cc958aebde8853a1ecfcda304f60500/research/2026-11-25-cogentic

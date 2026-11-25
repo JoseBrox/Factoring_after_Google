@@ -4,12 +4,223 @@
   "author": "Jose Brox",
   "python": "3.12.14",
   "node": "v24.22.3",
-  "verification": "All eight exact verification programs passed; outputs recorded in expected_results.json.",
+  "verification": "All eight exact verification programs passed and matched expected_results.json; repository integrity checks passed.",
   "proof_scope": "Finite checks are not analytic or formal proof verification.",
+  "build_report": "verification/build_report.json",
+  "manuscript_source_commit": "c8b2feae86f98003f3279562928cd95666bf8622",
+  "manifest_scope": "Every published repository file except this manifest; generated temporary files and build directories are excluded.",
   "files": {
+    ".gitattributes": {
+      "sha256": "8df22cc43d34bc5cf0e2ae4d1cd11a28ad8073b0e53f3ad51d1d693516d12b32",
+      "bytes": 45
+    },
+    ".github/workflows/manuscripts.yml": {
+      "sha256": "6fb77acf5d14719def368e4fa4a6d70de7b1c076f1fc03d44755de08a327fcb5",
+      "bytes": 1711
+    },
+    ".github/workflows/verify.yml": {
+      "sha256": "4e3d0d0496ef8350a80c14162d769acb298198a8c995749478581a57c89ef265",
+      "bytes": 619
+    },
+    ".gitignore": {
+      "sha256": "7a4961a1f6811dd187827dc2fafbcbbe7b96eebe193b8e75aafa67b2aa9ff0a3",
+      "bytes": 98
+    },
+    "ABOUT.md": {
+      "sha256": "3645995ccdf822b46e3564c283ddf966c7c0495c101f99629137b68f791abed1",
+      "bytes": 346
+    },
+    "CHANGELOG.md": {
+      "sha256": "aa27240b09c51cc35d6f05f7b537f479caaef61ee5130ce949296f985152f3c8",
+      "bytes": 582
+    },
+    "CITATION.bib": {
+      "sha256": "5b7b2d8a6cfe11a8483af2d54083547c9606b18e1151bf32b443c4d58a08a3d0",
+      "bytes": 350
+    },
+    "CITATION.cff": {
+      "sha256": "d572a7d914f86410f512f5b745cd2f694a86c24288ee78d1d417d6749fe7b9ab",
+      "bytes": 801
+    },
+    "CONTRIBUTING.md": {
+      "sha256": "b6f90276332155b9117834f4dbdb2d018815c9eeb4187acaaf2ce9d9584b0ca1",
+      "bytes": 1855
+    },
+    "LICENSE": {
+      "sha256": "b165782e01bedc0a9318cbcc07d1f489c7cd5d6eabd9d4c349262c0d4058bd3f",
+      "bytes": 18660
+    },
+    "Makefile": {
+      "sha256": "88c010244cbb1424076da9795857d02310d6205d9396c07440b9df0f1863ff33",
+      "bytes": 196
+    },
+    "NOTICE": {
+      "sha256": "0cdfca7bb8fbc8c95686096f50dd3cf595b3e46f026d6b8ac14c06cb39546cb9",
+      "bytes": 1719
+    },
+    "README.md": {
+      "sha256": "a1ebdbf19ac1b5bd086ab2f7c2892877548ac1780c173e6d035c5f9abef89c2f",
+      "bytes": 12045
+    },
+    "docs/comparison_sources.md": {
+      "sha256": "55a1c0ca7f572e0e7140d946f5163d7ed33149d0faef5115de4aff88b385c4e6",
+      "bytes": 4532
+    },
+    "docs/errata.md": {
+      "sha256": "e4331b7fccdd97de63caba574a0f83041227ed35d49b39f810c5ab7fcdee1e6e",
+      "bytes": 3357
+    },
+    "docs/notation.md": {
+      "sha256": "972a3fe3f6c956180b32aa04d7c543429d5bd623a05ae1c58c6214bafc6ad922",
+      "bytes": 1598
+    },
+    "docs/overview.md": {
+      "sha256": "fc5115ec98a33ea0630f19348fe626ff7c79d9367a0ed4ec132862b08b81dae0",
+      "bytes": 6019
+    },
+    "docs/proof_status.md": {
+      "sha256": "bda94dafb267acb03454083b15f94c0f7c8e690b5c76f843b47bea249eb33301",
+      "bytes": 4829
+    },
+    "docs/reproducibility.md": {
+      "sha256": "43ea83f29a1f9b50295c198aa8eef6dc4b2888721f2785799dec8c03d7a1194e",
+      "bytes": 7511
+    },
     "examples/quadratic_relation_example.py": {
       "sha256": "9d81becd2e1f46a890957f6c52bf8cc7cd664901564c9c092d9342ca815df5d4",
       "bytes": 652
+    },
+    "manuscripts/README.md": {
+      "sha256": "f82baa58406ba1301c77160c8b2e61c2e910e3d859397d315d290c1babd7fccd",
+      "bytes": 2451
+    },
+    "manuscripts/deterministic_factoring/body.tex": {
+      "sha256": "827bb73e9516d32035515a638f031ba8762c32b2519d5e6a65e01c0da6253348",
+      "bytes": 99103
+    },
+    "manuscripts/deterministic_factoring/main.tex": {
+      "sha256": "7ac293ffe797ba9903e1eb433c04a38c71efe6724199d6fd8fc97478216eb6a6",
+      "bytes": 805
+    },
+    "manuscripts/order_splitting/body.tex": {
+      "sha256": "dadb745dc54c5143734323dcfed3963e89157a097234eaf0b8e1c39cae952244",
+      "bytes": 17542
+    },
+    "manuscripts/order_splitting/main.tex": {
+      "sha256": "d119659f6df9d3b6199ea05dd17dce098972f7eb1a8eecdd925da0d4e28e154b",
+      "bytes": 787
+    },
+    "manuscripts/quadratic_nonresidues/body.tex": {
+      "sha256": "056495c50717abaaac3663b513c9bcd85b8201b03f8c70da12432fd2ada53376",
+      "bytes": 12227
+    },
+    "manuscripts/quadratic_nonresidues/main.tex": {
+      "sha256": "29fca05d8d63003c7e0206a1df0d59baaccbf1b1551377e3f9918a2d7789f503",
+      "bytes": 756
+    },
+    "manuscripts/quadratic_relations/body.tex": {
+      "sha256": "7b4045c8d04d410602be8612d9d57520602ad38aa250c26a4087aed3b8832421",
+      "bytes": 18126
+    },
+    "manuscripts/quadratic_relations/main.tex": {
+      "sha256": "fbbbefb5deb6183ce058f04983610d68173b6ab0a0d5a3c892e20123407a083d",
+      "bytes": 756
+    },
+    "manuscripts/randomized_factoring/body.tex": {
+      "sha256": "fa0f5840c4734674b2837b25afe3f092e56fd5b0cb1354911b693d344e6c2909",
+      "bytes": 74873
+    },
+    "manuscripts/randomized_factoring/main.tex": {
+      "sha256": "0d9f2493d6a79f569f61576a930963fcd55b5cad54798f5d054c53882d4bbac0",
+      "bytes": 813
+    },
+    "manuscripts/shared/preamble.tex": {
+      "sha256": "77014f57e7d4e654b61388bae2e94fee483c1f758c9bbce28f37ea11bdfd2994",
+      "bytes": 1603
+    },
+    "manuscripts/shared/quadratic_package.tex": {
+      "sha256": "d184dcafb76cd03effa84c583f13ceed5d7644a2bb8727dcbe14cacb90eb424b",
+      "bytes": 41551
+    },
+    "manuscripts/shared/references.bib": {
+      "sha256": "a84e2e1de6bd60f7019afbc949e4f4215cd3d0cc0e58f8c2f68775fb74701ed1",
+      "bytes": 5163
+    },
+    "papers/README.md": {
+      "sha256": "e8a7c7fb34511bc7eac00cc0d59544f537fac9cf615ce4d5346305a6e53ff852",
+      "bytes": 509
+    },
+    "papers/deterministic_factoring.pdf": {
+      "sha256": "cabc474492b84aaebd08218bc67a9b165062fcb7ea552c3434bb480f013c456c",
+      "bytes": 561888
+    },
+    "papers/order_splitting.pdf": {
+      "sha256": "ec344b9519d8cb3b36f2f3deb2119770f1e970bd68bd6eb26c08afe53d766c00",
+      "bytes": 506506
+    },
+    "papers/quadratic_nonresidues.pdf": {
+      "sha256": "e9489dcebd4643e69fb9dd414913d1181e684fc67dded7718bf82119e36b3e44",
+      "bytes": 440219
+    },
+    "papers/quadratic_relations.pdf": {
+      "sha256": "d555c7058b9f5db3260292c53cb168e887f945c09b7cef72cb46d2ad90f165a9",
+      "bytes": 323305
+    },
+    "papers/randomized_factoring.pdf": {
+      "sha256": "0c68ca3211f949a01542ff1ebd08eccf2a4827593e7e93b78c0077ef0a31f3a7",
+      "bytes": 495781
+    },
+    "provenance/README.md": {
+      "sha256": "79cf56900a38a03ba33370e8773a5778e4bbe0b1e93b56c035c4ed957d7766b3",
+      "bytes": 2910
+    },
+    "provenance/manifest.json": {
+      "sha256": "acf44ce6e4df32277ee424356ba6269cca665db1c18e8e9abc5a1622af98f636",
+      "bytes": 3631
+    },
+    "provenance/notes/deterministic-algebraic-completion.md": {
+      "sha256": "8fe689baa5f7f7da816b7732ef466df78e0e1f3b9430ed822888b811dc15d290",
+      "bytes": 11231
+    },
+    "provenance/notes/deterministic-analytic-audit.md": {
+      "sha256": "78d341ca77f773066964fe92c2d9205c4766d1c5662aab715ef9d53d18e2009c",
+      "bytes": 32689
+    },
+    "provenance/notes/deterministic-parameter-compression.md": {
+      "sha256": "dff4583520b050adc83a6264b6b72578528ae4120619aa7ed3c88890080f00df",
+      "bytes": 15026
+    },
+    "provenance/notes/deterministic-splitting-core-audit.md": {
+      "sha256": "f17539d592456c9fe38285749aba240e8decf1ba0c3b884c08ac6aea68b45756",
+      "bytes": 19441
+    },
+    "provenance/notes/enumeration-burgess-audit.md": {
+      "sha256": "c9d70e990d091e264fb016d3c1170319ad088a55066cbb2ebe4ec90cdad29048",
+      "bytes": 28648
+    },
+    "provenance/notes/randomized-recursion-audit.md": {
+      "sha256": "fac84c622a29bc1e69da8cdb7907f4557ba6a436f45a689988f88c1c08010941",
+      "bytes": 24069
+    },
+    "provenance/notes/retained-individual-continuations.md": {
+      "sha256": "2539df2e0db4bba995aa3ddbb2b44c11df03dfd6d63b27968f98d547d4dce723",
+      "bytes": 14007
+    },
+    "provenance/notes/sparse-gram-order-splitting.md": {
+      "sha256": "da3cb653fcf214e7a0e24680210549bd80dab6670acd8ab9e4d41bb74379566d",
+      "bytes": 15288
+    },
+    "provenance/notes/sparse-randomized-factorer.md": {
+      "sha256": "6fdcd4a0b713eccf1715bf710bd09349dfd97b082866ad4c44ca9bce4672de02",
+      "bytes": 16362
+    },
+    "provenance/notes/splitting-provenance-audit.md": {
+      "sha256": "ab0497f433d025445070fc53a6864360ce3e65b68b58f16808446dc5fc9913c0",
+      "bytes": 22305
+    },
+    "references/README.md": {
+      "sha256": "7569e5af8d0ed74aeb24b1e388e8a55337f526b81e858623cbd30db52236e608",
+      "bytes": 1607
     },
     "references/sources.lock.json": {
       "sha256": "a83cbf9824a6a98383776603edbb10aa6dda1178bd0c9e2c8e240a2134c855e2",
@@ -19,6 +230,10 @@
       "sha256": "22ca183ec37ab19ecdee3798c38015620ea0c4ba6f86099ed56fea7a5f34738e",
       "bytes": 3282
     },
+    "references/upstream/deterministic-paper.pdf": {
+      "sha256": "0ccf115516dab3cbeee15167f2dea62fcb29d03a19224cb4a9ae69a5ce402993",
+      "bytes": 1132128
+    },
     "references/upstream/deterministic-paper.txt": {
       "sha256": "1eb0d8ab28762e6438e25bc8d0f0a8277917c28b475841cce916eb8a510188ac",
       "bytes": 407615
@@ -27,21 +242,33 @@
       "sha256": "01213d2cb85f4132e3e6b77882a4c4ecd620663daebc65309f1b153475f36b12",
       "bytes": 2333
     },
+    "references/upstream/randomized-paper.pdf": {
+      "sha256": "9ac07593ca90c0f315af0b0214320823a43e7c905e6700948261ebb09a4d537d",
+      "bytes": 1072968
+    },
     "references/upstream/randomized-paper.txt": {
       "sha256": "9fd8a34e4c0dcf37131f747f12b7641d0a4f00c23d5b90c22a180135f1c3a336",
       "bytes": 322520
     },
     "scripts/build_manuscripts.py": {
-      "sha256": "662cdc3a5c2d16599e310903ffd472ad9d9e8b6c8725e8d110811a43093013dd",
-      "bytes": 1591
+      "sha256": "96dca057c4c3a255447363136ea4a868da1886730b9671882834d5d7d2b6c4ed",
+      "bytes": 1826
     },
     "scripts/fetch_sources.py": {
       "sha256": "e8df83d3b8f4f4edf863ca186afc0260b03854760798c168a2f02886c42a7df0",
       "bytes": 1660
     },
+    "scripts/verify_release.py": {
+      "sha256": "a08c474b863c83abb58f9ed10e594d85683a708bc03e504bd7b818d507d72661",
+      "bytes": 1071
+    },
     "scripts/verify_repository.py": {
       "sha256": "25f7db75c4aeffa0317935205b5f2fa5526310bb0fdefa1f5e20ea3e02735a43",
       "bytes": 4352
+    },
+    "src/README.md": {
+      "sha256": "82e54502b83a44c9519fc47d144845214e43e3fd40009d00c389f898bfc58b20",
+      "bytes": 874
     },
     "src/factoring_after_google/__init__.py": {
       "sha256": "efd727782fbddbf55b657182d04e061223a6c1d1f27ff56e627576243a6ffe1b",
@@ -50,6 +277,66 @@
     "src/factoring_after_google/quadratic_relations.py": {
       "sha256": "70cc3993d298adae8f8583656a47c31ed4d173d8718e570c09de3e13dc80a7b2",
       "bytes": 2907
+    },
+    "verification/README.md": {
+      "sha256": "594f3a1af9b2ab91cefff650756d4c1dff6ecfbdbca98f7d0a733c71ce2d933d",
+      "bytes": 3491
+    },
+    "verification/build_evidence/README.md": {
+      "sha256": "152460bd20ff1520a0687bba3d609162299e02e862a7132a8466cecf149282a5",
+      "bytes": 1285
+    },
+    "verification/build_evidence/deterministic_factoring.blg.txt": {
+      "sha256": "f454de5bcdb2634e3f655ce8249dc8877be270deb8fcb7f07c7e541376be07f2",
+      "bytes": 933
+    },
+    "verification/build_evidence/deterministic_factoring.log.txt": {
+      "sha256": "48171e8cbb03e95f426d1779a54e8378b2c6b5b5f3f6b1729d2d19d6d581b3d9",
+      "bytes": 31594
+    },
+    "verification/build_evidence/order_splitting.blg.txt": {
+      "sha256": "0a6eda88d82f065c0a6c9e80eabd0385c7a7700c93e32a2e89ba89756b7624b4",
+      "bytes": 921
+    },
+    "verification/build_evidence/order_splitting.log.txt": {
+      "sha256": "df8795bf5836012ab695ff77979ad72dc2b0299facfd7bb72989b3204c4f808f",
+      "bytes": 31164
+    },
+    "verification/build_evidence/quadratic_nonresidues.blg.txt": {
+      "sha256": "2d91fa30da3dda05646b1ab8910693038b4d9a4554925f45c95e9a5b1eefa462",
+      "bytes": 927
+    },
+    "verification/build_evidence/quadratic_nonresidues.log.txt": {
+      "sha256": "f193c676b35a6d7ea13eaee6233c6da2a73704f3e4cd475ec5e81da821bd3ee6",
+      "bytes": 30821
+    },
+    "verification/build_evidence/quadratic_relations.blg.txt": {
+      "sha256": "3ba9fd40ab6ea2a8bf331f2805903267ef01b56748d58310f9c1bd6e73627b62",
+      "bytes": 907
+    },
+    "verification/build_evidence/quadratic_relations.log.txt": {
+      "sha256": "6dc3c787e61bdd2c95bca36745815f0c9dc637040d4f0c7c737bfebb7b20b9a6",
+      "bytes": 29716
+    },
+    "verification/build_evidence/randomized_factoring.blg.txt": {
+      "sha256": "43c3bec5c37c563dfad913a03f3242c89ae17d449affb98fa7fb895de04e9d63",
+      "bytes": 930
+    },
+    "verification/build_evidence/randomized_factoring.log.txt": {
+      "sha256": "71ea8aee5ce7b07615b10193e380c8d2078ca7119bb85640c9fc4a76f7411dfe",
+      "bytes": 31074
+    },
+    "verification/build_evidence/source_receipt.json": {
+      "sha256": "109b22fdf01752661665e2e0c0b8185c83a547f5c01a20fa8354a7e53a5854a0",
+      "bytes": 935
+    },
+    "verification/build_evidence/tool_versions.json": {
+      "sha256": "d15179a42d2c6c16b98b8b3af95c9dce60fb8a7be3090d2f5b6044e1ba2dc8b2",
+      "bytes": 371
+    },
+    "verification/build_report.json": {
+      "sha256": "a52402f7479fda52c3ccb04229e1abd1a9fd42e8b804f2839399b27007209cb1",
+      "bytes": 3441
     },
     "verification/expected_results.json": {
       "sha256": "614ee1e2a48d7d6b5b0b984369fd74bcf8ac77251463af05fe1aedcaf69be394",
@@ -83,13 +370,13 @@
       "sha256": "bf495df42512b7372adb5aaaf5ec84913c0436d66e36606762c0033157b2170a",
       "bytes": 2940
     },
-    "verification/verify_sparse.js": {
-      "sha256": "8e471a40759ec584018e87a469002ffefcf9eb5514d2701fc0474fb8cce1a652",
-      "bytes": 5419
-    },
     "verification/verify_selected_sections.py": {
       "sha256": "b9a249f15294344a852379860c179f0da7aba6e50f6e718a377fc06f09c90f96",
       "bytes": 3962
+    },
+    "verification/verify_sparse.js": {
+      "sha256": "8e471a40759ec584018e87a469002ffefcf9eb5514d2701fc0474fb8cce1a652",
+      "bytes": 5419
     }
   }
 }

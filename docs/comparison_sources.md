@@ -16,6 +16,8 @@ Both source manuscripts come from Google Research commit `4a7bc8ab0bc770e71a259b
 
 Source PDFs and READMEs: [deterministic](https://github.com/google-research/google-research/tree/4a7bc8ab0bc770e71a259b7966c500496b99010a/cogentic_research_papers/deterministic_factoring_l34), [randomized](https://github.com/google-research/google-research/tree/4a7bc8ab0bc770e71a259b7966c500496b99010a/cogentic_research_papers/integer_factorization). The source READMEs attribute the papers to Cogentic using Gemini 4 and promise a companion release of formal proofs. Their announcement is not a verification performed by this repository.
 
+The deterministic source's general-factor theorem is stated for finding a proper factor of a composite input. Recursive completion preserves the exponent in the comparison; extra polynomial factors should not be suppressed when discussing its exact displayed constant. The randomized source theorem is explicitly for complete prime factorization. The new deterministic manuscript explains the corresponding reduction, while the randomized manuscript keeps the complete-factorization output specification throughout.
+
 ## Established historical reference points
 
 H. W. Lenstra, Jr. and C. Pomerance, *A rigorous time bound for factoring integers*, JAMS 5 (1992), 483–516, proves a randomized $L_N[1/2,1]$ bound. [Primary article](https://cr.yp.to/bib/1992/lenstra.pdf), [DOI](https://doi.org/10.1090/S0894-0347-1992-1137100-0).

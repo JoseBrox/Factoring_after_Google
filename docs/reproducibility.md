@@ -24,7 +24,9 @@ The second command checks available source bytes, archived-note hashes, LaTeX in
 
 The example reports the saturated-exponent case $N=35$, $b=2$, $M=48$: 10 successful parameters for the one-shot relation, and all 35 for the chain. Known factors are used to prove and test the promise, not as inputs to the splitting routine.
 
-The release's actual tool versions, result hashes, and PDF metadata are recorded in `verification/release_manifest.json`. They document the performed run. The minimum version requirements above describe the language features needed, not a claim that every future interpreter release has been tested.
+The release's Python and Node.js versions and file hashes are recorded in [release_manifest.json](../verification/release_manifest.json). The exact manuscript source commit, successful workflow run, TeX versions, PDF hashes, page counts, and layout checks are recorded in [build_report.json](../verification/build_report.json). These records document the performed runs. The minimum version requirements above describe the language features needed, not a claim that every future interpreter release has been tested.
+
+To check every recorded file in an unmodified release checkout, run `python3 scripts/verify_release.py`. This includes the manuscripts, verification programs and expected results, original source PDFs, published PDFs, and build records. An intentional source edit or a rebuild with another TeX distribution can change a hash; in that case the report identifies the changed file rather than deciding whether its mathematics is correct.
 
 ## 3. Retrieve and verify the primary source manuscripts
 
@@ -51,7 +53,7 @@ Run from the repository root. The script uses `latexmk` to run pdfLaTeX and BibT
 
 The build fixes `SOURCE_DATE_EPOCH` to 25 November 2026 UTC and suppresses volatile PDF dates and trailer identifiers. The TeX tool versions are recorded in `build/tool_versions.json`. This reduces accidental differences; byte-for-byte identity across distinct TeX distributions is not promised. The source, mathematical content, and successful build are the reproducibility target.
 
-The GitHub Actions workflow uses Ubuntu 24.04, pinned action commits, explicit package names, and read-only repository permissions. It preserves compiled PDFs, upstream PDFs, build logs, and source receipts in the `manuscripts-and-sources` artifact. The runner's package repositories can evolve, so use the recorded tool versions when investigating a layout difference.
+The GitHub Actions workflow uses Ubuntu 24.04, pinned action commits, explicit package names, and read-only repository permissions. It preserves compiled PDFs, upstream PDFs, build logs, and source receipts in the `manuscripts-and-sources` artifact. The published PDFs, source PDFs, and final logs and receipts are also committed in the repository, so verification does not depend on the temporary Actions artifact remaining available. See [build evidence](../verification/build_evidence/README.md). The runner's package repositories can evolve, so use the recorded tool versions when investigating a layout difference.
 
 ## 5. Audit the proofs
 
