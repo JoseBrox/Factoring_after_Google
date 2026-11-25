@@ -8,7 +8,7 @@ This repository develops and audits improvements to the November 2026 Cogentic f
 
 ## Results at a glance
 
-Write $`\ell=\log N`$ and let $`\ell_M`$ denote the bit length of the supplied integer $`M`$. All logarithms in the asymptotic expressions are natural. The standard subexponential notation is
+All logarithms in the asymptotic expressions are natural. The standard subexponential notation is
 
 ```math
 L_N[\alpha,c]=\exp\!\bigl((c+o(1))(\log N)^\alpha(\log\log N)^{1-\alpha}\bigr).
@@ -18,8 +18,8 @@ The table compares like-for-like inputs and computational models. **“Previous�
 
 | Problem / manuscript (PDF) | New complexity | Previous bound and source | Proof status |
 |:---|:---|:---|:---|
-| **[Deterministic factoring](papers/deterministic_factoring.pdf)** | $`\exp(O_\varepsilon(\ell^{2/3+\varepsilon}))`$ | $`O(\exp(3\ell^{3/4}))`$ [D, Thm. 1.1][D] | Written proof; any fixed $`\varepsilon>0`$. [LaTeX](manuscripts/deterministic_factoring/) |
-| **[Deterministic supplied-order splitting](papers/order_splitting.pdf)** | $`\ell_M\,\ell^{O(1)}\exp(O(\sqrt{\ell\log\ell}))`$ | $`\ell_M\,\ell^2\exp(O(\sqrt{\ell}\,\log\ell))`$ [D, Thm. 1.2][D] | Written proof; supplied exponent. [LaTeX](manuscripts/order_splitting/) |
+| **[Deterministic factoring](papers/deterministic_factoring.pdf)** | $`\exp(O_\varepsilon((\log N)^{2/3+\varepsilon}))`$ | $`O(\exp(3(\log N)^{3/4}))`$ [D, Thm. 1.1][D] | Written proof; any fixed $`\varepsilon>0`$. [LaTeX](manuscripts/deterministic_factoring/) |
+| **[Deterministic supplied-order splitting](papers/order_splitting.pdf)** | $`(\log M)(\log N)^{O(1)}\exp(O(\sqrt{\log N\,\log\log N}))`$ | $`(\log M)(\log N)^2\exp(O(\sqrt{\log N}\,\log\log N))`$ [D, Thm. 1.2][D] | Written proof; supplied exponent. [LaTeX](manuscripts/order_splitting/) |
 | **[Deterministic quadratic nonresidues](papers/quadratic_nonresidues.pdf)** | $`\exp(O(\sqrt{\log p\,\log\log p}))`$ | $`\exp(O(\sqrt{\log p}\,\log\log p))`$ [D, Thm. 1.2][D] | Written proof; prime input. [LaTeX](manuscripts/quadratic_nonresidues/) |
 | **[Randomized factoring](papers/randomized_factoring.pdf)** — expected time | $`L_N[1/3,91.4]`$ | $`L_N[1/3,105]`$ [R, Thm. 1.1][R] | **Conditional.** [LaTeX](manuscripts/randomized_factoring/) |
 | Randomized factoring — workspace | $`L_N[1/3,19]`$ | $`L_N[1/3,40]`$ [R, Thm. 1.1][R] | **Conditional** for the full factorer. |
@@ -28,7 +28,7 @@ The table compares like-for-like inputs and computational models. **“Previous�
 ### Reading the bounds
 
 - **Deterministic factoring:** the power of the logarithm in the running-time exponent drops from $`3/4`$ to $`2/3+\varepsilon`$ for every fixed $`\varepsilon>0`$. This is a family approaching $`2/3`$, not an endpoint bound of the form $`L_N[2/3,c]`$.
-- **Supplied-order splitting and quadratic nonresidues:** the main exponential factor changes from $`\exp(O(\sqrt{\ell}\,\log\ell))`$ to $`\exp(O(\sqrt{\ell\log\ell}))`$ (using $`\ell=\log p`$ in the prime-input problem). This saves a factor of $`\sqrt{\log\ell}`$ in the scale of the exponent. The nonresidue bound is $`L_p[1/2,O(1)]`$. The splitting input includes an even positive integer $`M`$ divisible by $`p-1`$ for every prime $`p\mid N`$, with composite $`N`$ not a perfect power. Its bit length is charged; producing it is a separate task.
+- **Supplied-order splitting and quadratic nonresidues:** the main exponential factor changes from $`\exp(O(\sqrt{\log N}\,\log\log N))`$ to $`\exp(O(\sqrt{\log N\,\log\log N}))`$ (with $`p`$ in place of $`N`$ in the prime-input problem). This saves a factor of $`\sqrt{\log\log N}`$ in the scale of the exponent. The nonresidue bound is $`L_p[1/2,O(1)]`$. The splitting input includes an even positive integer $`M`$ divisible by $`p-1`$ for every prime $`p\mid N`$, with composite $`N`$ not a perfect power. Its bit length is charged; producing it is a separate task.
 - **Randomized factoring:** the headline time and deterministic workspace constants change from 105 and 40 to 91.4 and 19, conditional on the widened analytic and square-certification contracts. Google's concluding proof also reports the tighter intermediate constants 104 and 38. Our sparse kernel theorem and recursion budget have written proofs.
 - **Quadratic relation chain:** under its mixed-sign promise, each independent uniform trial succeeds with probability at least $`\frac{p+3}{2p}>\frac12`$. This is not a general factoring algorithm without the promised inputs.
 
