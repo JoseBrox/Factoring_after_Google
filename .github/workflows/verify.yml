@@ -1,0 +1,23 @@
+name: Exact verification
+on:
+  push:
+    paths-ignore:
+      - 'papers/**'
+      - 'references/upstream/*.pdf'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Record interpreter versions
+        run: |
+          python3 --version
+          node --version
+      - name: Reproduce finite checks
+        run: python3 verification/run_all.py
+      - name: Check repository integrity and manuscript references
+        run: python3 scripts/verify_repository.py

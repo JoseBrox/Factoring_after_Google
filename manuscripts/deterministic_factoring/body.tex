@@ -1,0 +1,2364 @@
+\begin{abstract}
+We give a deterministic integer-factorization algorithm with bit complexity
+\(\exp(O_\varepsilon((\log N)^{2/3+\varepsilon}))\) for every fixed
+\(\varepsilon>0\).  The construction modifies the exponent-annihilation
+method in the pinned Cogentic manuscript on deterministic factoring.  Its
+main ingredients are preconditioned polynomial pairs, squarefree smooth
+values in arithmetic progressions, exact cancellation in two real-unit
+lattices, and a supplied-exponent splitting algorithm.  We give an explicit
+replacement parameter schedule and prove the uniform analytic transfer,
+including the conditional Gaussian laws, exceptional-conductor estimates,
+adaptive deletion argument, and final spectral lower bound.  A corrected
+Perron estimate retains a term omitted from the source's displayed bound.
+The algorithm uses finite enumeration and exact certificates; probability
+is used to prove that a successful enumerated pair exists.  We also identify
+the precise large-modulus obstruction in the present progression argument.
+The result is a mathematical manuscript using stated classical inputs; it
+does not assert verification of the source's formal-proof artifacts or an
+endpoint \(L_N[2/3,c]\) bound.
+\end{abstract}
+
+\tableofcontents
+
+\section{The result, its provenance, and the proof strategy}
+\label{sec:introduction}
+
+All logarithms without a subscript are natural.  Complexity means bit
+operations on a deterministic multitape Turing machine.  An integer
+\(N\ge4\) is supplied in binary.  Write \(L=\log N\), \(L_2=\log L\), and
+\(\kappa=\log2\).  A returned factor is always checked to be an integer
+\(g\) with \(1<g<N\) and \(g\mid N\).
+
+\begin{theorem}\label{thm:main}
+For every fixed rational \(0<\delta\le1/100\), there is an explicit
+deterministic algorithm that factors every composite integer \(N\ge4\)
+within
+\[
+ \exp\bigl(O_\delta(L^{h})\bigr),
+ \qquad h=\frac23+8\delta,
+\]
+bit operations.  The constants are effective.  Consequently, for every
+fixed \(\varepsilon>0\), deterministic factoring is possible in
+\(\exp(O_\varepsilon(L^{2/3+\varepsilon}))\) bit operations.
+\end{theorem}
+
+Here ``factors'' can mean either finding one proper nontrivial factor or
+producing the complete prime factorization.  The latter follows by
+recursion and deterministic primality testing; at most \(O(\log N)\)
+nontrivial recursive calls are needed, which is absorbed by the bound.
+One may use AKS primality testing \cite{AKS2004}.  Perfect powers are
+recognized by exact integer-root computations for exponents at most
+\(\lfloor\log_2N\rfloor\).
+
+The conventional notation
+\[
+ L_N[\alpha,c]=
+ \exp\bigl((c+o(1))L^\alpha L_2^{1-\alpha}\bigr)
+\]
+should be kept separate from a fixed-power estimate.  The theorem supplies
+a family of bounds approaching power \(2/3\); it does not supply a fixed
+constant \(c\) in an endpoint \(L_N[2/3,c]\) estimate.  In particular, it
+does not establish an algorithm with first \(L\)-parameter below \(1/3\).
+
+\subsection{What is inherited and what is proved here}
+
+The starting point is the deterministic Cogentic manuscript
+\cite{CogDet2026}, frozen at Google Research commit
+\texttt{4a7bc8ab0bc770e71a259b7966c500496b99010a}, file
+\texttt{cogentic\_research\_papers/deterministic\_factoring\_l34/paper.pdf}.
+Its Git blob is
+\texttt{973002e0eb92acf3964fc020ca52ba6f1ac384ac}.
+References to source lemma numbers below always mean that version.
+The source proves a bound with power \(3/4\).  We retain its finite
+algebraic architecture and replace its decimal parameter powers.
+
+The new work is the uniform transfer, not merely an optimization of a
+list of inequalities.  We check the progression estimate at the actual
+moduli; the lattice congruences underlying the Gaussian conditioning;
+the centered moment identity; the exceptional-conductor contributions;
+the deletion process with its dependence on previously deleted rows;
+and the spectral projection needed by the exact extractor.  The
+parameter-free algebraic statements that we import are given with their
+hypotheses in Section~\ref{sec:extraction}.  The supplied-exponent splitter
+is stated in Section~\ref{sec:splitter}.  Its proof is developed in the
+companion order-splitting manuscript, including a direct replacement for
+the source's biquadratic enumeration implementation.
+
+\begin{remark}[Status and reproducibility]
+This is an ordinary mathematical proof using the explicitly stated
+analytic and algebraic inputs.  The proof does not infer an asymptotic
+running time from numerical experiments.  The accompanying exact
+parameter checks are aids to reconstruction.  The source's full Lean
+formalization has not been checked as part of this manuscript.  Pinning
+the source fixes the object being used; it is not itself a mathematical
+correctness certificate.
+\end{remark}
+
+\subsection{The algorithm in one paragraph}
+
+For many primes \(\ell\in(B/2,B]\), construct two degree-\(d\) polynomials
+that vanish at a common integer \(m\) modulo \(N\).  The first has \(d\)
+simple roots modulo \(\ell\), and the second has none.  Enumerate small
+linear perturbations preserving these facts.  For a successful pair,
+jointly smooth polynomial values provide enough relations to cancel
+all non-\(\ell\) ideal valuations and all real-unit logarithms.  Exact
+rational reconstruction then gives an even \(E_\ell\) with
+\(\ell^{E_\ell}=1\pmod N\).  A combinatorial saturation argument converts
+enough such certificates into a common multiple of every \(p-1\),
+\(p\mid N\).  A deterministic order splitter then returns a factor.
+
+The analytic task is to show that the finite perturbation box contains
+a successful pair for sufficiently many \(\ell\).  We prove this using
+independent discrete Gaussians on that box's ambient lattice.  The actual
+algorithm exhausts the box in a fixed order.
+
+\begin{center}
+\begin{tabular}{p{.25\textwidth}p{.33\textwidth}p{.32\textwidth}}
+\toprule
+Component & Required conclusion & Location \\
+\midrule
+Base-polynomial construction & Primitive, irreducible, real-rooted pairs;
+fixed modular behavior & Sections~\ref{sec:parameters}--\ref{sec:construction} \\
+Smooth progressions & Uniform squarefree smooth density outside controlled
+conductors & Sections~\ref{sec:saddle}--\ref{sec:progressions} \\
+Conditioned moments & Exact local factors and a centered square-moment bound
+& Sections~\ref{sec:gaussian}--\ref{sec:moments} \\
+Peeling and projection & A surviving positive Gram matrix with gap
+at least \(L^{-3}\) & Sections~\ref{sec:peeling}--\ref{sec:spectral} \\
+Exact extraction & Verified order multiples from that spanning certificate
+& Section~\ref{sec:extraction} \\
+Saturation and splitting & A common \(p-1\) multiple and a factor
+& Sections~\ref{sec:saturation}--\ref{sec:runtime} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{An explicit replacement parameter schedule}
+\label{sec:parameters}
+
+Fix \(0<\delta\le1/100\), rational, and set
+\begin{align*}
+ a&=\frac13,& t&=\frac13+\delta,& k&=\frac13+2\delta,
+ &v&=\frac13+\frac52\delta,\\
+ b&=\frac13+3\delta,& \eta&=\frac13+4\delta,
+ &r&=\frac13+5\delta,& c&=\frac13+6\delta,\\
+ h&=\frac23+8\delta,& m_0&=\frac23,
+ &g&=1-b+\delta=\frac23-2\delta.
+\end{align*}
+The letter \(r\) denotes a power in this display; a modular root will
+always be identified by its surrounding notation.  The roles of the
+parameters are as follows.
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Quantity & Definition up to bounded integer rounding & Leading scale \\
+\midrule
+Degree, small-prime cutoff & \(d=z_0\) & \(L^a\) \\
+Root-window width & \(w=2^{-L^t+O(1)}\) & \(\log(1/w)\asymp L^t\) \\
+Approximation parameter & \(K_1=2^{L^k+O(1)}\) & \(\log K_1\asymp L^k\) \\
+Smoothness bound & \(B=2^{L^b+O(1)}\) & \(\log B\asymp L^b\) \\
+Evaluation range & \(A=2^{L^c+O(1)}\) & \(\log A\asymp L^c\) \\
+Perturbation width & \(U=2^{L^h+O(1)}\) & \(\log U\asymp L^h\) \\
+Base & \(m=\lceil N^{1/d}\rceil\) & \(\log m=(1+o(1))L^{m_0}\) \\
+Polynomial value scale & \(X_{\rm sc}=c_dA^d\) & \(\log X_{\rm sc}=(\kappa+o(1))L^h\) \\
+Smoothness parameter & \(u=\log X_{\rm sc}/\log B\) & \(u=(1+o(1))L^r\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Computable rounding}
+
+All powers in the algorithm are computed by rational arithmetic and
+integer roots.  To be explicit, put \(n=\lfloor\log_2N\rfloor+1\),
+\(z=1-N/2^n\in[0,1/2]\), and \(J=n+30\).  Set
+\[
+ \kappa_- =\sum_{j=1}^J\frac1{j2^j},\qquad
+ \kappa_+=\kappa_-+2^{-J},\qquad
+ \widehat L=n\kappa_+-\sum_{j=1}^J\frac{z^j}{j},\qquad
+ L_0=\lceil\widehat L\rceil.
+\]
+The positive tails of the two convergent series show that
+\(L<\widehat L<L+2^{-20}\) for \(N\ge16\), and
+\(\kappa_-<\kappa<\kappa_+\).  For rational \(\theta=A_\theta/B_\theta\)
+in \((0,1)\), let
+\[
+ e(\theta)=\max\{j\in\mathbb Z_{\ge0}:
+       j^{B_\theta}\le \widehat L^{A_\theta}\}.
+\]
+The inequality is tested after clearing denominators.  Binary search
+computes \(e(\theta)\) in polynomial time in \(\log N\), for fixed
+\(\theta\), and \(e(\theta)=L^\theta+O(1)\).
+Take \(d=z_0=e(a)\), \(B=2^{e(b)}\), \(K_1=2^{e(k)}\),
+\(A=2^{e(c)}\), \(U=2^{e(h)}\), and \(w=2^{-e(t)}\).
+Inputs for which a later finite guard fails go to trial division.
+
+Once \(d\ge10\) (otherwise the algorithm uses fallback), put
+\begin{gather*}
+ P_0=\prod_{p\le z_0}p,\quad P_{\rm odd}=P_0/2,
+ \quad S_0=UA,\quad S_1=U,\quad
+ \bar u_j=L_0^{20}S_j\quad(j=0,1),\\
+ \mathcal B_U=([1,2\bar u_0]\cap\mathbb Z)
+                 \times([1,2\bar u_1]\cap\mathbb Z),
+ \qquad \Delta_{\rm close}=AK_1^{-1/2},\\
+ \mathcal P_{\rm gen}=\{\ell\text{ prime}:B/2<\ell\le B\}.
+\end{gather*}
+Choose the least positive integer \(j\) such that
+\(3^jP_{\rm odd}A^d\ge6K_1BP_0m\bar u_0\), and define
+\begin{equation}\label{eq:scale}
+ c_d=P_{\rm odd}3^j,
+ \qquad
+ 6K_1BP_0m\bar u_0\le X_{\rm sc}=c_dA^d
+            <18K_1BP_0m\bar u_0.
+\end{equation}
+Finally define the integer saturation cutoff
+\begin{equation}\label{eq:kidx}
+ K_{\rm idx}=B\,2^{\left\lceil
+       n\lceil\log_2(6L_0)\rceil/e(b)\right\rceil}.
+\end{equation}
+It satisfies
+\begin{equation}\label{eq:kidx-lower}
+ K_{\rm idx}\ge B\exp\left(\frac{L}{\log B}\log(6L)\right),
+ \qquad
+ \log K_{\rm idx}=O(L^{1-b}L_2).
+\end{equation}
+
+\subsection{Strict inequalities used in the proof}
+
+The following collection records all the power comparisons that will
+be used.  They are supplemented by the actual estimates in the ensuing
+sections.
+\begin{align}
+ &a<t<k<v<b<\eta<r<c<m_0<h<3/4,
+       \qquad a+c<h,\label{eq:gates1}\\
+ &m_0<2b,\quad m_0-v<b,\quad m_0-b<k,
+       \quad 2c<h+b,\label{eq:gates2}\\
+ &\eta+\delta<c,\quad 1-b<g<h,
+       \quad 2h+r=\frac53+21\delta<3.\label{eq:gates3}
+\end{align}
+The equality \(r=h-b\) is built into the schedule.  Integer rounding of
+\(d\) gives the slightly more precise statement
+\(\log m=L^{2/3}+O(L^{1/3})\), which fits all conductor caps below.
+
+The two error scales for the sieve and the centered moments are
+\begin{equation}\label{eq:errors}
+ E_{\rm Br}=\exp\left(-\frac\delta2L^\delta L_2\right),
+ \qquad E=E_{\rm rel}
+ =\exp\left(-\frac{3\delta}4L^\delta L_2\right).
+\end{equation}
+Both are smaller than every fixed inverse power of \(L\).  However,
+they are much larger than \(B^{-c_1}\) or \(K_1^{-c_1}\) for any fixed
+\(c_1>0\).  This separation is used explicitly, especially in the
+deletion argument.
+
+\section{The finite polynomial construction and the deterministic search}
+\label{sec:construction}
+
+We work after removing even inputs and perfect powers.  Then
+\((m-1)^d<N<m^d\).  Trial division up to \(K_{\rm idx}\) ensures that
+\(P^-(N)>K_{\rm idx}\) if no factor has already been found.  Testing
+\(\gcd(a-m,N)\) for \(1\le a\le A\) either gives a factor or guarantees
+the localization condition used later.
+
+For \(i\in\{1,2\}\) and \(1\le s\le d\), set
+\[
+ \rho_{i,s}=\frac{2s-2+i}{4d},\qquad
+ P_i(t)=\prod_{s=1}^d(t-\rho_{i,s}).
+\]
+For each \(\ell\in\mathcal P_{\rm gen}\), let \(r_1<\cdots<r_d\)
+be the first \(d\) residues modulo \(\ell\) different from \(m\bmod\ell\).
+The base-polynomial construction of source Lemma~8.1 produces
+\(f_i^{(0)}\in\mathbb Z[X]\) of degree \(d\), leading coefficient
+\(c_d\), and integers \(1\le k_i<2c_d\), with
+\begin{align}
+ &f_i^{(0)}(m)=k_iN,\quad
+       (k_1k_2,P_0\ell)=1,\label{eq:base-eval}\\
+ &\left|[X^j]f_i^{(0)}-c_dA^{d-j}[t^j]P_i\right|
+       <P_0\ell m\qquad(0\le j<d),\label{eq:base-approx}\\
+ &f_1^{(0)}(X)\equiv c_d\prod_{s=1}^d(X-r_s)\pmod\ell,
+       \qquad f_2^{(0)}\text{ has no root modulo }\ell.\label{eq:base-ell}
+\end{align}
+Every perturbation
+\begin{equation}\label{eq:perturb}
+ f_{i,\mathbf u}(X)
+ =f_i^{(0)}(X)+P_0\ell(X-m)(u_0+u_1X),
+ \qquad \mathbf u=(u_0,u_1)\in\mathbb Z^2,
+\end{equation}
+is primitive, remains irreducible modulo \(2\), and satisfies
+\(f_{i,\mathbf u}(a)\equiv1\pmod{P_0}\) for every integer \(a\).
+It is therefore irreducible over \(\mathbb Q\).
+
+\paragraph{Why this construction is finite and effective.}
+Choose the first irreducible monic degree-\(d\) polynomial over
+\(\mathbb F_2\) by testing at most \(2^d\) candidates.  Modulo the odd
+part of \(P_0\), prescribe the constant polynomial \(1\).  Modulo
+\(\ell\), prescribe the split polynomial in \eqref{eq:base-ell} and a
+root-free polynomial \(c_d(X^d-X-s_\ell)\).  Such an \(s_\ell\) exists
+because \(x^d-x\) takes the same value at \(0\) and \(1\), hence misses
+at least one residue.  Use the Chinese remainder theorem to round each
+target coefficient to its prescribed class modulo \(P_0\ell\).
+A balanced base-\(m\) correction of degree less than \(d\) enforces
+\eqref{eq:base-eval} while preserving the congruences and
+\eqref{eq:base-approx}; this is the coefficient-by-coefficient algorithm
+in source Lemma~8.1.  Its time is polynomial in
+\(2^d,\ell,z_0,\log c_d,d\log(mA)\), hence polynomial in \(B\).
+Primitivity follows because every prime dividing \(c_d\) lies in
+\(P_0\), while the constant term is \(1\) modulo each such prime.
+
+Define
+\begin{gather*}
+ T_0=[3/4,3/4+w],\quad
+ T_s=[\rho_{1,s}+w,\rho_{1,s}+2w],\quad
+ T_{d+s}=[\rho_{2,s}+w,\rho_{2,s}+2w],\\
+ I_j=AT_j\cap\mathbb Z,\qquad
+ \mathcal A=\bigsqcup_{j=0}^{2d}I_j,\qquad
+ \mathcal A^*=\{a\in\mathcal A:(a-m,k_1k_2)=1\},\\
+ \mathcal J=\{p\text{ prime}:\sqrt B<p\le B,\ p\nmid k_1k_2\}.
+\end{gather*}
+All these sets are computed by trial division and gcd tests.  In
+particular, \(\ell\in\mathcal J\), and no prime of \(\mathcal J\)
+divides \(c_dN\).
+
+\begin{lemma}[Uniform construction bounds]\label{lem:construction}
+For all sufficiently large \(N\), uniformly in \(\ell\in\mathcal
+P_{\rm gen}\) and \(\mathbf u,\mathbf v\in\mathcal B_U\), the two
+perturbed polynomials satisfy:
+\begin{enumerate}[label=(\roman*)]
+\item \(\log c_d=(\kappa+o(1))L^h\),
+\(\log X_{\rm sc}=(\kappa+o(1))L^h\), and
+\(\|f_i\|_\infty<2X_{\rm sc}<2^{L_0}\).
+\item On \([-1,1]\),
+\(\left|X_{\rm sc}^{-1}f_i(At)-P_i(t)\right|\le K_1^{-1}\).
+Each \(f_i\) has \(d\) distinct real roots \(\theta_{i,s}\), with
+\(\left|\theta_{i,s}/A-\rho_{i,s}\right|<K_1^{-0.95}\).
+\item For \(a\in\mathcal A\),
+\[
+ w(8d)^{-d}\le |P_i(a/A)|\le1,
+ \quad
+ \min_s|a/A-\theta_{i,s}/A|\ge w/2,
+\]
+and replacing the target roots by the actual roots changes each
+logarithm by at most \(K_1^{-0.90}\).
+\item A squarefree \(\mathcal J\)-smooth value has at most \(2.1u\)
+prime factors.  Thus a joint relation has at most \(5u<L_0\) nonzero
+valuation features, including the top row of ones.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The logarithm of the right side of \eqref{eq:scale} is
+\(\kappa L^h+L^{m_0}+O(L^c+L^k+L^b+L^a+L_2)\).
+Since \(h>m_0\) and \(h>a+c\), subtracting \(d\log A\) gives the
+first claim.  In particular, \(c_d\gg P_0B\), \(dA=o(m)\), and
+\(dA^{d-1}=o(\bar u_0)\).  These are the explicit estimates used in
+the coefficient-error and perturbation bounds of source Lemma~8.2(3).
+Summing those errors on \([-1,1]\) and using \eqref{eq:scale} proves
+the uniform \(K_1^{-1}\) approximation.
+
+At distance \(K_1^{-0.95}\) on either side of a target root, the product
+of the other \(d-1\) root distances is at least \((8d)^{-d}\).
+Since \(\log K_1\gg d\log d\), the target polynomial's magnitude
+there exceeds \(K_1^{-1}\); its two signs are opposite.  Degree \(d\)
+then gives exactly one real root in each disjoint isolating interval.
+The sampling intervals are distance at least \(w\) from their target
+roots, and \(\log(1/w)=o(\log K_1)\), proving the logarithmic
+stability.  Finally, each prime divisor of a smooth value is larger
+than \(\sqrt B\), whereas \(\log|f_i(a)|\le(1+o(1))\log X_{\rm sc}\).
+This gives the prime-factor count.  All comparisons are effective.
+\end{proof}
+
+\begin{algorithm}[Deterministic annihilator search]\label{alg:annihilator}
+On an odd composite non-perfect-power input, perform the following
+steps.  Every failure mentioned below invokes complete trial division.
+\begin{enumerate}
+\item For \(N\le64\), use fallback immediately.  Compute
+\(\widehat L\) and \(d\) first; if \(d<10\), use fallback before
+forming \(P_{\rm odd}\) or \(c_d\).  Compute the remaining rounded
+parameters.  Trial-divide up to
+\(\min(K_{\rm idx},N-1)\).  Test \(\gcd(a-m,N)\) for
+\(1\le a\le A\); return a proper gcd and invoke fallback if a gcd is
+\(N\).
+\item Check the construction and extractor guards: \(d\ge10\), \(L_0\ge10\),
+\(B\ge20\), \(B>z_0^2\), \(2(d+1)<B\), \(16dw\le1\),
+\(4dA\le m\le2^{L_0}\), \(K_1\ge16\), \(4P_0B\le c_d\), and
+\(\lceil\log_2K_1\rceil\le64d^3(d+1)L_0\).  Also check that the
+root-isolating radius \(2^{-\lceil0.95\log_2K_1\rceil}\) is less
+than \(1/(8d)\).
+\item Initialize \(M_*=2\) and \(\mathcal P_{\rm ok}=\varnothing\).
+For each \(\ell\in\mathcal P_{\rm gen}\), construct the base pair,
+\(\mathcal J\), and \(\mathcal A^*\).  Enumerate
+\((\mathbf u,\mathbf v)\in\mathcal B_U^2\) lexicographically.
+When the polynomial heights are at most \(2^{L_0}\), call the exact
+procedure \(\operatorname{TryPair}\) of
+Lemma~\ref{lem:trypair}.  On its first successful certificate
+\(E_\ell\), record \(\ell\), replace
+\(M_*\) by \(\operatorname{lcm}(M_*,E_\ell)\), and proceed to the
+next prime.
+\item Require the rationally checkable inequality
+\(6|\mathcal P_{\rm ok}|e(b)\kappa_-\ge B\).  Multiply \(M_*\)
+by every maximal prime power at most \(K_{\rm idx}\), obtaining
+\(M\).  Abort this multiplication if its bit length exceeds
+\(2^{e(g)}\).  Return \(M\) if the cap holds; otherwise use fallback.
+\end{enumerate}
+\end{algorithm}
+
+The analytic proof will show that fallback is never reached above an
+effective threshold depending only on \(\delta\).  The algorithm itself
+does not need to know that threshold.
+
+\section{Preconditioning and the elementary weighted sieve}
+\label{sec:sieve}
+
+The factor \(k_1k_2\) in \eqref{eq:base-eval} cannot be ignored.  It is
+the reason for the restriction defining \(\mathcal A^*\).  Every prime
+dividing \(k_1k_2\) exceeds \(z_0\), and
+\(k_1k_2<4c_d^2\).  Since \(h<3/4\), for sufficiently large \(N\)
+the number of its distinct prime divisors is less than \(L^{0.76}\).
+Comparison with the smallest such primes, followed by the prime number
+theorem, gives
+\begin{equation}\label{eq:coprime-density}
+ \prod_{p\mid k_1k_2}(1-p^{-1})>\frac14.
+\end{equation}
+Indeed, all the relevant smallest primes lie below \(L^{0.80}\), and
+\(\sum_{L^{1/3}<p\le L^{0.80}}p^{-1}=\log(2.4)+o(1)<1\).
+The sum of their squares is negligible, so the Euler product exceeds
+\(1/4\).  This use of an asymptotic estimate is effective.
+
+Define
+\[
+ \psi_0(q)=q\prod_{p\mid(q,k_1k_2)}(1-p^{-1}).
+\]
+The following is the version of source Lemma~8.2(2) needed here.
+
+\begin{lemma}[Weighted progression count]\label{lem:brun}
+For every sampling interval \(I_j\),
+\(|I_j\cap\mathcal A^*|\ge Aw/5\).  Suppose that \(q\) is squarefree
+and supported on primes at most \(\sqrt B\), that
+\((r_q-m,q)=1\), that \((Q,qk_1k_2)=1\), and that \(qQ\le B^4\).
+If \(|F(a)|\le F_0\) and
+\[
+ |F(a+1)-F(a)|\le \frac{L^{40}F_0}{Aw}
+ \quad(a,a+1\in I_j),
+\]
+then, uniformly in \(r_Q\),
+\begin{align*}
+ &\frac1{|I_j\cap\mathcal A^*|}
+ \sum_{\substack{a\in I_j\cap\mathcal A^*\\
+      a\equiv r_q\ (q),\ a\equiv r_Q\ (Q)}}F(a)\\
+ &\hspace{1cm}=
+ \frac1{\psi_0(q)Q}\,
+ \frac1{|I_j\cap\mathcal A^*|}
+ \sum_{a\in I_j\cap\mathcal A^*}F(a)
+ +O\left(\frac{F_0E_{\rm Br}}{\psi_0(q)Q}\right).
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+Take the sieve threshold \(z_{\rm Br}=\exp(L^\eta)\) and truncation
+order \(r_0=\lceil L^\delta\rceil\).  Primes dividing \(k_1k_2\)
+above \(z_{\rm Br}\) remove at most
+\(O(\omega(k_1k_2)(|I|/(qQz_{\rm Br})+1))\) points from any
+subinterval \(I\) in the progression.  For the remaining primes,
+Bonferroni's inequalities at order \(2r_0\) bound the relative omitted
+tail by
+\[
+ O\left(\sum_{\nu\ge2r_0}\frac{C^\nu}{\nu!}\right)
+ =\exp\bigl(-(2\delta+o(1))L^\delta L_2\bigr),
+\]
+because their reciprocal sum is bounded absolutely.  There are at most
+\(\exp(O(L^\delta L_2))\) retained divisors, each at most
+\(z_{\rm Br}^{2r_0}\).  Thus every progression modulus used has
+logarithm
+\[
+ O(L^b+L^{\eta+\delta})=o(L^c).
+\]
+Since \(\log(Aw)=(\kappa+o(1))L^c\), every endpoint error is
+negligible, even on subintervals of length
+\(AwE_{\rm Br}L_0^{-50}\).  Dividing the sieved count by the corresponding
+unrestricted count gives the local factor \(\psi_0(q)^{-1}Q^{-1}\).
+The density assertion follows from \eqref{eq:coprime-density}.
+Partition into \(\lceil L^{40}/E_{\rm Br}\rceil\) consecutive
+subintervals, whose lengths still exceed that lower cutoff for large
+\(N\).  The displayed Lipschitz bound makes the variation on each
+piece \(O(F_0E_{\rm Br})\).  The spare exponent between
+\(2\delta\) and \(\delta/2\) absorbs its polynomial losses and yields
+the asserted error.
+\end{proof}
+
+\section{Classical analytic inputs and a corrected prime-sum estimate}
+\label{sec:analytic-inputs}
+
+We state the analytic inputs explicitly.  The proof uses effective
+versions of the prime number theorem, the Landau--Page theorem and its
+explicit-formula consequence, and the near-one zero-density estimate.
+These are the inputs recorded in source Proposition~7.1.
+
+\begin{enumerate}[label=(A\arabic*)]
+\item\label{input:pnt} For an effective \(c>0\),
+\(\vartheta(x)=x+O(x\exp(-c\sqrt{\log x}))\).
+Its consequences used below include partial summation for prime powers
+and \(\sum_{p\le x}p^{-1}=\log\log x+C+o(1)\).
+See \cite{PNT}.
+\item\label{input:page} There is an effective absolute \(c_{\rm LP}>0\)
+such that the primitive Dirichlet \(L\)-functions of conductor at most
+\(D\) are zero-free in the usual region
+\(\Re s\ge1-c_{\rm LP}/\log(D(|\Im s|+4))\), with at most one
+exceptional primitive real character and one real exceptional zero.
+The explicit formula in that range gives the exceptional character the
+main term \(-x^\beta/\beta\), when its zero \(\beta\) is present;
+the derivative of this main term is nonpositive.  We use the effective
+uniform error stated in source Proposition~7.1(2), at
+\(D=T=\exp(c_{\rm LP}\log B/(800L_2))\).
+See \cite{LandauPage}.
+\item\label{input:density} For \(4/5\le\sigma\le1\), \(Q\ge1\),
+and \(T\ge2\),
+\begin{equation}\label{eq:density}
+ \sum_{d\le Q}\ \sum_{\substack{\chi\bmod d\\\chi\ {\rm primitive}}}
+ N(\sigma,T,\chi)
+ \ll (Q^2T)^{2(1-\sigma)/\sigma}\log^{14}(QT+2).
+\end{equation}
+Here \(N(\sigma,T,\chi)\) counts zeros with real part at least
+\(\sigma\) and imaginary part of absolute value at most \(T\), with
+multiplicity.  This is Montgomery's near-one estimate
+\cite{Montgomery1971}; its exact displayed form is also used in the
+proof of Lemma~5.2 of Ren--Tsang \cite{RenTsang2005}.
+\end{enumerate}
+
+\begin{remark}[Bibliographic precision]
+The source attributes the last estimate to Montgomery's Theorem~12.1,
+whereas Ren--Tsang attribute it to Theorem~12.2.  We use the explicit
+inequality \eqref{eq:density}.  No conclusion depends on resolving this
+numbering discrepancy.  A direct check of the original book's numbering
+is not claimed here.
+\end{remark}
+
+For clarity, we retain the following slightly weaker, but fully adequate,
+prime-sum bound.  It corrects the omission of a horizontal-contour factor
+in source Lemma~9.2(1).
+
+\begin{lemma}[Corrected zero-free prime-sum estimate]\label{lem:prime-sum}
+Let \(\chi\) be primitive of conductor \(d_0\ge1\), let
+\(0<\nu\le1/8\), \(H\ge8\), and
+\(1-\nu/2\le\sigma\le1\).  Suppose \(L(s,\chi)\) is zero-free on
+\[
+ \Re s\ge1-\nu,\qquad |\Im s-t|\le2H.
+\]
+For the trivial character of conductor one assume also \(|t|\ge3H\).
+Put \(\mathcal L=\log(d_0(|t|+H+4)/\nu)\).  Uniformly for
+\(\sqrt B\le x_1<x_2\le B\),
+\begin{align}\label{eq:prime-sum}
+ \left|\sum_{x_1<p\le x_2}\chi(p)p^{-\sigma-it}\log p\right|
+ \ll{}&\frac{\mathcal L}{\nu}
+     x_1^{1-\nu/2-\sigma}\log(H\log B)\notag\\
+ &+\frac{x_2^{1-\sigma}}{H}
+       \left((\log B)^2+\frac{\mathcal L}{\nu}\right)
+       +B^{-1/10}.
+\end{align}
+\end{lemma}
+
+\begin{proof}
+The Borel--Carath\'eodory argument on the zero-free rectangle bounds
+\(L'/L\) on its inner part by \(O(\mathcal L/\nu)\).  Apply truncated
+Perron to the difference of the two interval endpoints and shift to
+\(\Re z=1-\nu/2-\sigma\).  The quotient
+\((x_2^z-x_1^z)/z\) is analytic at zero, so no artificial pole is
+introduced there.  The vertical integral gives the first term.
+The horizontal segments give the second term with
+\(\mathcal L/\nu\) retained; the truncated Perron endpoint error is
+covered by its \((\log B)^2\) term.  The prime-power terms are
+\(O(B^{-1/10})\) in the indicated range.  Half-integer endpoint
+approximations remove endpoint coincidences without changing the bound.
+These are the steps of source Lemma~9.2(1), with its displayed
+horizontal-contour contribution preserved.
+\end{proof}
+
+Set, from now on,
+\begin{equation}\label{eq:conductor-parameters}
+ \begin{split}
+ Q_{\max}&=\exp(3L^{m_0}),\qquad T_*=2K_1^{7/2},\\
+ D_{\rm small}&=\exp\left(\frac{c_{\rm LP}\log B}{800L_2}\right),
+ \qquad \nu_1=\frac{400L_2}{\log B},\qquad \nu_0=L^{-v}.
+ \end{split}
+\end{equation}
+In applications take \(H=L^{12}\).  The high-conductor factor
+\(\mathcal L/\nu_0\) is at most
+\(L^{m_0+v+o(1)}<L^{1.1}\).  At the saddle below,
+\(B^{1-\alpha}=O(u\log u)\le L^{0.4}\) eventually.  Thus the
+horizontal term is negligible.  The vertical term contains
+\[
+ \exp(-c\nu_0\log B)
+   =\exp(-cL^{b-v})=\exp(-cL^{\delta/2}),
+\]
+which beats every polynomial in \(L\).
+The same application with \(\nu_1\) treats the small conductors,
+apart from the single exceptional real character.  Abel summation
+therefore gives the \(O(L^{-4})\) weighted partial-prime-sum bounds
+needed below.  Omitting \(\mathcal L/\nu\) from the intermediate
+statement is unnecessary.
+
+\section{Squarefree saddle densities and the covariance correction}
+\label{sec:saddle}
+
+For a finite prime set \(J\), write
+\[
+ \zeta_J^{\rm sf}(s)=\prod_{p\in J}(1+p^{-s}),\qquad
+ L_J^{\rm sf}(s,\chi)=\prod_{p\in J}(1+\chi(p)p^{-s}).
+\]
+In this section \(J=\mathcal J\), with at most \(O(L)\) additional
+primes deleted when stated.  The initially omitted primes dividing
+\(k_1k_2\) also number \(O(L)\).  Put
+\(\phi(s)=\log\zeta_J^{\rm sf}(s)\).  For
+\(u_Z=\log Z/\log B\in[u/3,3u]\), define \(\alpha_Z\) by
+\[
+ -\phi'(\alpha_Z)=\log Z,
+ \qquad \lambda_Z=(1-\alpha_Z)\log B,
+ \qquad V_Z=\phi''(\alpha_Z).
+\]
+Monotonicity and the prime number theorem give a unique
+\(\alpha_Z\in(4/5,1)\).  Define the central integral
+\begin{equation}\label{eq:pure}
+ I_{\rm pure}(Z;S)=\frac1{2\pi}
+ \int_{-1/\log B}^{1/\log B}
+       Z^{\alpha_Z+it-1}\zeta_{J\setminus S}^{\rm sf}(\alpha_Z+it)\,dt.
+\end{equation}
+This quantity is positive in the range used here.
+
+\begin{lemma}[Uniform saddle expansion]\label{lem:saddle}
+Uniformly for \(|S|\le5L\) and the stated \(Z\)-range,
+\begin{align}
+ \lambda_Z&=\log u_Z+\log\log u_Z+O(1),\label{eq:lambda}\\
+ (-1)^j\phi^{(j)}(\alpha_Z)&\asymp_j u_Z(\log B)^j,
+               \qquad j\ge1,\label{eq:cumulants}\\
+ I_{\rm pure}(Z;S)
+ &=\frac{Z^{\alpha_Z-1}\zeta_{J\setminus S}^{\rm sf}(\alpha_Z)}
+          {\sqrt{2\pi V_Z}}
+       \left(1+\frac{\phi^{(4)}(\alpha_Z)}{8V_Z^2}
+                -\frac{5\phi'''(\alpha_Z)^2}{24V_Z^3}
+                +O(u_Z^{-2})\right).\label{eq:edgeworth}
+\end{align}
+Moreover,
+\(\left|dI_{\rm pure}(e^x;S)/dx\right|\ll I_{\rm pure}(e^x;S)\).
+If \(B^{u/3}\le Z'\le Z\), then
+\begin{equation}\label{eq:saddle-ratio}
+ \frac{I_{\rm pure}(Z';S')}{I_{\rm pure}(Z;S)}
+ \ll (Z/Z')^{1-\alpha_Z}
+       \exp\left(O\left(\frac{\log(Z/Z')}{u\log B}\right)\right).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Partial summation with input~\ref{input:pnt} gives
+\(-\phi'(\alpha)\asymp B^{1-\alpha}/(1-\alpha)\) in this range.
+The saddle equation therefore yields
+\(e^{\lambda_Z}/\lambda_Z\asymp u_Z\), which gives
+\eqref{eq:lambda}; the same calculation with powers of \(\log p\)
+gives \eqref{eq:cumulants}.  Deleting \(O(L)\) primes changes the
+\(j\)-th derivative by
+\(O(LB^{-\alpha_Z/2}(\log B)^j)\), negligible at every scale used.
+
+In \eqref{eq:pure}, put \(z=t\sqrt{V_Z}\).  On
+\(|z|\le\log u_Z\), the standardized cumulant of order \(j\) is
+\(O_j(u_Z^{1-j/2})\).  Expand the exponential of the cubic through
+sixth-order terms.  The odd terms integrate to zero; the fourth term
+and the square of the cubic term give the two explicit corrections
+in \eqref{eq:edgeworth}.  The remaining Gaussian moments are
+\(O(u_Z^{-2})\).  On the rest of the central interval, the elementary
+inequality \(1-\cos(t\log p)\gg(t\log p)^2\) gives
+\(\exp(-c(\log u_Z)^2)\) relative decay.  This proves the expansion
+with a uniform error.
+
+The derivative assertion follows by differentiating the integral
+itself, using \(\alpha'(x)=-1/\phi''(\alpha(x))\), and bounding the
+resulting \(|t|\) Gaussian moment.  The ratio assertion follows by
+integrating the derivative of the explicit logarithmic main term;
+\(\alpha'(x)<0\) gives its stated one-sided exponent.
+\end{proof}
+
+\subsection{Why the second difference is legitimate}
+
+We will need the first nontrivial covariance between two prime
+divisibility indicators.  Let \(x=\log Z\), \(\alpha=\alpha_{e^x}\),
+and write
+\begin{align*}
+ G(x)={}&(\alpha-1)x+\phi(\alpha)
+       -\tfrac12\log(2\pi\phi''(\alpha))
+       +\log(1+\kappa_1(\alpha)),\\
+ \kappa_1(\alpha)={}&
+       \frac{\phi^{(4)}(\alpha)}{8\phi''(\alpha)^2}
+       -\frac{5\phi'''(\alpha)^2}{24\phi''(\alpha)^3}.
+\end{align*}
+Then \(\log I_{\rm pure}(e^x;\varnothing)=G(x)+O(u^{-2})\), and
+direct differentiation of \(G\) gives
+\[
+ G''(x)=-\phi''(\alpha)^{-1}(1+O(u^{-1})).
+\]
+For \(h_1=\log p\), \(h_2=\log p'\), use the exact double-integral
+formula for the second difference to obtain
+\begin{equation}\label{eq:second-difference}
+ G(x-h_1-h_2)-G(x-h_1)-G(x-h_2)+G(x)
+       =-\frac{h_1h_2}{V_Z}+O(u^{-2}).
+\end{equation}
+The four error values from \eqref{eq:edgeworth} contribute only
+\(O(u^{-2})\).  No derivative of an unspecified error term is taken.
+This distinction is necessary: a uniform bound on a function alone
+does not imply a bound on its derivatives.
+
+Let \(\alpha_s=\alpha_{X_{\rm sc}}\) and
+\(\mu_i(a)=X_{\rm sc}|P_i(a/A)|\).  Since
+\[
+ |\log|P_i(a/A)||=O(L^t+d\log d)=O(L^t),
+\]
+we have
+\( |\alpha_{\mu_i(a)}-\alpha_s|\log B=o(u^{-1})\), by \(t<b\).
+For a label \(\mathfrak q=(i,p,r_0)\), define
+\begin{align*}
+ m_{\mathfrak q}(a)
+ &=p^{\alpha_s/2-1}
+       \frac{I_{\rm pure}(\mu_i(a)/p;\{p\})}
+            {I_{\rm pure}(\mu_i(a);\varnothing)},\\
+ d_{\mathfrak q}(a)&=p^{\alpha_s/2}m_{\mathfrak q}(a),
+ \qquad
+ c_{\mathfrak q}(a)=
+       \frac{m_{\mathfrak q}(a)\log p}
+            {\sqrt{\phi''(\alpha_{\mu_i(a)})}}.
+\end{align*}
+The expansion gives
+\begin{equation}\label{eq:prime-moments}
+ m_{\mathfrak q}(a)=p^{-\alpha_s/2}(1+O(u^{-1})),
+ \quad d_{\mathfrak q}(a)=1+O(u^{-1}).
+\end{equation}
+For distinct primes \(p,p'\) in the same field, the exact second-moment
+quantity is
+\[
+ U^{\rm ex}_{\mathfrak q,\mathfrak q'}(a)
+ =(pp')^{\alpha_s/2-1}
+   \frac{I_{\rm pure}(\mu_i(a)/(pp');\{p,p'\})}
+        {I_{\rm pure}(\mu_i(a);\varnothing)}.
+\]
+Equation~\eqref{eq:second-difference} yields
+\begin{equation}\label{eq:covariance}
+ U^{\rm ex}_{\mathfrak q,\mathfrak q'}(a)
+ =m_{\mathfrak q}(a)m_{\mathfrak q'}(a)
+  -c_{\mathfrak q}(a)c_{\mathfrak q'}(a)
+  +O((pp')^{-\alpha_s/2}u^{-2}).
+\end{equation}
+The rank-one negative term is the finite-size constraint imposed by
+conditioning a smooth integer to have a specified size.
+
+\section{Clean smooth progressions and the two-prefix estimate}
+\label{sec:progressions}
+
+For \(Y,S>0\), put
+\[
+ W_{Y,S}(x)=S^{-1}\exp(-\pi(x-Y)^2/S^2),\qquad R=Y/S,
+\]
+and, for \((a_0,q)=1\), define
+\begin{equation}\label{eq:sigma}
+ \Sigma(Y,S;q,a_0,S_{\rm om})
+ =q\sum_{\substack{n\ge1\text{ squarefree}\\
+              P(n)\subseteq J\setminus S_{\rm om}\\n\equiv a_0\ (q)}}
+              W_{Y,S}(n).
+\end{equation}
+Here \(P(n)\) denotes the set of prime divisors of \(n\).
+When primes dividing \(q\) are removed as well, denote the union of
+the removed sets by \(S_{\rm tot}\).
+
+\subsection{A compact cutoff with controlled Mellin tails}
+
+The explicit Gevrey kernel in source Lemmas~8.3--8.4 gives a smooth
+cutoff \(\widetilde W_{Y,S}\), supported in
+\([e^{-0.31}Y,e^{0.31}Y]\), that agrees with the Gaussian up to an
+exponentially small tail.  We use the following precise consequences,
+uniformly for \(1/2\le\sigma\le1\): its Mellin transform has
+\(L^1\)-norm \(O(RY^{\sigma-1})\); its contribution from
+\(|t|>R^2\) is bounded by \(Y^{\sigma-1}\) times a polynomial in
+\(R\) times \(\exp(-cR^{0.6})\); and on the central interval its
+Mellin transform is
+\(Y^{\sigma+it-1}(1+O(R^{-2}))\) after integration against the
+symmetric central saddle.  One construction starts with
+\(\exp(-1/(1-x^2)^2)\) on \((-1,1)\), extends it by zero, and
+normalizes its integral.  The derivative bounds
+\(C^{j+1}(j!)^{3/2}\) yield the asserted Fourier decay by repeated
+integration by parts.  These source lemmas are parameter-general;
+our windows satisfy \(K_1^{0.8}\le R\le K_1^{1.7}\).
+
+Let \(I(Y,S;S_{\rm tot})\) be the central Mellin integral with this
+window and Euler product.  The saddle expansion and tail bounds below
+give
+\begin{equation}\label{eq:I-vs-pure}
+ I(Y,S;S_{\rm tot})
+ =I_{\rm pure}(Y;S_{\rm tot})(1+O(R^{-2})).
+\end{equation}
+
+\subsection{Exceptional conductors}
+
+Let \(\mathcal E_{\rm med}\) consist of primitive characters of
+conductor \(d_0\) with
+\(D_{\rm small}<d_0\le B^{64}\) having a zero in
+\(\Re s\ge1-\nu_0\), \(|\Im s|\le T_*\).
+Define \(\mathcal E_{\rm hi}\) similarly for
+\(B^{64}<d_0\le Q_{\max}\).  A modulus is called \emph{clean}
+if no conductor represented in either set divides it.  Let
+\(\mathcal Q_{\rm med}\) be the primes in \(J\) dividing a medium
+conductor, and let \(\mathcal P_{\rm gen}^{\rm good}\) be the generator
+primes dividing none of those conductors.
+
+These sets occur only in the proof.  The algorithm does not enumerate
+characters, zeros, or exceptional conductors.
+
+\begin{lemma}[Exceptional-set size]\label{lem:exception-count}
+\begin{align*}
+ \log(2+|\mathcal E_{\rm med}|)&=O(L^{b-v})=O(L^{\delta/2}),\\
+ \log(2+|\mathcal E_{\rm hi}|)&=O(L^{m_0-v}),\\
+ |\mathcal P_{\rm gen}^{\rm good}|
+       &=(1/2-o(1))B/\log B.
+\end{align*}
+Also \(|\mathcal Q_{\rm med}|\le128|\mathcal E_{\rm med}|\).
+\end{lemma}
+
+\begin{proof}
+Apply \eqref{eq:density} with \(\sigma=1-\nu_0\) and
+\(T=T_*\).  The logarithm of \(Q^2T_*\) is \(O(L^b)\) at
+\(Q=B^{64}\), and \(O(L^{m_0})\) at \(Q=Q_{\max}\).
+The logarithmic factor in \eqref{eq:density} is smaller than both
+displayed positive powers.  Each medium conductor has at most
+128 prime divisors greater than \(\sqrt B\).  Removing their union
+therefore deletes \(o(B/\log B)\) primes from \((B/2,B]\).
+\end{proof}
+
+\subsection{Euler-product decay}
+
+For the principal character at \(|t|\ge1/\log B\), and for the
+exceptional real character at every \(t\), the required estimate is
+\begin{equation}\label{eq:repulsion}
+ \frac{|L_{J\setminus S}^{\rm sf}(\alpha_Y+it,\chi)|}
+      {\zeta_{J\setminus S}^{\rm sf}(\alpha_Y)}
+ \ll\exp\left(-\frac{cu_Y}{(\log u_Y)^2}\right),
+ \qquad |t|\le R^2.
+\end{equation}
+Here \(|S|\le5L\); the principal-character restriction on \(t\)
+is necessary.
+
+To see the low-frequency estimate explicitly, the logarithm of the
+Euler-product ratio is at most
+\[
+ -c\sum_{\sqrt B<p\le B}p^{-\alpha_Y}
+       (1-\Re(\chi(p)p^{-it}))+O(LB^{-\alpha_Y/2}).
+\]
+The explicit formula from input~\ref{input:page} gives, on
+\([\sqrt B,B]\), a prime-counting main term with derivative \(1\)
+for the principal character and derivative
+\(-\mathbf1_{\{\beta\}}x^{\beta-1}\le0\) for the exceptional
+character.  At \(|t|\le L^{50}/\log B\), partial summation changes
+the displayed sum into an integral in \(v=\log x/\log B\), with
+weight \(e^{\lambda_Yv}/v\) and negligible error.
+On \([1-1/\lambda_Y,1]\), its oscillatory factor is bounded below
+by a constant multiple of \(\sin^2(t\log B\,v/2)\) in the principal
+case or \(\cos^2(t\log B\,v/2)\) in the exceptional case.
+Integrating over that interval gives at least
+\(c e^{\lambda_Y}/\lambda_Y^3\asymp cu_Y/\lambda_Y^2\).
+This covers short intervals about zeros of the sine or cosine as well
+as intervals containing whole periods.
+
+For \(L^{50}/\log B<|t|\le R^2\), the zero-free strip and
+Lemma~\ref{lem:prime-sum} bound the weighted character prime sum by
+\(O(L^{-4})\).  The untwisted prime mass is \(\asymp u_Y\), giving
+the stronger decay \(\exp(-cu_Y)\).  An exceptional real zero lies
+outside these shifted rectangles.  This proves
+\eqref{eq:repulsion}, including a possible exceptional character
+without a lower bound on \(1-\beta\).
+
+\begin{proposition}[Clean progression asymptotic]\label{prop:progressions}
+Uniformly for clean \(1\le q\le Q_{\max}\), \((a_0,q)=1\),
+\(|S_{\rm om}|\le2L\), \(K_1^{0.8}\le Y/S\le K_1^{1.7}\), and
+\(u_Y\in[u/2,2u]\),
+\begin{equation}\label{eq:clean-asymptotic}
+ \Sigma(Y,S;q,a_0,S_{\rm om})
+ =\frac q{\varphi(q)}I(Y,S;S_{\rm tot})
+       \left(1+O(\exp(-c_\delta L^\eta))\right).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Character orthogonality gives the principal-character contribution
+\(qI/\varphi(q)\).  The cutoff and \eqref{eq:repulsion} control
+the exceptional real character, if it induces a character modulo
+\(q\).  There is at most one such induced character.
+
+The other characters are handled by two prime prefixes.  Since
+\begin{equation}\label{eq:prefix-size}
+ q^2B^2<e^{-0.31}Y,
+\end{equation}
+every squarefree smooth integer in the cutoff support has a unique
+ordered factorization \(n=m_1m_2m_3\), in which \(m_1\) is the
+shortest initial prime prefix exceeding \(q\), \(m_2\) is the next
+shortest such prefix, and
+\(q<m_1,m_2\le qB\).  Let \(p_a<p_b\) be their final primes.
+For fixed \(p_a,p_b\), let \(A_{p_a}(s,\chi)\) and
+\(B_{p_a,p_b}(s,\chi)\) be the two prefix Dirichlet polynomials.
+The remaining factor contributes the squarefree Euler product over
+primes above \(p_b\).
+
+Shortestness gives \(m_1/p_a\le q\); distinct possible quotients
+are distinct reduced residues modulo \(q\).  Consequently
+\[
+ \sum_{\chi\bmod q}|A_{p_a}(\alpha+it,\chi)|^2
+ =\varphi(q)\sum_{m_1}m_1^{-2\alpha}
+ \le\varphi(q)^2q^{-2\alpha},
+\]
+and the same bound holds for the second prefix.  Cauchy--Schwarz
+therefore gives the decisive estimate
+\begin{equation}\label{eq:prefix-cs}
+ \frac q{\varphi(q)}
+       \sum_{\chi\bmod q}|A_{p_a}B_{p_a,p_b}|
+ \le q^{2(1-\alpha)}.
+\end{equation}
+
+For a remaining character, its primitive conductor avoids the
+excluded zero sets.  The corrected prime-sum estimate gives
+\(\exp(-cu_Y)\) relative decay in the terminal Euler product if
+\(p_b\le B^{1-1/(4\lambda_Y)}\).  If \(p_b\) exceeds this threshold,
+the omitted lower primes already carry a fixed positive fraction
+of the saddle prime mass, giving the same bound.  There are at
+most \(B^2\) terminal-prime pairs.  The cutoff's Mellin \(L^1\)
+bound and the saddle main term show that the nonexceptional relative
+error is at most
+\begin{equation}\label{eq:progression-error}
+ CB^2R\sqrt{V_Y}
+       \exp(2(1-\alpha_Y)\log q-cu_Y).
+\end{equation}
+The exceptional-character relative error is at most
+\(CR\sqrt{V_Y}\exp(-cu_Y/(\log u_Y)^2)\).
+The Mellin tail is negligible because its
+\(\exp(-cR^{0.6})\) factor dominates all losses exponential in
+\(\log q+u_Y\).
+
+The positive logarithms in \eqref{eq:progression-error} total
+\[
+ O(L^b+L^k+L^{m_0-b}L_2+\log L)=o(L^r)=o(u_Y).
+\]
+Also \(u_Y/(\log u_Y)^2\gg L^\eta\gg\log R\), and
+\eqref{eq:prefix-size} holds since
+\(2\log q+2\log B=O(L^{m_0})=o(\log Y)\).
+These prove \eqref{eq:clean-asymptotic} and
+\eqref{eq:I-vs-pure} with the stated uniformity.
+\end{proof}
+
+\section{Conditional Gaussian laws at one and two evaluation points}
+\label{sec:gaussian}
+
+For each field, give \(\mathbf u=(u_0,u_1)\in\mathbb Z^2\) probability
+proportional to
+\[
+ \exp\left(-\pi\frac{(u_0-\bar u_0)^2}{S_0^2}
+           -\pi\frac{(u_1-\bar u_1)^2}{S_1^2}\right).
+\]
+Call this distribution \(\mathbb P_G\), and use independent copies for
+the two fields.  Its mass outside \(\mathcal B_U\) is at most
+\(4\exp(-\pi L_0^{40})\).
+
+\subsection{An upper bound that requires no cleanliness}
+
+\begin{lemma}[Greedy-prefix Rankin bound]\label{lem:rankin}
+Suppose \((a_0,q)=1\), \(Y/S>1\), \(Y>q\), and
+\(S>e^{0.62}qB\).  For \(0<\alpha\le1\),
+\[
+ \Sigma(Y,S;q,a_0,S_{\rm om})
+ \ll (qB/S)^{1-\alpha}\zeta_{J\setminus S_{\rm om}}^{\rm sf}(\alpha)
+       +\exp(-c(Y/S)^2).
+\]
+The same bound holds with primes dividing \(q\) removed from the
+Euler product.
+\end{lemma}
+
+\begin{proof}
+Outside \([e^{-0.31}Y,e^{0.31}Y]\), the normalized Gaussian mass on a
+progression is exponentially small.  Within that interval take the
+shortest prime prefix \(d_1\) of a supported integer \(n\) that is at
+least \(M_1=e^{0.31}Yq/S\).  Then \(d_1<M_1B\), and its complement
+\(d_2=n/d_1\) lies in
+\[
+ e^{-0.62}S/(qB)<d_2\le S/q.
+\]
+For fixed \(d_2\), \(d_1\) occupies one class modulo \(q\), and its
+normalized Gaussian mass is at most \(3/d_2\).  Since
+\[
+ d_2^{-1}\le(e^{-0.62}S/(qB))^{\alpha-1}d_2^{-\alpha},
+\]
+summing over squarefree smooth \(d_2\) proves the assertion.
+\end{proof}
+
+The cancellation of \(Y\) in this bound is useful.  Dividing a forced
+gcd out of a progression does not introduce an extra unaccounted factor
+\(G^{1-\alpha}\): the ratio of width to modulus is unchanged.
+
+\subsection{Conditioning on prescribed roots}
+
+Fix a field \(i\) and a set
+\(R_i=\{(p_j,r_j)\}_{j=1}^{n_i}\), where \(n_i\le2\), the primes
+are distinct members of \(J\setminus\{\ell\}\), and
+\(r_j\ne m\pmod{p_j}\).  Let \(\mathcal E_{R_i}\) be the event
+that all these residues are roots of the perturbed polynomial.
+Each root condition is precisely
+\begin{equation}\label{eq:root-congruence}
+ u_0+r_ju_1\equiv c_j\pmod{p_j},
+\end{equation}
+because \(p_j\nmid P_0\ell(r_j-m)\).
+Write
+\[
+ Q_R=\prod_{j=1}^{n_i}p_j,\quad
+ Q_{\rm hit}(a)=\prod_{a\equiv r_j\ (p_j)}p_j,
+ \quad Q_{\rm pre}(i,a)=\ell^{\epsilon_\ell(i,a)}Q_{\rm hit}(a),
+\]
+where \(\epsilon_\ell(i,a)=1\) exactly when \(i=1\) and \(a\)
+is one of the prescribed roots modulo \(\ell\).
+Let \(E_i(a)\) denote the event that \(|f_i(a)|\) is a nonzero,
+squarefree \(J\)-smooth integer.
+
+Put
+\[
+ L_a(\mathbf u)=u_0+au_1,\quad
+ \bar\ell_a=\bar u_0+a\bar u_1,\quad
+ S(a)=\sqrt{S_0^2+a^2S_1^2},\quad
+ \widetilde S_1(a)=\frac{S_0S_1}{S(a)}.
+\]
+For \(a\in\mathcal A\), \(S(a)\asymp UA\) and
+\(\widetilde S_1(a)\asymp U\).
+The change of variables \((u_0,u_1)\mapsto(L_a,u_1)\) is
+unimodular.  Completing the square gives the exact identity
+\begin{align}\label{eq:gaussian-square}
+ \frac{(u_0-\bar u_0)^2}{S_0^2}
+ +\frac{(u_1-\bar u_1)^2}{S_1^2}
+ ={}&\frac{(L_a-\bar\ell_a)^2}{S(a)^2}\notag\\
+ &+\frac{\left(u_1-\bar u_1-
+      \frac{aS_1^2}{S(a)^2}(L_a-\bar\ell_a)\right)^2}
+        {\widetilde S_1(a)^2}.
+\end{align}
+Poisson summation on the remaining coset proves
+\begin{equation}\label{eq:root-probability}
+ \mathbb P_G(\mathcal E_{R_i})=Q_R^{-1}(1+O(e^{-cU})),
+\end{equation}
+and, conditionally, \(L_a\) has a discrete Gaussian on one class modulo
+\(Q_{\rm hit}(a)\), with mean \(\bar\ell_a\), width \(S(a)\), and
+normalizing factor \(Q_{\rm hit}(a)/S(a)\), up to relative
+\(O(e^{-cU})\).  Indeed, every residual width divided by its modulus
+is at least \(U/(\sqrt2B^2)\), and \(U\ge4B^4\) eventually.
+
+Let \(s_i(a)=\operatorname{sgn}P_i(a/A)\), and write
+\[
+ \mu_i^{\rm ex}(a)=s_i(a)
+   \bigl(f_i^{(0)}(a)+P_0\ell(a-m)\bar\ell_a\bigr),\qquad
+ S_{1,i}^*(a)=P_0\ell|a-m|S(a).
+\]
+The construction bounds give
+\(\mu_i^{\rm ex}(a)=\mu_i(a)(1+O(K_1^{-0.95}))\).
+On the overwhelmingly likely central range of \(L_a\), the normalized
+value \(s_i(a)f_i(a)/Q_{\rm pre}(i,a)\) runs through one residue
+class modulo
+\begin{equation}\label{eq:q1}
+ q_1=P_0\ell^{1-\epsilon_\ell(i,a)}|a-m|,
+\end{equation}
+with center \(\mu_i^{\rm ex}(a)/Q_{\rm pre}(i,a)\) and width
+\(S_{1,i}^*(a)/Q_{\rm pre}(i,a)\).  Its width/modulus ratio is
+\(S(a)/Q_{\rm hit}(a)\ge UA/B^2\).
+
+The class in \eqref{eq:q1} is coprime.  The factors of \(P_0\) are
+excluded by \(f_i(a)\equiv1\pmod{P_0}\).  A factor of \(a-m\)
+cannot divide \(f_i(a)\), because
+\(f_i(a)\equiv k_iN\pmod{a-m}\) and
+\((a-m,k_iN)=1\).  The \(\ell\)-case is exactly the distinction in
+\(\epsilon_\ell\).  Also, prescribed roots are different from
+\(m\), so dividing their prime factors does not spoil this argument.
+
+\subsection{The two-point lattice, including repeated prime factors}
+
+For \(a'\ne a\), put \(\Delta=|a'-a|\).  The map
+\(\mathbf u\mapsto(L_a,L_{a'})\) identifies \(\mathbb Z^2\) with
+\[
+ \{(x,y)\in\mathbb Z^2:y\equiv x\pmod\Delta\}.
+\]
+This lattice relation prevents one from treating the two values as
+independent.  Put
+\[
+ Q_{\rm both}=(Q_{\rm hit}(a),Q_{\rm hit}(a')),
+ \quad Q_{\rm free}=Q_R/Q_{\rm hit}(a),
+ \quad Q_{\rm free}^*=Q_{\rm free}/(Q_{\rm free},Q_{\rm hit}(a')).
+\]
+Given \(L_a\), the exact step for \(L_{a'}\) is
+\begin{equation}\label{eq:M2}
+ M_2=\frac{\Delta}{(\Delta,Q_{\rm hit}(a'))}
+          Q_{\rm hit}(a')Q_{\rm free}^*.
+\end{equation}
+This formula follows prime by prime from \eqref{eq:root-congruence}.
+If a prescribed prime hits both points, it divides \(\Delta\), and
+its existing power in \(\Delta\) is retained rather than duplicated.
+If it hits neither, the root condition adds one power to the
+\(\Delta\)-step.  If it hits just one, the two points are distinct
+modulo that prime and the one relevant congruence is imposed.
+
+The conditional mean of \(L_{a'}\), given \(L_a=x\), is
+\[
+ \bar\ell_{a'}+\frac{S_0^2+aa'S_1^2}{S(a)^2}(x-\bar\ell_a),
+\]
+and its width is \(\Delta\widetilde S_1(a)\).
+After normalizing the polynomial value by its prescribed factors,
+the second modulus is
+\begin{equation}\label{eq:q2}
+ q_2=P_0\ell^{1-\epsilon_\ell(i,a')}|a'-m|
+             \frac{\Delta}{Q_{\rm both}}Q_{\rm free}^*.
+\end{equation}
+The width/modulus ratio is at least \(U/(\sqrt2B^2)\).
+The conditional center differs relatively from
+\(\mu_i(a')/Q_{\rm pre}(i,a')\) by at most \(K_1^{-0.94}\),
+when \(|L_a-\bar\ell_a|\le L_0^3S(a)\).
+
+For separated points \(\Delta>\Delta_{\rm close}\), the first and
+second center/width ratios lie in
+\([K_1^{0.8},K_1^{1.7}]\).  These assertions follow by substituting
+\eqref{eq:scale}: the ratios are \(K_1^{1+o(1)}\) and, at worst,
+\(K_1^{3/2+o(1)}\).  The factors \(|P_i(a/A)|\), polynomial powers
+of \(L\), and coefficient errors are \(K_1^{o(1)}\), since \(t<k\).
+All normalized centers remain in the saddle range.
+
+\subsection{Cleanliness and exact local factors}
+
+Call \(a\) \emph{one-clean} for \((i,R_i)\) when
+\(P_0\ell|a-m|Q_R\) is a clean modulus.  Call \((a,a')\)
+\emph{two-clean} when
+\begin{gather*}
+ \Delta>\Delta_{\rm close},\qquad \ell^2\nmid\Delta,
+ \qquad p_j^2\nmid\Delta\quad((p_j,r_j)\in R_i),\\
+ P_0\ell|a-m||a'-m|\Delta Q_R
+       \text{ is clean}.
+\end{gather*}
+The product in the second line is at most \(Q_{\max}\) eventually:
+its logarithm is \(2L^{m_0}+o(L^{m_0})\).
+Both \eqref{eq:q1} and \eqref{eq:q2}, and the enlarged moduli used
+to exclude additional bad residues, divide this product.
+
+Define the reference densities
+\begin{align*}
+ q_0(a)&=P_0\ell|a-m|,\qquad D_0(a)=J\cap\{p:p\mid a-m\},\\
+ Z_i(a)&=\frac{q_0(a)}{\varphi(q_0(a))}
+     I(\mu_i(a),S_{1,i}^*(a);\{\ell\}\cup D_0(a)),\\
+ \Phi_i(a;R_i)&=
+    \frac{I_{\rm pure}(\mu_i(a)/Q_{\rm pre}(i,a);
+                          P(Q_{\rm pre}(i,a)))}
+         {I_{\rm pure}(\mu_i(a);\varnothing)}.
+\end{align*}
+Put
+\begin{equation}\label{eq:gamma}
+ \gamma(a,a')=
+ \prod_{\substack{z_0<p\le\sqrt B\\p\mid a'-a,\ p\nmid a-m}}
+                \frac p{p-1}.
+\end{equation}
+
+\begin{proposition}[Conditional smoothness laws]\label{prop:conditional}
+There is an absolute \(C\) such that, with
+\(R_{\rm rough}=\exp(CL^{m_0-b}L_2)\), the conditional one-point
+probability is at most
+\(R_{\rm rough}Z_i(a)\Phi_i(a;R_i)\), and the conditional
+two-point probability is at most
+\(R_{\rm rough}^2Z_i(a)Z_i(a')\Phi_i(a;R_i)\Phi_i(a';R_i)\).
+For one-clean points,
+\[
+ \mathbb P_G(E_i(a)\mid\mathcal E_{R_i})
+   =Z_i(a)\Phi_i(a;R_i)(1+O(K_1^{-0.90})).
+\]
+For two-clean pairs,
+\begin{align*}
+ &\mathbb P_G(E_i(a)\cap E_i(a')\mid\mathcal E_{R_i})\\
+ &\quad=Z_i(a)Z_i(a')\Phi_i(a;R_i)\Phi_i(a';R_i)
+          \gamma(a,a')(1+O(K_1^{-0.90})).
+\end{align*}
+\end{proposition}
+
+\begin{proof}
+For a single point, apply Lemma~\ref{lem:rankin} or
+Proposition~\ref{prop:progressions} to \eqref{eq:q1}.  For the second
+point condition first on \(L_a\), then use \eqref{eq:q2}.
+If its residue has gcd \(G\) with \(q_2\), a squarefree smooth event
+forces \(G\) itself to be squarefree and \(J\)-smooth.  Otherwise
+the event is empty.  Divide \(G\) out and exclude its primes from
+the remaining value.  The width/modulus ratio is unchanged, so
+Lemma~\ref{lem:rankin} still applies.  Here \(G\le AB^3\), and
+the more precise saddle comparison costs at most
+\[
+ \exp\left(O\left(\frac{(\log G)^2}{u(\log B)^2}\right)\right)
+ =1+o(1),
+\]
+because \(2c<h+b\).
+The logarithm of the remaining rough loss is bounded by
+\[
+ O\left((1-\alpha)\log\frac{\mu_i(a)}{UA}\right)
+       =O(L^{m_0-b}L_2).
+\]
+The \(U\)-contribution cancels in this ratio by \eqref{eq:scale};
+using \(\log\mu_i(a)\) alone would give the wrong error budget.
+
+For the clean two-point formula, inspect each prime dividing \(q_2\).
+Primes dividing \(P_0|a'-m|\) cannot divide its normalized residue.
+The prime \(\ell\) can introduce one additional forbidden residue
+when both points hit its root classes; the condition
+\(\ell^2\nmid\Delta\) makes the two squarefreeness exclusions
+distinct.  Its probability is \(O(\ell^{-1})\) times the first-point
+main term.  Primes in \((z_0,\sqrt B]\) dividing \(\Delta\) and
+not \(a-m\) contribute exactly \(p/(p-1)\), giving
+\eqref{eq:gamma}.  A factor-base prime dividing \(\Delta\) removes
+only \(O(p^{-\alpha})\) of the first-point smooth mass.  Each of
+the at most two other prescribed primes likewise removes
+\(O(p^{-\alpha})\); for a zero residue divide that prime out, and
+for a nonzero residue enlarge the modulus.  All these moduli divide
+the two-clean product.
+
+The total discarded relative mass is at most
+\[
+ L^{O(1)}\exp(O(L^{m_0-b}L_2))B^{-\alpha/2}
+       =o(K_1^{-0.90}),
+\]
+since \(b>m_0-b\) and \(b>k\).
+The center perturbations cost \(O(K_1^{-0.94})\) by direct
+differentiation of the saddle integral.  Gaussian tails and Poisson
+errors are smaller still.  Integrating over \(L_a\) proves both
+clean formulas.
+\end{proof}
+
+\section{Centered Gram moments and exceptional-conductor geometry}
+\label{sec:moments}
+
+Fix \(\ell\in\mathcal P_{\rm gen}^{\rm good}\).  A factor-base label
+is a triple \(\mathfrak q=(i,p,r_0)\), where \(i\in\{1,2\}\),
+\(p\in J\), and \(r_0\) is a root of \(f_i\) modulo \(p\).
+Let \(F_{\rm all}\) be the set of these labels.  Let
+\(F_{\rm mult}\) be the labels for multiple roots, and let
+\(F_{\rm shared}\) be those at a residue that is a root of both
+polynomials modulo the same prime.  Set
+\[
+ F_{\rm clean}=F_{\rm all}\setminus(F_{\rm mult}\cup F_{\rm shared}),
+ \quad
+ F_{\rm med}=\{(i,p,r_0)\in F_{\rm all}:p\in\mathcal Q_{\rm med}\},
+ \quad F^\circ=F_{\rm all}\setminus F_{\rm med}.
+\]
+The \(d\) protected labels are
+\(\mathfrak l_s=(1,\ell,r_s)\), \(1\le s\le d\).  They belong
+to \(F^\circ\cap F_{\rm clean}\) for every perturbation.
+
+For a set \(D\) of labels, let \(\mathcal S(D)\) consist of those
+\(a\in\mathcal A^*\) for which both absolute polynomial values are
+squarefree \(J\)-smooth and which hit no label of \(D\).
+Write \(\mathcal S_{\rm raw}=\mathcal S(\varnothing)\).
+For \(a\in I_j\cap\mathcal A^*\), put
+\begin{equation}\label{eq:weights}
+ \pi_0(a)=\frac1{(2d+1)|I_j\cap\mathcal A^*|},\qquad
+ w_{\rm eq}(a)=\frac{\pi_0(a)}{Z_1(a)Z_2(a)}.
+\end{equation}
+In particular \(\sum_a\pi_0(a)=1\).
+Let
+\[
+ z_{\mathfrak q}(a)=p^{\alpha_s/2}\mathbf1_{a\equiv r_0\ (p)},
+ \quad
+ \boldsymbol\ell_i(a)=
+       (\log|a/A-\rho_{i,s}|)_{s=1}^d,
+ \quad \boldsymbol\ell=(\boldsymbol\ell_1,\boldsymbol\ell_2).
+\]
+The unprojected feature vector is
+\[
+ \mathbf r^\circ(a)=
+   (1,(z_{\mathfrak q}(a))_{\mathfrak q\in F^\circ},
+                  \boldsymbol\ell(a)),
+\]
+and the random Gram matrix and random total weight are
+\[
+ \widetilde H^\circ=
+      \sum_{a\in\mathcal S_{\rm raw}}
+           w_{\rm eq}(a)\mathbf r^\circ(a)\mathbf r^\circ(a)^T,
+ \qquad
+ \widehat C=\sum_{a\in\mathcal S_{\rm raw}}w_{\rm eq}(a).
+\]
+
+\subsection{A fixed index set for a random factor base}
+
+Moment conditioning must be meaningful before the polynomials are
+sampled.  Use the universal label set consisting of the protected
+labels and every \((i,p,r_0)\) with
+\(p\in J\setminus(\mathcal Q_{\rm med}\cup\{\ell\})\) and
+\(r_0\ne m\pmod p\).  A label enters \(F^\circ\) precisely when
+its root event occurs.  We condition on that event when estimating
+an entry.  The factor \(1/p\) from
+\eqref{eq:root-probability} is retained when summing over universal
+indices.  This avoids paying the cardinality of that universal set
+as a spurious matrix-dimension factor.
+
+On the universal index set, start with the rank-one matrix whose mean
+vector is
+\((1,(m_{\mathfrak q}(a)),\boldsymbol\ell(a))\).
+Replace each prime diagonal by \(d_{\mathfrak q}(a)\), and replace
+same-field, distinct-prime entries by the exact second-moment quantity
+in \eqref{eq:covariance}.  Call the resulting matrix
+\(U^{\rm ex}(a)\), and set
+\[
+ U^{\rm ex}=\sum_a\pi_0(a)U^{\rm ex}(a),\qquad
+ \widetilde A^\circ=
+       \widetilde H^\circ-\widehat C\,U^{\rm ex}|_{F^\circ}.
+\]
+The restriction includes the scalar and archimedean rows.  Centering
+by \(\widehat C\) is essential: it removes the random total relation
+mass before the entrywise cancellation argument.
+
+Define size weights
+\[
+ M_0=1,\quad M_{\mathfrak q}=p^{-\alpha_s/2},\quad
+ M_\nu=L_0\quad(\nu\text{ archimedean}),
+\]
+and \(M_{\alpha\beta}=M_\alpha M_\beta\), except that
+\(M_{\mathfrak q\mathfrak q}=1\).
+
+\begin{proposition}[Centered moments]\label{prop:moments}
+For all sufficiently large \(N\),
+\[
+ \mathbb E\widehat C=1+O(K_1^{-0.90}),\qquad
+ \operatorname{Var}(\widehat C)=O(L^{-a}).
+\]
+For each pair of indices \((\alpha,\beta)\), except distinct labels
+with the same underlying rational prime, let
+\(\mathcal E_{\alpha\beta}\) require their root events.  Then
+\begin{equation}\label{eq:centered-moment}
+ \mathbb E\left[(\widetilde A^\circ_{\alpha\beta})^2
+             \mid\mathcal E_{\alpha\beta}\right]
+ \le M_{\alpha\beta}^2E.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+There are at most two prescribed roots in each field.  Let \(R_i\)
+record those roots, put
+\(\Pi_R(a)=\Phi_1(a;R_1)\Phi_2(a;R_2)\), and define
+\[
+ f_*(a)=r^\circ_\alpha(a)r^\circ_\beta(a),\qquad
+ g_*(a)=f_*(a)-U^{\rm ex}_{\alpha\beta}.
+\]
+The centered square moment is exactly
+\begin{equation}\label{eq:moment-sum}
+ \sum_{a,a'\in\mathcal A^*}
+   w_{\rm eq}(a)w_{\rm eq}(a')g_*(a)g_*(a')
+   \prod_{i=1}^2
+      \mathbb P_G(E_i(a)\cap E_i(a')\mid\mathcal E_{R_i}).
+\end{equation}
+Partition the sample points into \(O(d)\) cells according to the
+prescribed prime and protected-root classes they hit.  On each cell,
+the hit-prime product \(M_c\le B^3\) fixes a single residue class,
+and
+\begin{equation}\label{eq:cell-bounds}
+ |g_*(a)|\Pi_R(a)\ll L^{O(1)}M_cM_{\alpha\beta},\qquad
+ \sum_a\pi_0(a)|g_*(a)|\Pi_R(a)\ll L^{O(1)}M_{\alpha\beta}.
+\end{equation}
+This follows directly from the definitions and
+Lemma~\ref{lem:brun}; a hit contributes
+\(p^{\alpha_s/2}p^{1-\alpha_s}=p\,p^{-\alpha_s/2}\), or \(p\)
+for a prime diagonal.
+
+We first bound the exceptional pairs in \eqref{eq:moment-sum}.
+The diagonal \(a=a'\) contributes an exponentially small quantity
+on the \(L^c\)-scale: its inverse interval size supplies
+\((Aw)^{-1}\), while
+\[
+ \log((Z_1(a)Z_2(a))^{-1})=O(u\log u),
+\]
+and all remaining losses have logarithms
+\(O(L^b+L^k+L^t+L^{m_0-b}L_2)\).  Here \(c>r,b,k,t\).
+Close pairs \(0<|a'-a|\le\Delta_{\rm close}\) contribute
+\(K_1^{-1/2+o(1)}M_{\alpha\beta}^2\).  If a prescribed prime or
+\(\ell\) has its square dividing \(a'-a\), one extra factor of
+that prime occurs in the progression modulus, giving
+\(B^{-1/2+o(1)}M_{\alpha\beta}^2\).
+
+For clarity, the conductor calculations are given in detail.  The
+elementary bound
+\begin{equation}\label{eq:divisor-weight}
+ \sum_{d\mid n}d^{-1/2}\le\exp(C\sqrt{\log n})
+\end{equation}
+follows by splitting the Euler product at \(\log n\) and summing
+\(p^{-1/2}\) below that point.  It is a weighted divisor bound;
+using the full divisor count would spend an unnecessary loss.
+
+For a medium conductor dividing
+\(P_0\ell|a-m||a'-m||a'-a|Q_{\rm pair}\), its part outside
+\(P_0\) has size at least \(D_{\rm small}^{0.99}\).  It is
+coprime to the prescribed and protected primes, by the definitions
+of \(F^\circ\) and \(\mathcal P_{\rm gen}^{\rm good}\).
+One of the three differences therefore has a divisor at least
+\(D_{\rm small}^{0.33}\).  Take its shortest prime prefix above
+that threshold.  If this prefix is at most \(B^{10}\), progression
+counting saves
+\(D_{\rm small}^{-0.165}\) times the inverse square root of the
+prefix.  If it exceeds \(B^{10}\), its last prime exceeds \(B^9\),
+giving an even stronger saving.  Count in \(a\) or in \(a'\),
+as appropriate to the difference being divided.  After
+\eqref{eq:divisor-weight}, the logarithmic costs are
+\[
+ O(L^{b-v}+L^{b/2}+L^{m_0-b}L_2),
+\]
+whereas the saving is \(cL^b/L_2\).  Each cost is smaller by a
+strict power gap.
+
+For a high conductor, removing \(P_0\ell Q_{\rm pair}\) leaves a
+factor larger than \(B^{60}\).  One difference has a divisor above
+\(B^{20}\).  Its shortest prefix above \(B^{10}\) either lies
+below \(B^{20}\), saving
+\(B^{-2}\) times the inverse square root of that prefix after
+allowing a gcd of size \(B^3\), or has a last prime above
+\(B^{10}\), giving a stronger saving.  The total logarithmic cost
+is
+\[
+ O(L^{m_0-v}+L^{m_0/2}+L^{m_0-b}L_2)=o(L^b).
+\]
+This proves a fixed negative power of \(B\) for the high-conductor
+contribution.  For prefixes up to \(B^{10}\) or \(B^{20}\), plain
+progression counting suffices: \(Aw\) dominates every fixed power
+of \(B\).  Thus Lemma~\ref{lem:brun} is not being applied outside
+its stated \(qQ\le B^4\) range.
+
+On the remaining two-clean pairs, use
+Proposition~\ref{prop:conditional}.  Apart from negligible errors,
+\eqref{eq:moment-sum} becomes
+\begin{equation}\label{eq:gamma-main}
+ \sum_{a,a'}\pi_0(a)\pi_0(a')g_*(a)g_*(a')
+                      \Pi_R(a)\Pi_R(a')\gamma(a,a')^2.
+\end{equation}
+Expand the last factor as
+\[
+ \gamma(a,a')^2
+ =\sum_h\eta(h)\mathbf1_{h\mid a'-a,\ (a-m,h)=1},
+ \quad
+ \eta(h)=\prod_{p\mid h}\frac{2p-1}{(p-1)^2},
+\]
+over squarefree \(h\) supported on \((z_0,\sqrt B]\).
+The tail \(h>\sqrt B\), treated by its shortest prefix in
+\((\sqrt B,B]\), costs \(B^{-0.49}M_{\alpha\beta}^2\).
+
+For \(h\le\sqrt B\), replace the protected-prime hit in
+\(\Pi_R\) by the one forced by \(f_*\), obtaining
+\(\Pi_R^\circ\).  The difference has relative weighted mass
+\(O(L^{O(1)}B^{-0.49})\).  Let \(Q_{\rm pair}\) be the product
+of distinct rational primes represented by the indices
+\(\alpha,\beta\), and let \(r_{\rm pair}\) be their simultaneous
+residue.  The crucial exact identity is
+\begin{equation}\label{eq:exact-cancellation}
+ f_*(a)\Pi_R^\circ(a)
+   =\mathbf1_{a\equiv r_{\rm pair}\ (Q_{\rm pair})}
+             Q_{\rm pair}U^{\rm ex}_{\alpha\beta}(a).
+\end{equation}
+It holds for scalar and archimedean indices, one-prime indices,
+prime diagonals, distinct primes in one field, and primes in
+different fields.  For example, on a prime diagonal it is the
+identity \(p^{\alpha_s}\Phi=p\,d_{\mathfrak q}\); for two
+distinct primes it is exactly the definition of the second-moment
+ratio.  Replacing \(U^{\rm ex}\) by a heuristic product of means
+would destroy this identity.
+
+Apply Lemma~\ref{lem:brun} on a fixed reduced class modulo \(h\)
+to \eqref{eq:exact-cancellation}, and separately to
+\(\Pi_R^\circ\).  The main terms are respectively
+\(U^{\rm ex}_{\alpha\beta}/\psi_0(h)\) and
+\(1/\psi_0(h)\), so they cancel in the sum with \(g_*\).
+The functions involved have the required Lipschitz bounds:
+differentiate their defining saddle integrals and explicit means,
+rather than an asymptotic remainder.  The resulting polynomial
+factor in \(d\) is well below the allowed \(L^{40}\).
+Thus each class contributes at most
+\(L^{O(1)}M_{\alpha\beta}E_{\rm Br}/\psi_0(h)\).
+Since \(\varphi(h)\le\psi_0(h)\) and
+\(\sum_h\eta(h)/\psi_0(h)\ll1\),
+\eqref{eq:gamma-main} is
+\(O(L^{O(1)}M_{\alpha\beta}^2E_{\rm Br}^2)\).
+By \eqref{eq:errors}, this is \(o(M_{\alpha\beta}^2E)\).
+
+The same one-point decomposition proves the expectation of
+\(\widehat C\).  With no feature indices, the expansion of
+\(\gamma^2-1\) gives variance
+\(O(\sum_{p>z_0}p^{-2}+K_1^{-0.48})=O(L^{-a})\).
+This proves the proposition.
+\end{proof}
+
+\section{Adaptive deletion with a deterministic invariant}
+\label{sec:peeling}
+
+A small average entrywise error does not automatically give a useful
+Gram matrix: a few labels may carry too much error or appear only in
+relations that must be removed.  We delete such labels and then delete
+any label whose surviving mass has fallen too far.  The argument must
+control this adaptive process without a union bound over its stages.
+
+For a label set \(D\), write
+\begin{align*}
+ \mu(D)&=\sum_{\mathfrak q=(i,p,r_0)\in D\cap F^\circ}p^{-\alpha_s},\\
+ \Delta_{\mathfrak q}(D)&=
+   \sum_{a\in\mathcal S_{\rm raw}\setminus\mathcal S(D)}
+             w_{\rm eq}(a)z_{\mathfrak q}(a)^2,\\
+ W_{\rm drop}(D)&=
+   \sum_{a\in\mathcal S_{\rm raw}\setminus\mathcal S(D)}w_{\rm eq}(a).
+\end{align*}
+Choose
+\begin{equation}\label{eq:peel-thresholds}
+ \tau=E^{1/4},\qquad \zeta=E^{1/8},\qquad \mu_*=E^{7/15}.
+\end{equation}
+The symbol \(\zeta\) in this section is a deletion threshold, not
+an Euler product.  Let
+\[
+ F_{\rm diag}=\{\mathfrak q\in F^\circ:
+                  |\widetilde A^\circ_{\mathfrak q\mathfrak q}|>\tau\},
+ \quad
+ D_0=F_{\rm med}\cup F_{\rm mult}\cup F_{\rm shared}\cup F_{\rm diag},
+\]
+and recursively set
+\begin{equation}\label{eq:peel-process}
+ D_{j+1}=D_j\cup
+       \{\mathfrak q\in F^\circ\setminus D_j:
+                               \Delta_{\mathfrak q}(D_j)>\zeta\}.
+\end{equation}
+There are finitely many labels, so this process terminates.
+
+\subsection{The good event and its probability}
+
+Let \(F_A^2\) be the sum of squared centered entries, omitting prime
+diagonals and pairs with the same underlying prime.  Let
+\[
+ D_A=\sum_{\mathfrak q\in F^\circ}
+           p^{-\alpha_s}(\widetilde A^\circ_{\mathfrak q\mathfrak q})^2,
+ \qquad
+ F_\ell^2=\sum_{s=1}^d
+      \sum_{\substack{\mathfrak q\in F^\circ\\p\ne\ell}}
+          (\widetilde A^\circ_{\mathfrak l_s,\mathfrak q})^2.
+\]
+Conditioned root probabilities give
+\begin{align}
+ \mathbb E D_A&\ll uE,&
+ \mathbb E F_A^2&\ll L^{O(1)}E,&
+ \mathbb E F_\ell^2&\ll du\ell^{-\alpha_s}E.\label{eq:aggregate-errors}
+\end{align}
+For example, summing over all \(r_0\pmod p\) supplies \(p\)
+possible labels, but each has root probability \(1/p+O(e^{-cU})\).
+The net weight is \(p^{-\alpha_s}\), whose prime sum is \(O(u)\).
+This is why no factor of the ambient dimension \(B\) appears in
+\eqref{eq:aggregate-errors}.
+
+The two congruences imposing a multiple root have probability
+\(p^{-2}(1+O(e^{-cU}))\).  The same holds for a shared root, by
+independence of the fields.  Their expected \(\mu\)-mass is
+\(O(B^{-0.49})\).  The medium-prime deletion has
+\begin{equation}\label{eq:medium-drop}
+ \mathbb E\left[W_{\rm drop}(F_{\rm med})
+  +\sum_{\mathfrak q\in F^\circ}p^{-\alpha_s}
+                    \Delta_{\mathfrak q}(F_{\rm med})
+  +\sum_s\Delta_{\mathfrak l_s}(F_{\rm med})\right]
+       \ll B^{-c_0}
+\end{equation}
+for some fixed \(c_0>0\).  This follows from the rough conditional
+bounds and \(|\mathcal Q_{\rm med}|\): the positive logarithmic
+costs \(O(L^{b-v}+L^{m_0-b}L_2)\) are smaller than \(\log B\).
+
+Let \(w_i^\circ=(p^{-\alpha_s/2}\log p)\) on the field-\(i\)
+labels.  The root probabilities and their two-prime versions give
+\[
+ \mathbb E\mu(F_i^\circ)=(1+o(1))\sum_{p\in J}p^{-\alpha_s}
+       \le(2+o(1))u,
+ \quad
+ \mathbb E\|w_i^\circ\|^2=(1+o(1))\phi''(\alpha_s),
+\]
+with negligible variances.  The deterministic protected labels have
+negligible weight in these estimates.
+
+Markov's and Chebyshev's inequalities therefore give an event of
+probability \(1-o(1)\) on which all of the following hold:
+\begin{enumerate}[label=(\roman*)]
+\item Both perturbations lie in \(\mathcal B_U\), and
+\(|\widehat C-1|\le1/8\).
+\item \(\mu(F_i^\circ)\le3u\) and
+\(\|w_i^\circ\|^2=(1+o(1))\phi''(\alpha_s)\).
+\item \(\mu(D_0)\le\mu_*/2\), and no protected label belongs to
+\(D_0\).
+\item \(F_A^2,D_A\le E^{74/75}\) and
+\(F_\ell^2\le\ell^{-\alpha_s}E^{74/75}\).
+\item Each nonnegative term inside the expectation in
+\eqref{eq:medium-drop} is at most \(B^{-c_1}\), for a fixed
+\(c_1>0\).
+\end{enumerate}
+For the initial diagonal deletion,
+\(\mathbb E\mu(F_{\rm diag})\le\tau^{-2}\mathbb ED_A\ll uE^{1/2}
+=o(\mu_*)\).  Protected diagonals are excluded with probability at
+most \(d\tau^{-2}E=o(1)\).  Every other expectation-to-threshold
+ratio is a fixed positive power of \(E\) times a polynomial in
+\(L\), or a fixed negative power of \(B\).
+
+\begin{lemma}[The deletion invariant]\label{lem:peeling}
+On the good event, every stage of \eqref{eq:peel-process} satisfies
+\(\mu(D_j)\le\mu_*\), and no protected label is deleted.
+\end{lemma}
+
+\begin{proof}
+Suppose the assertion holds at stage \(j\).  A lost relation hitting
+a protected label must hit a medium-prime label or a previously
+deleted label over a different prime.  The mean bound and
+Cauchy--Schwarz give
+\[
+ \Delta_{\mathfrak l_s}(D_j)
+ \le B^{-c_1}+2\mu_*+\sqrt{\mu_*}\,E^{37/75}=o(\zeta).
+\]
+Thus no protected label enters \(D_{j+1}\).
+
+For every label newly deleted at any stage up to \(j+1\), its
+lost mass exceeded \(\zeta\) before it was deleted.  It is not a
+shared-root label, so a previously deleted label over the same
+rational prime cannot share its hit.  Subtracting the mean part,
+multiplying by \(p^{-\alpha_s}\), and summing over these newly
+deleted labels gives, by weighted Cauchy--Schwarz and AM--GM,
+\begin{equation}\label{eq:peel-invariant-bound}
+ \mu(D_{j+1}\setminus D_0)
+ \le4\zeta^{-1}B^{-c_1}
+       +4\zeta^{-2}\mu_*F_A^2
+ <\frac12\mu_*.
+\end{equation}
+Indeed, \(\zeta^{-2}E^{74/75}=E^{221/300}\to0\).
+Together with \(\mu(D_0)\le\mu_*/2\), this closes the induction.
+The same inequality works for the full cumulative newly deleted
+set, so no union bound over the number of stages is needed.
+\end{proof}
+
+Let \(D_\infty\) be the terminal set, \(F^*=F_{\rm all}\setminus
+D_\infty\), and \(\mathcal S^*=\mathcal S(D_\infty)\).
+It contains all protected labels and lies in \(F_{\rm clean}\).
+Restrict the feature vectors to \(F^*\), and let \(\widetilde H^*\)
+be their Gram over \(\mathcal S^*\).
+Distinct retained labels with the same underlying prime have
+different residues and cannot hit together.  Their centered entries
+are \(O(p^{-\alpha_s})\) in blocks of size at most \(2d\), so their
+operator norm is \(O(dB^{-0.49})\).  The remaining retained entry
+errors are controlled by \(\tau+F_A\).
+
+The total dropped relation weight is \(O(\mu_*)\).  A raw relation
+has at most \(5u\) nonzero prime features, while
+\(1+\|\boldsymbol\ell(a)\|^2\le L^{O(1)}\).  Applying
+Cauchy--Schwarz to each dropped relation and using
+\(\Delta_{\mathfrak q}(D_\infty)\le\zeta\) on retained labels gives
+\begin{equation}\label{eq:gram-error}
+ \|\widetilde H^*-\widehat C\,U^{\rm ex}|_*\|_{\rm op}
+ \ll L^{O(1)}\mu_*+O(u\zeta)+\tau+F_A+dB^{-0.49}
+ =O(E^{1/10}).
+\end{equation}
+The bound is independent of the potentially exponential number of
+feature rows.
+
+\section{The spectral lower bound after removing the two norm identities}
+\label{sec:spectral}
+
+Let \(H\) be the \((d-1)\)-by-\(d\) Helmert matrix: row \(j\)
+has \(j\) entries equal to \(1/\sqrt{j(j+1)}\), followed by
+\(-j/\sqrt{j(j+1)}\), followed by zeros.  Then
+\[
+ HH^T=I_{d-1},\qquad H\mathbf1_d=0,\qquad
+ H^TH=I_d-d^{-1}\mathbf1_d\mathbf1_d^T.
+\]
+Replace the target roots by the actual roots to define
+\(\boldsymbol\ell_i^{\rm true}(a)), and form the reduced vector
+\[
+ \mathbf r_{\rm true}(a)=
+ (1,(z_{\mathfrak q}(a))_{\mathfrak q\in F^*},
+             H\boldsymbol\ell_1^{\rm true}(a),
+             H\boldsymbol\ell_2^{\rm true}(a)).
+\]
+Its Gram over \(\mathcal S^*\), with weights \(w_{\rm eq}\), is
+denoted \(H_{\rm true}^*\).
+
+\begin{proposition}[Uniform positive Gram]\label{prop:positive-gram}
+On the good event of Section~\ref{sec:peeling},
+\[
+ \lambda_{\min}(H_{\rm true}^*)
+      \ge c_\delta L^{-2h-r}\ge L^{-3}
+\]
+for all sufficiently large \(N\).
+\end{proposition}
+
+\begin{proof}
+On the retained field-\(i\) labels put
+\(w_i=(p^{-\alpha_s/2}\log p)\).  Deleting mass \(\mu_*\) changes
+its squared norm by at most \((\log B)^2\mu_*\), so
+\begin{equation}\label{eq:wi-norm}
+ \|w_i\|^2\asymp u(\log B)^2\asymp L^{h+b}.
+\end{equation}
+Every retained relation satisfies the exact identity
+\begin{equation}\label{eq:norm-identity}
+ \sum_{\mathfrak q\in F_i^*}w_{i,\mathfrak q}z_{\mathfrak q}(a)
+      =\log|f_i(a)|
+      =\log X_{\rm sc}+\mathbf1_d^T
+                               \boldsymbol\ell_i^{\rm true}(a).
+\end{equation}
+These two identities explain the necessary projection.
+
+Take a unit input vector
+\(v=(v_0,v_{F_1},v_{F_2},v_{U_1},v_{U_2})\) in the reduced
+feature space.  Put
+\begin{align*}
+ t_i&=-\frac{w_i^Tv_{F_i}}{\|w_i\|^2},&
+ v'_0&=v_0-(t_1+t_2)\log X_{\rm sc},\\
+ v'_{F_i}&=v_{F_i}+t_iw_i,&
+ v'_{\rm arch,i}&=H^Tv_{U_i}-t_i\mathbf1_d.
+\end{align*}
+Then \(v'_{F_i}\perp w_i\), and \eqref{eq:norm-identity} shows
+that the corresponding linear forms on true features agree exactly.
+Moreover,
+\[
+ \|v'\|^2=(v'_0)^2+
+   \sum_i\bigl(\|v_{F_i}\|^2-t_i^2\|w_i\|^2
+                       +\|v_{U_i}\|^2+dt_i^2\bigr).
+\]
+If a substantial fraction of the original norm lies in the removed
+prime directions, the last terms give \(cd/\max_i\|w_i\|^2\).
+Otherwise either the remaining components have substantial norm,
+or cancellation of a substantial \(v_0\) forces
+\(d(t_1^2+t_2^2)\gg d/(\log X_{\rm sc})^2\).  Thus
+\begin{equation}\label{eq:projection-loss}
+ \|v'\|^2\ge c\min\left(1,
+        \frac d{\max_i\|w_i\|^2},
+        \frac d{(\log X_{\rm sc})^2}\right)
+       \gg L^{a-2h}.
+\end{equation}
+
+Normalize \(y=v'/\|v'\|\).  Let \(U(a)\) be the covariance model
+obtained by replacing the exact same-field second moments with the
+first two terms of \eqref{eq:covariance}.  The total Frobenius error
+between \(U^{\rm ex}\) and \(U\) is \(O(u^{-1})\), because
+\(\mu(F_i^*)=O(u)\).  Crucially, this error is supported only on
+the prime-feature block.  It is absorbed there by the order-one
+positive diagonal; applying a global Weyl estimate against the much
+smaller final gap would not be valid.
+
+The negative covariance direction in field \(i\) differs from
+\(w_i/\sqrt{\phi''(\alpha_{\mu_i(a)})}\) in norm by \(O(u^{-1})\).
+Since \(y_{F_i}\perp w_i\), its quadratic contribution is
+\(O(u^{-2})\|y_{F_i}\|^2\).  Also
+\(d_{\mathfrak q}-m_{\mathfrak q}^2=1+O(u^{-1})\), and
+\(\sum_{\mathfrak q}m_{\mathfrak q}(a)^2\le12u\).
+Completing the square, with a small multiple of \(1/u\), therefore
+gives
+\begin{equation}\label{eq:model-coercive}
+ y^TU^{\rm ex}|_*y
+ \ge\frac12\|y_F\|^2+
+       \frac c u\sum_a\pi_0(a)
+             (y_0+\boldsymbol\ell(a)^Ty_{\rm arch})^2.
+\end{equation}
+
+It remains to control the archimedean part.  Let
+\(\overline{\boldsymbol\ell}^{(j)}\) be its average on
+\(I_j\cap\mathcal A^*\).  The \(2d\)-by-\(2d\) matrix with
+rows \(\overline{\boldsymbol\ell}^{(j)}-
+\overline{\boldsymbol\ell}^{(0)}\), \(1\le j\le2d\), has
+diagonal magnitude \(\kappa L^t+O(1)\) and off-diagonal Frobenius
+norm \(O(d\log d)\).  Thus its smallest singular value is
+\(\gg L^t\), since \(t>a\).
+The reference average has squared norm \(O(d)\), since its
+interval is bounded away from all target roots.
+Writing \(s_j=y_0+
+\overline{\boldsymbol\ell}^{(j)T}y_{\rm arch}\), the singular-value
+bound gives
+\(\sum_j s_j^2\gg L^{2t}d^{-1}\|y_{\rm arch}\|^2\).
+Together with
+\(y_0^2\le2s_0^2+O(d)\|y_{\rm arch}\|^2\) and \(t>a\), this yields
+\[
+ \sum_a\pi_0(a)(y_0+\boldsymbol\ell(a)^Ty_{\rm arch})^2
+       \ge\frac c d(y_0^2+\|y_{\rm arch}\|^2).
+\]
+Equation~\eqref{eq:model-coercive} is consequently at least
+\(c/(du)\).
+
+The error \eqref{eq:gram-error} is smaller than every inverse power
+of \(L\).  Replacing target roots by actual roots costs at most
+\(L^{O(1)}K_1^{-1.8}\) in the squared linear-form comparison.
+Since \(\widehat C\ge7/8\), these errors can be absorbed.  Combining
+with \eqref{eq:projection-loss} gives
+\[
+ v^TH_{\rm true}^*v\gg
+        \frac{L^{a-2h}}{du}\asymp L^{-2h-r}.
+\]
+Finally \(2h+r=5/3+21\delta<3\), proving the claimed guard.
+\end{proof}
+
+\begin{corollary}[A successful enumerated pair]\label{cor:pair-exists}
+For every sufficiently large surviving input and every
+\(\ell\in\mathcal P_{\rm gen}^{\rm good}\), there is a pair
+\((\mathbf u,\mathbf v)\in\mathcal B_U^2\) with a retained set
+\(F^*\subseteq F_{\rm clean}\), containing all protected labels,
+whose reduced true Gram is positive definite.
+\end{corollary}
+
+\begin{proof}
+The good event has probability \(1-o(1)\), hence at least \(1/2\)
+for sufficiently large \(N\), and it includes membership in the
+finite box.  Positive probability proves existence in that box.
+The deterministic search enumerates every pair in it.
+\end{proof}
+
+\section{Exact order extraction from the two real-unit lattices}
+\label{sec:extraction}
+
+This section records the finite algebraic interface used by the analytic
+proof.  These statements are parameter-general.  Their hypotheses do
+not contain the original decimal powers of \(L\).
+
+\subsection{The nonmonic valuation offset}
+
+Let \(f(X)=\sum_{j=0}^dc_jX^j\) be primitive and irreducible,
+\(K=\mathbb Q(\theta)\), and \(f(\theta)=0\).  For a maximal ideal
+\(\mathfrak p\) of \(\mathcal O_K\), use the integer-normalized
+valuation \(v_{\mathfrak p}\).  Define
+\[
+ w_{\mathfrak p}(a,b)=v_{\mathfrak p}(a-b\theta)
+                       -\min(0,v_{\mathfrak p}(\theta)).
+\]
+For \((a,b)=1\), source Lemma~7.3 gives
+\begin{equation}\label{eq:valuation-sum}
+ w_{\mathfrak p}(a,b)\ge0,\qquad
+ \sum_{\mathfrak p\mid p}f(\mathfrak p/p)
+                 w_{\mathfrak p}(a,b)=v_p(F_f(a,b)),
+\end{equation}
+where \(F_f(a,b)=b^df(a/b)\), interpreted homogeneously at \(b=0\).
+To verify the offset, the local factorization of \(f\) over
+\(\mathbb Q_p\) and the Gauss valuation give
+\[
+ \sum_{\mathfrak p\mid p}f(\mathfrak p/p)
+                 \min(0,v_{\mathfrak p}(\theta))=-v_p(c_d).
+\]
+Subtract this from the valuation of
+\(N_{K/\mathbb Q}(a-b\theta)=F_f(a,b)/c_d\).
+Nonnegativity follows directly from the ultrametric inequality and
+\((a,b)=1\).
+
+If \(p\nmid c_d\) and \(r_0\) is a simple root of \(f\bmod p\),
+Hensel's lemma gives a unique degree-one, unramified prime ideal
+\[
+ \mathfrak p_{p,r_0}=p\mathcal O_K+
+                    (c_d\theta-c_dr_0)\mathcal O_K.
+\]
+When \(v_p(f(a))=1\), its valuation feature is exactly
+\(\mathbf1_{a\equiv r_0\ (p)}\), and all other ideals above
+\(p\) have adjusted valuation zero.  This proof uses the local
+simple factor and does not require coprimality of a power-order index
+with \(p\).  General ideal and valuation facts are as in
+\cite{Neukirch1999}.
+
+\subsection{The augmented valuation matrix and unit lattice}
+
+List all \(a_1<\cdots<a_M\) in
+\(\mathcal S(F_{\rm mult}\cup F_{\rm shared})\).  Define the
+\(0\)-\(1\) valuation matrix
+\[
+ V_{\mathfrak q,j}=\mathbf1_{a_j\equiv r_0\ (p)},
+ \qquad \mathfrak q=(i,p,r_0)\in F_{\rm clean},
+ \qquad
+ V_{\rm aug}=\begin{pmatrix}\mathbf1_M^T\\V\end{pmatrix}.
+\]
+Put \(D_{\rm row}=1+|F_{\rm clean}|\),
+\(\Lambda_{\rm val}=\ker(V_{\rm aug})\cap\mathbb Z^M\), and
+\(D_U=2d-2\).  The top row is needed to cancel the nonmonic offsets
+in \eqref{eq:valuation-sum}.
+
+Let \(U_{\rm arch}\) have columns
+\((H\boldsymbol\ell_1^{\rm true}(a_j),
+H\boldsymbol\ell_2^{\rm true}(a_j))\), and define
+\[
+ \Lambda_U=
+ \{(HL_1(\epsilon_1),HL_2(\epsilon_2)):
+                      \epsilon_i\in\mathcal O_{K_i}^{\times}\},
+\]
+where \(L_i\) is the vector of real-embedding logarithms.  By
+Dirichlet's unit theorem this is a full-rank lattice in
+\(\mathbb R^{D_U}\).  Its covolume has the elementary lower bound
+\begin{equation}\label{eq:unit-covolume}
+ \det\Lambda_U>(9d)^{-d}.
+\end{equation}
+Indeed, if a totally real unit \(\epsilon\ne\pm1\) had all
+\(|\sigma(\epsilon)|^2<2\), every factor of
+\(|N(\epsilon^2-1)|\) would be smaller than one, contradicting
+its positive integral norm.  Thus its log vector has norm greater
+than \(1/3\).  Minkowski's convex-body theorem applied to the cube
+of side \(2/(3\sqrt{d-1})\) gives the claimed product-lattice
+covolume.  The only units with zero log vector are \(\pm1\).
+
+Let \(b_\ell\) be the valuation-row vector equal to one on the
+\(d\) protected labels and zero elsewhere, including the top row.
+If
+\[
+ V_{\rm aug}c=-E b_\ell,\qquad c\in\mathbb Z^M,
+\]
+then \eqref{eq:valuation-sum} and the top row show that
+\[
+ \gamma_1=\ell^E\prod_j(a_j-\theta_1)^{c_j},\qquad
+ \gamma_2=\prod_j(a_j-\theta_2)^{c_j}
+\]
+are units.  In field one, the protected primes exhaust all ideals
+above \(\ell\), because the polynomial splits completely and
+simply there.  Their valuations are canceled by \(\ell^E\).
+All other valuations vanish.  Their projected log vector is
+\(U_{\rm arch}c\).
+
+\begin{lemma}[Exact two-field certificate]\label{lem:unit-certificate}
+Suppose there are \(c^{(0)}\in\mathbb Z^M\), \(E_0\ge1\), and
+\(c^{(1)},\ldots,c^{(D_U)}\in\Lambda_{\rm val}\) such that
+\(V_{\rm aug}c^{(0)}=-E_0b_\ell\), and the matrix
+\[
+ M_U=(U_{\rm arch}c^{(1)},\ldots,U_{\rm arch}c^{(D_U)})
+\]
+is nonsingular.  Then
+\(x=-M_U^{-1}U_{\rm arch}c^{(0)}\) is rational.  If \(Q\) is
+the least common multiple of its reduced denominators, then
+\begin{equation}\label{eq:exact-order}
+ \ell^{2E_0Q}\equiv1\pmod N.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+All columns of \(M_U\), and \(U_{\rm arch}c^{(0)}\), lie in
+\(\Lambda_U\).  The sublattice \(M_U\mathbb Z^{D_U}\) has
+positive integer index
+\(E_1=|\det M_U|/\det\Lambda_U\).  Thus \(E_1x\in\mathbb Z^{D_U}\),
+and every denominator of \(x\), hence \(Q\), divides \(E_1\).
+Set
+\[
+ c=Qc^{(0)}+\sum_{\nu=1}^{D_U}(Qx_\nu)c^{(\nu)}.
+\]
+It is integral, has valuation vector \(-E_0Qb_\ell\), and has
+zero projected unit logarithms.  Both resulting units are \(\pm1\).
+
+Evaluation \(\theta_i\mapsto m\pmod N\) defines a homomorphism
+on \(\mathbb Z[c_d^{-1}][\theta_i]\), since the defining polynomial
+is monic over \(\mathbb Z[c_d^{-1}]\) and vanishes at \(m\bmod N\).
+Localize further at the finitely many \(a_j-\theta_i\).  Their
+images \(a_j-m\) are invertible by the initial gcd checks, so the
+homomorphism extends.  The two unit products above belong to this
+localized ring.  Their images differ by \(\ell^{E_0Q}\) and are
+both signs.  Dividing and squaring proves \eqref{eq:exact-order}.
+No homomorphism from the entire maximal order is assumed.
+\end{proof}
+
+Positive definiteness in Corollary~\ref{cor:pair-exists} gives exactly
+the required spanning hypotheses.  The retained feature columns span
+their whole real space; their valuation parts therefore contain
+\(b_\ell\), and the image of the real valuation kernel under
+\(U_{\rm arch}\) is all of \(\mathbb R^{D_U}\).
+The valuation matrix is integral, so its real kernel is spanned by
+its rational kernel and hence by \(\Lambda_{\rm val}\).
+Extending combinations by zero to the omitted clean relations
+preserves these conclusions for the full matrices.
+
+\subsection{The exact finite extractor interface}
+
+The following is source Lemma~7.5, with its input promises stated
+explicitly.  It is the deterministic procedure used in
+Algorithm~\ref{alg:annihilator}.
+
+\begin{lemma}[\(\operatorname{TryPair}\), source Lemma 7.5]
+\label{lem:trypair}
+Let \(N\ge9\), \(m\ge2\), \(d\ge9\), \(c_d\ge1\),
+\(A\ge2\), \(B\ge4\), \(K_1\ge16\), and \(L_0\ge10\) be
+integers, with
+\[
+ N\le2^{dL_0},\quad(c_d,N)=1,\quad
+ m,A,B,K_1\le2^{L_0}.
+\]
+Let \(J\) be a duplicate-free prime list at most \(B\), coprime
+to \(c_dN\), and let \(\mathcal A^*\subseteq[1,A]\cap\mathbb Z\)
+be a duplicate-free list with \((a-m,N)=1\).
+Let \(f_1,f_2\) be primitive, irreducible degree-\(d\) integer
+polynomials with common leading coefficient \(c_d\),
+\(f_i(m)\equiv0\pmod N\), and height at most \(2^{L_0}\).
+Put
+\[
+ P_{\rm bit}=64d^3D_{\rm row}L_0,
+ \qquad e_{\rm rt}=\lceil(19/20)\lfloor\log_2K_1\rfloor\rceil,
+ \qquad 2^{-e_{\rm rt}}<1/(8d).
+\]
+There is a deterministic procedure, polynomial in
+\(A,B,d,D_{\rm row},P_{\rm bit}\), which returns either failure
+or a verified even \(E_\ell\ge2\) with
+\(\log_2E_\ell\le P_{\rm bit}\) and \(\ell^{E_\ell}=1\pmod N\).
+It succeeds whenever:
+\begin{enumerate}[label=(\roman*)]
+\item The protected split-root hypothesis holds and all protected
+labels are clean.
+\item Each \(f_i\) has opposite signs at
+\(A(\rho_{i,s}\pm2^{-e_{\rm rt}})\), for all \(s\).
+\item Every clean relation has at most \(L_0\) valuation features,
+including the top row, and distance at least \(2^{-L_0}\) from
+every normalized real root.
+\item \(b_\ell\in\operatorname{im}_{\mathbb Q}(V_{\rm aug})\) and
+\(U_{\rm arch}(\Lambda_{\rm val})\) spans \(\mathbb R^{D_U}\).
+\end{enumerate}
+\end{lemma}
+
+For reconstruction, use the five steps specified in the source's
+proof of Lemma~7.5: enumerate and factor the bounded values by trial
+division over \(J\); build the integer valuation matrix and its
+exact pivot minors; compute an integral valuation solution and
+integral kernel vectors; isolate the real roots and compute certified
+logarithmic Gram data; and use continued fractions to reconstruct
+the rational coordinates in Lemma~\ref{lem:unit-certificate}.
+The last step verifies the resulting modular power directly.
+
+We explain why this is a finite precision statement.  Integer
+pivot minors are bounded by Hadamard's inequality using the
+\(L_0\) nonzero entries per column.  Thus the kernel coefficients
+have bit lengths polynomial in \(D_{\rm row}L_0\).
+The archimedean columns have bounded logarithms because of the
+root-distance guard.  Equation~\eqref{eq:unit-covolume} bounds
+the index denominators and provides a separation bound for
+nonsingular logarithmic minors.  Exact bordered-adjugate updates
+select the required independent columns, and interval arithmetic
+at a polynomial multiple of \(P_{\rm bit}\) bits is enough for
+the Gram tests and rational reconstruction.  The proof of source
+Lemma~7.5 supplies the explicit constants, including the displayed
+\(64d^3D_{\rm row}L_0\) cap.  Its hypotheses have been retained
+rather than replaced by a heuristic numerical rank test.
+
+By Lemma~\ref{lem:construction}, all input promises and conditions
+(i)--(iii) hold for sufficiently large inputs and every enumerated
+pair.  The sign argument used there also holds at the possibly
+factor-two smaller radius \(2^{-e_{\rm rt}}\), since
+\(K_1^{0.05}\) dominates \((8d)^d\).
+Condition (iv) follows from a successful Gram pair.  The positive
+Gram and the proof-only deleted set need not be computed by
+\(\operatorname{TryPair}\); they guarantee that its exact algebraic
+search on the full clean relation set succeeds.
+
+\section{From many certified primes to a common exponent}
+\label{sec:saturation}
+
+The saturation step is elementary but important.  Certificates for
+many individual primes do not automatically annihilate every unit
+modulo every unknown prime factor.
+
+\begin{lemma}[Subgroup-index saturation]\label{lem:saturation}
+Suppose \(P^-(N)>K\ge B\),
+\[
+ K\ge B\exp\left(\frac L{\log B}\log(6L)\right),
+\]
+and \(\mathcal P\subset(B/2,B]\) is a prime set with
+\(|\mathcal P|\ge B/(6\log B)\).  Suppose
+\(\ell^{M_*}=1\pmod N\) for every \(\ell\in\mathcal P\).
+Let
+\[
+ L_{\rm idx}=\prod_{p\le K}p^{\max\{j:p^j\le K\}}
+              =\operatorname{lcm}(1,2,\ldots,K),
+ \qquad M=M_*L_{\rm idx}.
+\]
+Then \(p-1\mid M\) for every prime \(p\mid N\), and
+\(\log L_{\rm idx}\le2K\log4\) for \(K\ge20\).
+\end{lemma}
+
+\begin{proof}
+Fix \(p\mid N\), and let \(G\) be the subgroup of
+\(\mathbb F_p^\times\) generated by the reductions of
+\(\mathcal P\).  Its order divides \(M_*\).  Put
+\(j=\lfloor\log(p-1)/\log B\rfloor\ge1\).
+Products of \(j\)-element multisets from \(\mathcal P\) are
+distinct positive integers at most \(B^j\le p-1\), hence distinct
+elements of \(G\).  Unique factorization and the elementary
+binomial bound give
+\[
+ |G|\ge {|\mathcal P|+j-1\choose j}
+       \ge\left(\frac{|\mathcal P|}{j}\right)^j
+       \ge\left(\frac B{6L}\right)^j.
+\]
+Since \(p-1<B^{j+1}\), the index \(I=[\mathbb F_p^\times:G]\)
+satisfies
+\[
+ I<B(6L)^j\le B\exp\left(\frac L{\log B}\log(6L)\right)\le K.
+\]
+Every prime power dividing \(I\) is therefore at most \(K\), so
+\(I\mid L_{\rm idx}\).  Thus \(p-1=|G|I\mid M\).
+The stated logarithmic bound follows from
+\(\log L_{\rm idx}=\sum_{j\ge1}\vartheta(K^{1/j})\) and the
+elementary Chebyshev bound \(\vartheta(x)\le x\log4\).
+\end{proof}
+
+The rational guard in Algorithm~\ref{alg:annihilator} implies
+\(|\mathcal P_{\rm ok}|\ge B/(6\log B)\), because
+\(e(b)\kappa_-<\log B\).  Every recorded prime has a verified
+order certificate, so every element of the generated subgroup is
+annihilated by their least common multiple.  Thus, whenever the
+algorithm returns \(M\), its correctness follows from
+Lemma~\ref{lem:saturation} on every input, independently of the
+asymptotic existence proof.
+
+\section{The supplied-exponent splitter}
+\label{sec:splitter}
+
+We only need the original, slower splitter.  The companion
+order-splitting manuscript proves its finite algebraic and analytic
+interfaces, and also studies a faster family.  The following weaker
+statement suffices here.
+
+\begin{theorem}[Supplied-exponent splitting]\label{thm:splitter}
+There is an effective deterministic algorithm which, given a
+composite non-perfect-power integer \(N\) and an even integer
+\(M\ge2\) satisfying \(p-1\mid M\) for all \(p\mid N\),
+returns a proper factor in
+\[
+ \exp(O(\sqrt L\log\log(N+16)))\,(log M)L^2
+\]
+bit operations.  The factorization of \(M\) is not required.
+\end{theorem}
+
+For orientation, write \(M=2^tu\), \(u\) odd.  Testing the successive
+squares of \(z^u\) and gcds with \(N\) either splits \(N\) or
+forces the same exact power-of-two order at every prime-power
+component.  One unknown prime or product of two unknown primes
+then defines an active quadratic character whose value \(-1\)
+would force a split.  Failure on tested primes produces compatible
+modular square roots in quadratic and biquadratic fields.  Enumerating
+unit and small-principal-ideal generators forces a positive ideal
+character family.  Its Walsh positivity contradicts a uniform
+quadratic-field Burgess bound at an effectively reached dyadic scale.
+
+The exact proof dependencies are source Lemma~3.1, the corrected
+enumeration contract of Lemma~4.2, Lemma~5.1, the corrected
+finite-field character-sum input to Lemma~6.3(1), and the
+Lemma~6.4/Theorem~1.2 search.  The companion proof corrects two
+literal statements: the squarefactor in the root construction need
+only divide a power of the primorial, and the general finite-field
+Weil statement counts distinct roots in an algebraic closure.
+The actual moment polynomials split into linear factors, so that
+correction preserves the application.  The enumeration replacement
+uses exact quadratic units and a dimension-four weighted lattice
+search, with polynomial dependence on the numerical discriminant.
+This is a proved modular input to the present factoring argument.
+
+\section{Correctness, bit complexity, and effective finite-input coverage}
+\label{sec:runtime}
+
+We now assemble the proof of Theorem~\ref{thm:main}.
+Every direct factor output is checked.  Every returned \(E_\ell\)
+is checked by modular exponentiation.  The exact density guard and
+Lemma~\ref{lem:saturation} certify every returned common exponent
+\(M\).  Applying Theorem~\ref{thm:splitter} therefore returns a
+factor whenever the annihilator returns an exponent.  Complete
+trial division guarantees termination on all other inputs.
+
+For sufficiently large surviving inputs, all construction guards
+hold by \eqref{eq:gates1}--\eqref{eq:gates3} and
+Lemma~\ref{lem:construction}.  By
+Corollary~\ref{cor:pair-exists} and Lemma~\ref{lem:trypair}, every
+\(\ell\in\mathcal P_{\rm gen}^{\rm good}\) succeeds somewhere in
+the enumerated box.  Lemma~\ref{lem:exception-count} gives more
+than enough such primes to pass the exact density guard.
+
+Since \(|F_{\rm clean}|\le2dB\), each certificate has
+\[
+ \log_2E_\ell\le64d^3(1+2dB)L_0.
+\]
+There are at most \(B\) certificates, and taking an lcm cannot
+exceed the bit length of their product.  Hence
+\begin{equation}\label{eq:exponent-size}
+ \log M\le L^{O(1)}B^2+2K_{\rm idx}\log4
+       =\exp(O(L^{1-b}L_2)).
+\end{equation}
+Because \(g=1-b+\delta\), this is smaller than the bit-length
+cap \(2^{e(g)}\) eventually.  No large input invokes fallback.
+
+The total number of extractor calls is at most
+\begin{equation}\label{eq:call-count}
+ |\mathcal P_{\rm gen}|\,|\mathcal B_U|^2
+ \le16BL_0^{80}U^4A^2
+       =\exp((4\kappa+o(1))L^h).
+\end{equation}
+Each call has bit complexity
+\(\operatorname{poly}(A,B,d,D_{\rm row},P_{\rm bit})
+=\exp(O(L^c))\), which is a lower power because \(c<h\).
+All base constructions are polynomial in \(B\).  Trial division,
+the gcd loop, and saturation cost
+\(\operatorname{poly}(K_{\rm idx},A,L)
+=\exp(O(L^{1-b}L_2+L^c))\), again lower powers.
+Finally, \eqref{eq:exponent-size} and
+Theorem~\ref{thm:splitter} give splitting cost
+\[
+ \exp(O(\sqrt L L_2+L^{1-b}L_2))=\exp(o(L^h)).
+\]
+This proves the stated \(\exp(O_\delta(L^h))\) bound.
+In fact, the leading enumeration coefficient in
+\eqref{eq:call-count} is \(4\log2<3\), so an effective
+\(C_\delta\exp(3L^h)\) upper bound also follows after absorbing
+the finite initial range.
+
+\subsection{Why the threshold is effective}
+
+All computational parameters are rationally rounded.  The algorithm
+uses no zero-finding subroutine and no test for an exceptional
+Dirichlet character.  The zero sets classify the analysis of sample
+points; they do not define the search.  The exceptional real
+character is handled by its permitted nonpositive prime-sum main
+term, without an ineffective estimate for the distance of its zero
+from one.
+
+Every asymptotic comparison in the proof has an explicit strict
+power gap, or a fixed positive power of \(E\).  Effective constants
+in the stated classical inputs therefore give an effective
+threshold \(N_0(\delta)\).  Above it, all finite guards hold and
+enough searches succeed.  Below it, trial division has a finite
+maximum cost, absorbed by an effective constant depending on
+\(\delta\).  The executable algorithm does not need
+\(N_0(\delta)\) as an input or precomputed datum.
+
+For a requested fixed \(\varepsilon>0\), choose any fixed rational
+\(0<\delta\le1/100\) with \(8\delta<\varepsilon\).
+Then \(h<2/3+\varepsilon\), completing the proof.
+
+\section{What currently prevents a further power reduction}
+\label{sec:barrier}
+
+The proof identifies a concrete barrier rather than treating
+smoothness equidistribution as a black box.  The main progression
+argument needs two prime prefixes larger than its modulus.  This
+requires \(q^2B^2\ll Y\), and the actual moduli include a factor
+\(|a-m|\) of size approximately \(m\).
+
+Suppose the two prefix thresholds are shortened to
+\(Z_1,Z_2\le q\).  For a fixed terminal prime, orthogonality only
+gives
+\[
+ \sum_{\chi\bmod q}|A_i|^2
+       \ll\varphi(q)Z_i^{1-2\alpha}.
+\]
+Cauchy--Schwarz leaves
+\begin{equation}\label{eq:short-prefix-loss}
+ \frac q{\varphi(q)}\sum_\chi|A_1A_2|
+       \ll q(Z_1Z_2)^{1/2-\alpha}.
+\end{equation}
+At \(\alpha=1-o(1)\), avoiding a loss exponential in \(\log q\)
+requires \(Z_1Z_2\ge q^{2-o(1)}\).  If
+\(q\ge Y^{1/2+\epsilon_0}\) for a fixed \(\epsilon_0>0\), even
+the maximal available product \(Z_1Z_2=O(Y)\) leaves a loss of
+\(\exp((\epsilon_0+o(1))\log Y)\).  The Euler-product saving is
+only \(\exp(-O(u_Y))\), where
+\(u_Y=\log Y/\log B=o(\log Y)\).  Smoothing the window cannot
+alter this arithmetic size comparison.
+
+This is a limitation of the orthogonality/Cauchy--Schwarz proof,
+not a lower bound on factoring or on equidistribution.  An average
+over the special moduli arising from the construction, an estimate
+that exploits their actual residue classes, or a stronger
+multilinear character bound might behave differently.
+
+The present height mechanism has a second transparent restriction.
+If \(d=L^a\), \(\log A\asymp L^c\), and the perturbation width
+dominates both \(m\) and \(A^d\), then
+\[
+ h\ge1-a,\qquad h\ge a+c,
+\]
+while root separation and the smoothness/sieve layers require
+\(c>b>k>t>a\).  Thus \(h>2a\), and minimizing
+\(\max(1-a,2a)\) gives the limiting value \(2/3\) at
+\(a=1/3\).  This optimization describes the mechanism proved here.
+
+\subsection{Why translating all roots towards the evaluation point fails}
+
+A tempting way to shrink \(|a-m|\) is to place all polynomial roots
+near \(m\).  The exact product formula shows the cost.  Suppose
+\(f(m)=kN\ne0\), every real root satisfies
+\(|m-\theta_j|\le CA\), and a sampled \(a\) is at distance at
+least \(wA\) from its nearest root and at least
+\(A/(C'd)\) from all the others.  Then
+\[
+ \frac{|f(a)|}{|f(m)|}
+   =\prod_j\frac{|a-\theta_j|}{|m-\theta_j|}
+   \ge wC^{-d}(C'd)^{-(d-1)}.
+\]
+Consequently
+\(\log|f(a)|\ge\log N-\log(1/w)-O(d\log d)\).
+In the intended regime these norms are \(N^{1-o(1)}\), losing
+the subexponential value size.  This rules out a simple translation
+of the present separated-root construction; it leaves other
+polynomial shapes and different relation constructors open.
+
+\subsection{Two exact refinements that may help an endpoint analysis}
+
+For the equally spaced roots used here,
+\[
+ |P_i'(\rho_{i,s})|
+   =\frac{(s-1)!(d-s)!}{(2d)^{d-1}}
+   \ge(8e)^{-(d-1)}.
+\]
+Thus, for \(0<\epsilon\le1/(8d)\),
+\[
+ |P_i(\rho_{i,s}\pm\epsilon)|>
+                     \epsilon\,32^{-(d-1)}.
+\]
+The coarse root-stability argument can therefore replace a
+\(d\log d\) loss by \(O(d)\).  Likewise, grouping the
+off-diagonal mean-log entries by root spacing and using
+\(\int_0^1\log^2x\,dx=2\) improves their Frobenius bound from
+\(O(d\log d)\) to \(O(d)\).  These identities are useful for a
+future logarithmic optimization.  They do not by themselves prove
+an endpoint \(L_N[2/3,c]\) result: the zero-free height, conductor
+exclusions, Gaussian errors, and deletion thresholds would all
+have to be rebalanced at logarithmic precision.
+
+\appendix
+\section{Source correspondence, corrections, and reconstruction}
+\label{app:correspondence}
+
+The proof deliberately separates parameter-general finite algebra
+from the scale-sensitive analytic assertions.  The following table
+specifies the imported interfaces and the new work needed to use them.
+
+\begin{longtable}{p{.18\textwidth}p{.35\textwidth}p{.37\textwidth}}
+\toprule
+Source location & Role & Treatment in this manuscript \\
+\midrule
+\endhead
+Lemma 7.3 & Nonmonic ideal valuations & Offset and simple-root
+argument reproduced in Section~\ref{sec:extraction}. \\
+Lemma 7.4 & Two-field unit cancellation and spanning & Covolume,
+index denominators, localization, and Gram implication reproduced. \\
+Lemma 7.5 & Finite exact extractor & Full input/output contract
+retained in Lemma~\ref{lem:trypair}; its five-step exact implementation
+and explicit bit cap are imported. \\
+Lemma 8.1 & Base-polynomial CRT construction & Construction interface,
+finite recipe, and height transfer given in
+Section~\ref{sec:construction}. \\
+Lemma 8.2 & Sieve, roots, and means & New power schedule and proof
+given in Sections~\ref{sec:parameters}--\ref{sec:sieve}. \\
+Lemmas 8.3--8.4 & Gevrey cutoff & Parameter-general kernel and
+precise Mellin consequences stated in Section~\ref{sec:progressions}. \\
+Lemma 9.1 & Rough progression upper bound & Greedy-prefix proof
+reproduced in Lemma~\ref{lem:rankin}. \\
+Lemma 9.2 & Prime sums and saddle moments & Horizontal-contour term
+retained; Edgeworth and finite-difference proofs supplied. \\
+Proposition 9.3 & Clean progressions & Zero-density counts and exact
+two-prefix orthogonality argument supplied. \\
+Lemmas 9.4--9.5 & Conditional Gaussian laws & Congruence lattices,
+coprimality, gcd division, and local exclusions supplied. \\
+Proposition 10.1 & Centered Gram and peeling & Centered identity,
+conductor costs, adaptive invariant, and blockwise spectral proof
+supplied. \\
+Lemma 11.1 & Saturation & Elementary subgroup-count proof reproduced. \\
+Theorem 1.2(a) & Supplied-exponent splitter & Original slower bound
+suffices; complete package treated in the companion manuscript. \\
+\bottomrule
+\end{longtable}
+
+The corrections used here are narrow and explicit.  The Perron
+estimate retains \(\mathcal L/(\nu H)\) on the horizontal segments.
+The second-difference proof evaluates four bounded Edgeworth errors
+and differentiates only its explicit main term.  The covariance
+error is absorbed in the prime-feature block before deriving the
+small archimedean gap.  The order-splitting companion corrects the
+primorial squarefactor statement and the finite-field root-count
+statement.  None of these repairs is concealed inside a numerical
+experiment.
+
+To reconstruct the algorithm, use the rounded parameters and
+Algorithm~\ref{alg:annihilator}, the frozen source's finite
+\(\operatorname{TryPair}\) implementation, and the companion's
+supplied-exponent splitter.  To reconstruct the proof, the exact
+power-gap checks accompany the repository, while every analytic
+comparison needed to justify those gaps is written above.  The
+finite checks establish the algebra of the schedule; the mathematical
+lemmas establish the uniform probability, spanning, and running-time
+claims.

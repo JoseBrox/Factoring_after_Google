@@ -1,0 +1,32 @@
+Factoring after Google
+Copyright (c) 2026 Jose Brox
+
+Original manuscripts, explanations, and code in this repository are made
+available under the Creative Commons Attribution 4.0 International license
+(CC BY 4.0), whose full legal text is in LICENSE.
+
+This repository is an independent research project. Its title describes the
+sequence of the research and does not imply affiliation with or endorsement
+by Google, Google Research, Google DeepMind, or the authors of cited work.
+
+Upstream Cogentic manuscripts and their README files:
+Copyright 2026 Google LLC.
+The paper-specific upstream README files license the papers under CC BY 4.0.
+Source: google-research/google-research, commit
+4a7bc8ab0bc770e71a259b7966c500496b99010a, under
+cogentic_research_papers/deterministic_factoring_l34/ and
+cogentic_research_papers/integer_factorization/.
+The source README files attribute the papers to Cogentic using Gemini 4.
+
+When upstream PDFs are retrieved by scripts/fetch_sources.py, their bytes
+are unchanged and checked against their Git blob hashes. The committed
+plain-text extractions are transformations of those PDFs, with page
+markers and workflow boilerplate removed; they are provided for searching,
+not as authoritative mathematical typesetting. The new manuscripts change
+the constructions, bounds, and explanations as detailed in their provenance
+sections. Attribution to the upstream papers is required when reusing their
+material. License: https://creativecommons.org/licenses/by/4.0/ .
+
+The historical working notes were prepared in Jose Brox's earlier research
+repository. Their original paths and commit are recorded in provenance/.
+Classical articles and books are cited, not relicensed by this repository.

@@ -1,0 +1,108 @@
+# Sparse multiquadratic Gram averaging: improving deterministic order splitting
+
+**Further checkpoint.** [The ramification-tolerant construction and explicit parameter synthesis](splitting-provenance-audit.md), together with [the completed enumeration and uniform-character inputs](enumeration-burgess-audit.md) and [order-test/character assembly](deterministic-splitting-core-audit.md), now supply the missing dependencies for the L[1/2,O(1)] supplied-order bound. The original conditional wording below records the earlier checkpoint. No first L-power below 1/2 is claimed.
+
+2026-11-25. **Status:** new combinatorial lemma and parameter reduction proved below; algorithmic complexity is a theorem conditional on the correctness of three explicitly identified imported Cogentic lemmas, not an independent certification of those lemmas. No improvement to general deterministic factoring's exponent-construction stage is claimed here.
+
+## Source and baseline
+
+Google Research, [Unconditional Deterministic Subexponential Integer Factoring and Quadratic Nonresidue Construction](https://github.com/google-research/google-research/blob/4a7bc8ab0bc770e71a259b7966c500496b99010a/cogentic_research_papers/deterministic_factoring_l34/paper.pdf), pinned Git blob 973002e0eb92acf3964fc020ca52ba6f1ac384ac, 59 pages. Relevant sections 3–6, PDF pp. 13–29. [Verified text extraction](https://github.com/JoseBrox/factoring-algorithms/actions/runs/45666731595).
+
+Write L_x[a,c] = exp((c+o(1))(ln x)^a (ln ln x)^(1-a)). The paper's Theorem 1.2 gives order splitting, when an even multiple M of every p-1 for p|N is supplied, in exp(O(sqrt(ln N) ln ln N)) times bitlen(M) poly(ln N), and the same subexponential factor for constructing a quadratic nonresidue modulo a prime. Its Section 6.3 employs all nonzero vectors of F_2^K. The expense of the largest primorial discriminant is the source of an extra sqrt(ln ln N) in the exponent. We replace the full Walsh average by a sparse difference family with a positive-semidefinite (PSD) Gram kernel. This is a structural transfer of our local-character, auxiliary-field and PSD-kernel themes, not an appeal to a faster generic matrix evaluator.
+
+**Conditional improved conclusion.** Assuming the paper's Lemmas 3.1 (order tests and the base square-root construction), 4.2 (enumeration in quadratic and biquadratic fields), and 6.3(1) (uniform Burgess bound), there are deterministic algorithms with time
+- order splitting: exp(O(sqrt(ln N * ln ln N))) bitlen(M) poly(ln N);
+- quadratic nonresidue construction: exp(O(sqrt(ln p * ln ln p))) = L_p[1/2,O(1)].
+
+All constants can be effective if those imported lemmas have effective constants. This is a genuine asymptotic logarithmic improvement over the printed Theorem 1.2, not a change of its 1/2 power, and does not make its Theorem 1.3 faster.
+
+## 1. Local character extensions with field-specific bounds
+
+Let q be an odd prime or a product of two distinct odd primes, chi the corresponding quadratic character, and G=F_2^K. Use the compatible square classes d_l and compatible roots s_l from Lemma 3.1, reducing modulo q. Write F_l=Q(sqrt(d_l)) for nonzero l, and E_l,m for the biquadratic compositum of two distinct nonzero classes. Let S be any subset of G, size H>=2, and A=(S+S)\{0}. We need only F_l for l in A and E_l,m for l,m,l+m in A with l,m distinct. The latter set may be overenumerated harmlessly using all distinct pairs in A and computing the third square root on demand.
+
+For each field F or E choose inverse-class integral representatives a_c with norms <= M_F (respectively M_E), with a_1=O_F and M_F,M_E the ceilings of square roots of their absolute discriminants. Minkowski gives representatives of norm <= sqrt(D) itself. Assume all these bounds and all test thresholds below are strictly smaller than the least prime divisor of q, and that the chosen primes defining square classes are also smaller.
+
+Suppose:
+1. chi(r)=1 for 1<=r<=Y;
+2. the pulled-back character is 1 on each quadratic field's units and on every nonzero algebraic integer of absolute norm <= max(M_F^3,M_F Y);
+3. the pulled-back character is 1 on each required biquadratic field's units and on every nonzero algebraic integer of absolute norm <= max(M_E^3, M_E max_{F subset E, F required} M_F^2).
+
+Define a character on an integral ideal c coprime to the selected primes over q by chi_F^*(c)=chi(phi_F(gamma)), where (gamma)=a_[c] c; extend by zero on ideals meeting the selected primes. This is independent of the generator (units are trivial). Complete multiplicativity follows exactly from the ideal identity in Lemma 5.1(1): for c1,c2, insert the small representative e of the product's inverse class; the two correcting principal ideals have norms <= M_F^3. The same argument applies in E. On principal ideals this is the original character. For a prime r<=Y not dividing the defining primorial or q, each degree-one prime ideal is trivial by the M_F Y test, and an inert prime ideal is generated by r. For c coprime to q and F subset E among the required fields, extending a_[c] to E and multiplying by its small inverse-class representative produces a principal ideal of norm <= M_E M_F^2, so chi_E^*(c O_E)=chi_F^*(c). These statements do not require Y to exceed the full primorial or every field discriminant.
+
+This establishes precisely the local version of Lemma 5.1(1) needed below; no characters for absent quadratic fields are used.
+
+## 2. Sparse Gram positivity theorem
+
+Exclude primes dividing q or P_K, the product of the first K positive rational primes (including 2). For l in A put
+b_l(n)=sum_{N(a)=n} chi_F_l^*(a).
+These coefficients are multiplicative in n. Fix a nonexcluded prime r. The split/inert signature is g in G with (-1)^(l.g)=(d_l/r). Put h_a=(-1)^(a.g) for a in S. Then r splits in F_(a+b) iff h_a=h_b.
+
+For split l, write alpha_l=chi_F_l^*(p_l) for one prime over r. The other has character chi(r) alpha_l. If chi(r)=+1, the choice of prime does not matter. For distinct a,b,c with h_a=h_b=h_c, all three differences l=a+b, m=b+c, l+m=a+c are nonzero and split. In E_l,m the four primes over r have signs u_++,u_+-,u_-+,u_--. Extension compatibility gives
+alpha_l alpha_m alpha_(l+m)
+=(u_++u_+-)(u_++u_-+)(u_++u_--)=chi(r)=1.
+Here juxtaposition means multiplication. Thus, within each signature class of S, signs on edges form a balanced complete graph: choosing any anchor shows alpha_(a+b)=v_a v_b for suitable v_a in {+1,-1}, with diagonal set to 1. This is only a triangle condition on S, not linearity over all G.
+
+Define diagonal values at r^e by
+b_0(r^e) = e+1 if chi(r)=+1; 0 if chi(r)=-1 and e odd; 1 if chi(r)=-1 and e even.
+Extend b_0 multiplicatively, including b_0(1)=1. Then 0<=b_0(n)<=tau(n).
+
+Let B_r,e be the H by H symmetric matrix with (a,b)-entry b_(a+b)(r^e), using this diagonal. Put J=11^T.
+The split Euler coefficient is sum_{j=0}^e alpha_l^j (chi(r)alpha_l)^(e-j); the inert coefficient is zero for e odd and chi(r)^(e/2) otherwise. Hence:
+
+- chi(r)=+1, e odd: B_r,e is (e+1) times the block-diagonal outer products v_C v_C^T, one per signature class C. It is PSD.
+- chi(r)=+1, e even: B_r,e=((e+2)/2)J+(e/2)hh^T, PSD.
+- chi(r)=-1, e odd: B_r,e=0.
+- chi(r)=-1, e even: B_r,e=J if e/2 is even, hh^T otherwise.
+
+For r<=Y, chi(r)=1 and alpha_l=1 on split primes. In the odd-e case the matrix is ((e+1)/2)(J+hh^T), so in every such case B_r,e-J is PSD.
+
+For nonexcluded n, B(n)=(b_(a+b)(n)) is the entrywise product of the B_r,e; B(1)=J. The Schur product theorem proves B(n) PSD for all n. For Y-smooth n, B(n)-J is also PSD by induction, because (J+C) o (J+D)-J=C+D+C o D is PSD for PSD C,D. Consequently
+sum_{a,b in S} b_(a+b)(n) >= H^2 * 1_{n Y-smooth}.
+Subtract the diagonal and sum n<=X:
+sum_{a != b} S_(a+b)^cop(X) >= H^2 Psi_(P_K q)(X,Y) - H X(1+ln X),
+where S_l^cop is the sum of b_l over n<=X coprime to P_K q, and Psi counts Y-smooth n subject to the same exclusion. In particular,
+max_{l in A} S_l^cop(X) >= Psi_(P_K q)(X,Y) - X(1+ln X)/(H-1).
+The weights are the multiplicities of differences in S; no assumption that differences are distinct is needed. The PSD argument is exact and independent of the analytic estimates.
+
+## 3. Burgess bound with a large prime basis but small fields
+
+Use Lemma 6.3(1) with each actual field discriminant D_l, not the full primorial. Assume ln(P_K)=o(ln q), K=o(ln q), D_l=exp(o(ln q)), and least_prime(q)>D_l. Sum that bound over ideal classes, using actual representatives of norm <= sqrt(D_l) and h_F<=D_l as in Lemma 6.3(2). This gives C D_l^3 W q^(-1/4000) for the unrestricted ideal sum when q^(3/10)<=W<=q^(2/5).
+
+The inclusion-exclusion removing all primes over P_K is an argument in the proof only: at most 4^K terms, each with ideal norm <=P_K^2. At X=q^(1/3), and also at X/p1 if q=p1 p2 and p1<=q^(1/50), all reduced cutoffs lie in [q^(3/10),q^(2/5)] for sufficiently large q since P_K^2=q^o(1). For q=p1 p2 the other prime p2>X. The undesired ideals above p1 with nonzero character are exactly those divisible by its nonselected degree-one prime ideal, and hence their sum is a character times the analogous sum at X/p1. If p1>q^(1/50), bound this correction by X q^(-1/50)(1+ln X), using the quadratic ideal divisor bound. Thus uniformly in l,
+|S_l^cop(X)| <= C' 4^K D_l^3 X q^(-1/4000)
+             = X exp(-Omega(ln q)).
+Only D_l and the small prime bound enter the *algorithmic* guard; P_K is large but not enumerated up to, and 4^K inclusion-exclusion is never executed.
+
+## 4. Parameter choice and contradiction
+
+Put L=2^m with m a positive integer. For any q with 0.99 L<=ln q<=2.01 L use
+u=floor sqrt(L/m), t=32u, K=floor L^(3/4),
+S={a in F_2^K: Hamming weight(a)=t}.
+Ignore finitely many invalid scales (u<1, t>K). All integer parameters can be computed by integer roots and comparisons. Then:
+- ln H=ln binom(K,t) >= t ln(K/t)=(8+o(1))u ln L;
+- each difference has weight <=2t. In Lemma 3.1's explicit pivot construction, the squarefree d_l contains at most 2t+1 factors from {-1,2,...,q_K}; the absolute values are bounded by R=q_K^(2t+1);
+- the quadratic discriminants are <=4R; the discriminant of E is <=256 R^4, from the order basis 1,sqrt(d_l),sqrt(d_m),sqrt(d_l d_m) with discriminant 256 d_l^2 d_m^2;
+- q_K=O(K ln(K+2)) by effective prime counting, so ln R=O(sqrt(L ln L)), ln P_K=O(K ln K)=o(L), and K=o(L);
+- Y=floor X^(1/u), X=q^(1/3), satisfies ln Y=Theta(sqrt(L ln L)). A public upper bound is Y0=2^ceil(2L/u).
+
+Take D_*=256 R^4, and the integer guard B=64 D_*^4 (Y0+1). It dominates all the field-specific test thresholds in section 1, q_K, and 64 times each field discriminant. If least_prime(q)>B, all short principal ideals tested are coprime to q. By effective prime counting the interval (Y/2,Y] contains >=cY/ln Y primes for an absolute c>0; none divide P_K q, since q_K<Y/2 for large L and least_prime(q)>Y. Products of u distinct such primes give distinct eligible smooth integers <=Y^u<=X. For M0 their count of available primes, binom(M0,u)>=(M0/u)^u. As Y^u=X exp(o(1)) and ln(u ln Y)=ln L+O(1), this implies
+Psi_(P_K q)(X,Y) >= X exp(-(1+o(1))u ln L).
+Meanwhile X(1+ln X)/(H-1) <= X exp(-(8+o(1))u ln L), where the o(1) absorbs the polynomial factor. The lower bound of section 2 is therefore X exp(-O(sqrt(L ln L))), contradicting section 3, which is X exp(-Omega(L)). This proves that one of the short character tests must fail.
+
+## 5. Constructive algorithm and bit complexity
+
+For input N, let n=bitlen(N). Form the above integer parameters for dyadic scales m up to floor(log2 n). Let Bmax be the maximum of the valid guards (or 2 for an empty list). Trial-divide by integers up to min(Bmax,N-1); for a prime input skip division and only use scales with B<N. If N is odd composite and not a perfect power and no factor was found, then least_prime(N)>Bmax. For each valid scale:
+1. Test all integers 1,...,Y0 by SplitTest (or Euler's criterion for the prime nonresidue task).
+2. Execute only the base stage of Lemma 3.1(3), testing the first K primes and -1, recovering the common 2-primary pivot and base roots. Its proof explicitly constructs the roots for any requested l by multiplying the selected base roots and correcting the pivot square. Do not materialize the 2^K table. Enumerate S, its nonzero differences A, and the required pairs/triples. At most H^2 differences and H^4 biquadratic calls suffice; if overenumerating pairs, their third square class has weight <=4t and the same guard is valid for the compositum.
+3. Call Lemma 4.2 on each field, with the norm bounds in section 1 using Y0 instead of Y (or B as an upper bound). Test returned modular unit and generator images. All the enumeration hypotheses hold since B dominates 64D and the norm bound, and N>B. A failed character test gives a factor by Lemma 3.1(2), or a nonresidue by Euler's criterion. Every result is verified.
+4. Fallback to ordinary trial division or exhaustive nonresidue search if no scale succeeds. This fallback is used only on a finite range: the active modulus q is supplied by Lemma 3.1(2) existentially, and its dyadic scale is included for all sufficiently large N with no small prime factor. Indeed Bmax grows without bound, q>=least_prime(N)>Bmax, ln q<=ln N<n, and the valid scale eventually satisfies section 4. For a prime take q=N, and Bmax<N for all sufficiently large N.
+
+For a valid scale ln B=O(sqrt(L ln L)), ln H=O(sqrt(L ln L)). Bit construction of each radicand/root uses polynomial input-size work (including the supplied exponent for the base stage); only H^O(1) fields are needed. Trial division, enumeration of the initial primes, and each field's Lemma 4.2 enumeration are polynomial in B and ln N. SplitTest costs O(bitlen(M) (ln N)^2) per image. The O(log n) scale count and all polynomial factors are absorbed by exp(O(sqrt(ln N ln ln N))). Perfect powers and even inputs are handled as in the source theorem. Prime nonresidue construction uses M=p-1 for the base stage.
+
+## 6. Limits, source audit, and research implications
+
+- Imported dependencies: Lemma 3.1's proof gives the base pivot construction directly; Lemmas 4.2 and 6.3(1) still require an independent full audit, particularly infrastructure bit complexity and the nonuniform-discriminant Burgess estimate. No formalization has been independently checked. The PSD argument and changed asymptotic parameter proof above do not depend on the original full-family Lemmas 5.1(2), 6.3(2), or 6.4.
+- Minor source issue: in Lemma 3.1(3) the stated m_l|P_K is too strong for a repeated pivot; the proof correctly has m_l|P_K^K. All compatibility formulas and the construction above use the proof's bound. This does not obstruct the new argument.
+- The README's shorthand L_p[1/2,O(1)] for the *original* exp(O(sqrt(ln p) ln ln p)) is not the standard L-notation consequence; the present reduction genuinely gives that standard bound.
+- This improvement affects supplied-order splitting, and QNR, not general integer factoring's dominant exp(3(ln N)^(3/4)) exponent construction. A sub-L[1/3] deterministic bound would require a different route. The PSD method suggests a more general search for small-support difference sets under multiplicative local compatibility; it is not a proof of a better exponent for arbitrary tensor networks or arbitrary ideal-character averages.
+

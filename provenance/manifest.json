@@ -1,0 +1,72 @@
+[
+  {
+    "file": "provenance/notes/deterministic-algebraic-completion.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/deterministic-algebraic-completion.md",
+    "sha256": "8fe689baa5f7f7da816b7732ef466df78e0e1f3b9430ed822888b811dc15d290"
+  },
+  {
+    "file": "provenance/notes/deterministic-analytic-audit.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/deterministic-analytic-audit.md",
+    "sha256": "78d341ca77f773066964fe92c2d9205c4766d1c5662aab715ef9d53d18e2009c"
+  },
+  {
+    "file": "provenance/notes/deterministic-parameter-compression.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/deterministic-parameter-compression.md",
+    "sha256": "dff4583520b050adc83a6264b6b72578528ae4120619aa7ed3c88890080f00df"
+  },
+  {
+    "file": "provenance/notes/deterministic-splitting-core-audit.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/deterministic-splitting-core-audit.md",
+    "sha256": "f17539d592456c9fe38285749aba240e8decf1ba0c3b884c08ac6aea68b45756"
+  },
+  {
+    "file": "provenance/notes/enumeration-burgess-audit.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/enumeration-burgess-audit.md",
+    "sha256": "c9d70e990d091e264fb016d3c1170319ad088a55066cbb2ebe4ec90cdad29048"
+  },
+  {
+    "file": "provenance/notes/randomized-recursion-audit.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/randomized-recursion-audit.md",
+    "sha256": "fac84c622a29bc1e69da8cdb7907f4557ba6a436f45a689988f88c1c08010941"
+  },
+  {
+    "file": "provenance/notes/retained-individual-continuations.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/retained-individual-continuations.md",
+    "sha256": "2539df2e0db4bba995aa3ddbb2b44c11df03dfd6d63b27968f98d547d4dce723"
+  },
+  {
+    "file": "provenance/notes/sparse-gram-order-splitting.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/sparse-gram-order-splitting.md",
+    "sha256": "da3cb653fcf214e7a0e24680210549bd80dab6670acd8ab9e4d41bb74379566d"
+  },
+  {
+    "file": "provenance/notes/sparse-randomized-factorer.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/sparse-randomized-factorer.md",
+    "sha256": "6fdcd4a0b713eccf1715bf710bd09349dfd97b082866ad4c44ca9bce4672de02"
+  },
+  {
+    "file": "provenance/notes/splitting-provenance-audit.md",
+    "source_repository": "JoseBrox/factoring-algorithms",
+    "source_commit": "94d84cf90cc958aebde8853a1ecfcda304f60500",
+    "source_path": "research/2026-11-25-cogentic/splitting-provenance-audit.md",
+    "sha256": "ab0497f433d025445070fc53a6864360ce3e65b68b58f16808446dc5fc9913c0"
+  }
+]

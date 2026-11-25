@@ -1,0 +1,988 @@
+\section{The quadratic-field package}
+\label{sec:qp-package}
+
+This appendix supplies the number-field and analytic machinery used in the
+main algorithm.  Its input fields always have degree two or four.  An
+important distinction is that the enumeration algorithms are polynomial in
+the \emph{numerical} discriminant and norm cutoff, not polynomial in their
+bitlengths.  This distinction permits exact, potentially very large,
+fundamental units without hiding their storage cost.
+
+We use three classical theorems in their following precise forms.  First,
+Minkowski's ideal-class bound gives an integral representative of every
+ideal class of a degree-$d$ field of discriminant $\Delta$ with norm at most
+$(4/\pi)^{r_2}d!d^{-d}\sqrt{|\Delta|}$.  In degrees two and four this is at
+most $\sqrt{|\Delta|}$ \cite{Neukirch1999}.  Second, exact LLL reduction of
+a fixed-dimensional integer lattice has polynomial bit complexity and,
+for $\delta=3/4$, gives
+\begin{equation}
+ |\mu_{ij}|\leq\tfrac12,
+ \qquad \|b_i^*\|\geq2^{-(i-1)/2}\|b_1\|.
+ \label{eq:qp-lll}
+\end{equation}
+The basis transformation is integral and unimodular
+\cite{LLL1982}.  Third, if $\chi_p$ is the quadratic character of an odd
+prime field and $f$ is not a constant times a square, then
+\begin{equation}
+ \left|\sum_{z\in\mathbb F_p}\chi_p(f(z))\right|
+ \leq (s-1)\sqrt p,
+ \label{eq:qp-weil}
+\end{equation}
+where $s$ counts the distinct roots of $f$ in a splitting field
+\cite{Schmidt1976}.  The splitting-field qualification matters.  Every
+application below is to a product of at most sixteen linear factors over
+$\mathbb F_p$, with an odd root multiplicity.  These classical inputs,
+unique factorization of nonzero ideals in rings of integers, and elementary
+exact integer arithmetic are the external mathematical prerequisites.
+The varying-field Burgess estimate needed here is proved below; it is not
+inferred from a fixed-field estimate with an unspecified discriminant
+constant.
+
+\subsection{A precise enumeration interface}
+
+For squarefree $d\ne1$ write $F=\mathbb Q(\sqrt d)$ and
+$D=|\Delta_F|$.  A supplied root $s^2=d\pmod N$, for odd $N$ coprime to
+$d$, gives a ring homomorphism
+$\phi_{F,N}:\mathcal O_F\longrightarrow\mathbb Z/N\mathbb Z$:
+substitute $s$ for $\sqrt d$ and invert 2 when necessary.  For a
+biquadratic field with radicands $d_1,d_2,d_3$, compatible roots mean
+\[
+ s_i^2=d_i,\qquad s_1s_2=\eta_{12}s_3\pmod N,
+ \quad d_3=d_1d_2/g^2,\quad g=\gcd(|d_1|,|d_2|),
+\]
+where $\eta_{12}=g$ except that $\eta_{12}=-g$ when both $d_1,d_2$ are
+negative.  This is the sign of the product of the canonical real or
+positive-imaginary radicals.  Substitution, with denominators dividing
+four, then gives $\phi_{E,N}$.
+
+\begin{theorem}[Enumeration in degree two and four]
+\label{thm:qp-enumeration}
+Let $K$ be quadratic or biquadratic, let $D_K=|\Delta_K|$, and supply
+the compatible modular roots defining $\phi_{K,N}$.  Let $Z\geq1$ and
+assume $N>\max(64D_K,Z)$ is odd and coprime to the defining radicands.
+There is a deterministic algorithm of bit cost
+\[
+ \operatorname{poly}(D_K,Z,\log N)
+\]
+which either returns a proper divisor of $N$, or returns a finite list of
+units modulo $N$ containing the images of a generating set of
+$\mathcal O_K^*$ and, for every principal integral ideal $\mathfrak B$ of
+norm at most $Z$ coprime to $N$, the image of at least one generator of
+$\mathfrak B$.  The number of listed images has the same polynomial bound.
+\end{theorem}
+
+The algorithm does not compute a class group.  The following proof also
+explains why a large real fundamental unit is compatible with the stated
+complexity.
+
+\subsubsection{Real quadratic reduction with exact coefficients}
+
+For a real quadratic discriminant $D$, every nonzero integral ideal is
+uniquely $mI(a,b)$, where $m\geq1$,
+\begin{equation}
+ I(a,b)=a\mathbb Z+\frac{b+\sqrt D}{2}\mathbb Z,
+ \quad b\equiv D\pmod2,\quad 4a\mid D-b^2,
+ \quad N(I(a,b))=a.
+ \label{eq:qp-primitive}
+\end{equation}
+Here $b$ may be stored modulo $2a$.  To see the assertion, remove the
+largest integer scalar from the ideal and write its two-dimensional
+Hermite normal form in the basis $1,(D+\sqrt D)/2$.  Closure under
+multiplication by the second basis element forces the second diagonal
+entry to divide both entries in the first row.  Primitivity makes that
+diagonal entry one, giving \eqref{eq:qp-primitive}.  Its remaining closure
+condition is exactly the displayed divisibility.
+
+Put $f_D=\lfloor\sqrt D\rfloor$.  A pair is reduced when
+\begin{equation}
+ 0<\sqrt D-b<2a<\sqrt D+b.
+ \label{eq:qp-reduced}
+\end{equation}
+It then has $1\leq a,b\leq f_D$.  For each $b$ the interval for $a$ has
+length $b$, so there are at most $f_D(f_D+1)/2<D$ reduced pairs.  Define
+\begin{equation}
+ a'=(D-b^2)/(4a),\qquad
+ b'=f_D-((f_D+b)\bmod 2a').
+ \label{eq:qp-gauss}
+\end{equation}
+The inequalities in \eqref{eq:qp-reduced} give
+$\sqrt D-b<2a'<\sqrt D+b$, with the corresponding normalized $b'$;
+more explicitly, $2a'\leq f_D+b$ ensures the quotient in
+$f_D+b=2a'v+r$ is positive, and $0\leq r<2a'$ gives
+$0<\sqrt D-b'<2a'<\sqrt D+b'$.  The inverse is recovered from
+$b=f_D-((f_D+b')\bmod2a')$ and $a=(D-b^2)/(4a')$.
+Thus \eqref{eq:qp-gauss} permutes the reduced pairs.  Its ideal identity is
+\begin{equation}
+ \theta I(a,b)=a I(a',b'),
+ \qquad \theta=(-b+\sqrt D)/2,
+ \qquad |N\theta|=aa'.
+ \label{eq:qp-step-identity}
+\end{equation}
+
+Start at $a_0=1$, with $b_0$ the largest integer at most $f_D$ of the
+parity of $D$.  This is the unique reduced pair for $\mathcal O_F$.
+Its cycle has length $L<D$.  If
+$\eta_0=1$ and $\eta_{k+1}=\eta_k\theta_k/a_k$, then
+$I(a_k,b_k)=\eta_k\mathcal O_F$ and
+$0<\sigma_1(\theta_k/a_k)<1$.  Hence
+$\varepsilon=\eta_L^{-1}$ is a positive unit greater than one.
+
+We verify that it is fundamental and that this cycle contains every
+reduced principal ideal.  Suppose a reduced principal ideal has a
+generator $\gamma$ with $0<\sigma_1(\gamma)<1$.  Let
+$(a_-,b_-)$ be its predecessor and
+$\gamma_-=(a_-/\theta_-)\gamma$.  Clearly
+$\sigma_1(\gamma_-) >\sigma_1(\gamma)$.  In fact it is at most one.
+Otherwise
+\[
+ \sigma_1(\gamma)>
+ \frac{\sqrt D-b_-}{2a_-}=
+ \frac{2a}{\sqrt D+b_-},
+ \qquad
+ |\sigma_2(\gamma)|<\frac{\sqrt D+b_-}{2}.
+\]
+Writing
+$\gamma_-=a_-v+w(b_-+\sqrt D)/2$ in the predecessor ideal gives
+$\gamma=wa+v(-b_-+\sqrt D)/2$.  The two embedding bounds imply
+$|v|\sqrt D<1+(\sqrt D+b_-)/2<2\sqrt D$, so
+$v\in\{-1,0,1\}$.  If $v=0$, $\sigma_1(\gamma)$ is an integer.
+If $v=1$, the inequality $0<\sigma_1(\gamma)<1$ implies $w\leq0$,
+so $\sigma_2(\gamma)\leq-(\sqrt D+b_-)/2$.  If $v=-1$, it implies
+$w\geq1$, so $\sigma_2(\gamma)>(\sqrt D+b_-)/2$.  All three
+possibilities contradict the preceding bounds.
+
+The inverse multipliers range over a finite set of numbers greater than
+one.  Repeated inverse steps must therefore reach
+$\sigma_1(\gamma_-)=1$, at which point the algebraic integer itself is
+one.  This proves that the initial ideal is on the principal cycle.
+It also proves that every unit with first embedding in $(0,1)$ is a
+negative power of $\varepsilon$.  A generator of any reduced principal
+ideal can first be multiplied by a power of the already constructed
+$\varepsilon$ and by a sign to enter that interval.  Consequently
+\begin{equation}
+ \mathcal O_F^*=\{\pm\varepsilon^j:j\in\mathbb Z\},
+ \qquad \frac25<\log\varepsilon<\frac12D\log D.
+ \label{eq:qp-unit-bounds}
+\end{equation}
+For the upper bound, each inverse multiplier is
+$(\sqrt D+b_k)/(2a_{k+1})<\sqrt D$ and there are fewer than $D$.
+For the lower bound write $\varepsilon=(x+y\sqrt D)/2$ with
+$|\sigma_2(\varepsilon)|=\varepsilon^{-1}<1$: then $x,y\geq1$ and
+$\varepsilon\geq(1+\sqrt5)/2>e^{2/5}$.
+
+To reduce an arbitrary primitive ideal with $a\leq Z$, while $a>f_D$
+choose $\widetilde b\equiv b\pmod{2a}$ with
+$|\widetilde b|\leq a$ and apply \eqref{eq:qp-step-identity} with
+$a'=|D-\widetilde b^2|/(4a)$.  Since $D<a^2$, this is at most $a/4$.
+After $O(\log Z)$ steps normalize
+$b=f_D-((f_D-b)\bmod2a)$.  Now
+$0<\sqrt D-b<2a$.  If the other reduced inequality fails, then
+$2a>\sqrt D+|b|$; one further step gives
+$2a'=(D-b^2)/(2a)<\sqrt D-|b|\leq\sqrt D$, and its normalized
+successor is reduced.  Comparing that pair with the principal cycle
+decides principality.  Exact products of the known multipliers recover a
+generator when it exists.
+
+The number of factors in these exact products is $O(D+\log Z)$, and
+their numerator and denominator bitlengths are $O(\log(D+Z))$.
+Quadratic-field rational arithmetic therefore has polynomial bit cost in
+$D$ and $\log(Z+2)$.  Multiplying a recovered generator by a suitable
+power of $\varepsilon$ gives a balanced generator satisfying
+\begin{equation}
+ \left|\log\left|\frac{\sigma_1(\gamma)}{\sigma_2(\gamma)}\right|\right|
+ <3\log\varepsilon.
+ \label{eq:qp-balanced-quadratic}
+\end{equation}
+The required exponent and resulting coefficient bitlength remain
+polynomial in $D,\log(Z+2)$.  Logs can be approximated with certified
+error and a fixed slack: after rounding the balancing exponent, a
+bounded error gives the factor three in
+\eqref{eq:qp-balanced-quadratic}.  Cancellation in a small embedding is
+avoided by computing its absolute value as the absolute rational norm
+divided by the larger embedding.
+
+Enumerate $a\leq Z$, $b\pmod{2a}$ satisfying
+\eqref{eq:qp-primitive}, and $m$ with $m^2a\leq Z$.  This proves the
+real quadratic enumeration assertion.  For an imaginary quadratic field,
+enumerate integral elements $(x+y\sqrt{-D})/2$ with
+$x^2+Dy^2\leq4Z$.  There are polynomially many pairs; they include all
+units and all generators of ideals with norm at most $Z$.
+
+\subsubsection{Biquadratic enumeration by parity and weighted lattices}
+
+Write $E=\mathbb Q(\sqrt{d_1},\sqrt{d_2})$, let $d_3$ be the
+squarefree product, and put
+$L=\mathbb Z+\sum_{i=1}^3\mathbb Z\sqrt{d_i}$.
+Then $4\mathcal O_E\subset L$.  Indeed, for
+$x=a_0+\sum_i a_i\sqrt{d_i}\in\mathcal O_E$, its rational trace
+gives $4a_0\in\mathbb Z$, while each relative trace to the corresponding
+quadratic subfield gives $4a_i\in\mathbb Z$.
+Test the 256 cosets of $L$ in $\frac14L$ for integrality by the
+characteristic polynomial of multiplication.  A monic integral
+characteristic polynomial is both necessary and sufficient here.
+Hermite normal form gives an integral basis and exact multiplication
+tables.  Since the discriminant of $L$ is $256d_1d_2d_3$ and
+$[\mathcal O_E:L]\leq256$, we have
+\[
+ |d_i|\leq256D_E,\qquad |\Delta_{F_i}|\leq1024D_E,
+ \qquad D_E=|\Delta_E|.
+\]
+An integral basis obtained in this way has embeddings of absolute value
+at most $49\sqrt{D_E}$.  These deliberately coarse bounds suffice.
+
+Enumerate the Hermite normal forms of all sublattices of index at most
+$Z$ and test closure under the integral-basis multiplication tables.
+These are exactly the integral ideals of norm at most $Z$.
+There are $Z^{O(1)}$ candidates in dimension four.  Fix one,
+$\mathfrak B$, of norm $B$.
+
+For each real quadratic subfield $F_i$ compute
+\[
+ \mathfrak n_i=N_{E/F_i}(\mathfrak B)
+   =(\mathfrak B\tau_i(\mathfrak B))\cap\mathcal O_{F_i},
+ \qquad N_{F_i/\mathbb Q}(\mathfrak n_i)=B,
+\]
+where $\tau_i$ fixes $F_i$.  The identity follows prime ideal by prime
+ideal in the split, inert, and ramified cases.  Multiplication and
+contraction are fixed-dimensional lattice operations.  If any
+$\mathfrak n_i$ is nonprincipal, $\mathfrak B$ is nonprincipal.
+Otherwise compute a balanced generator $\gamma_i$ and a fundamental
+unit $\varepsilon_i$ by the quadratic algorithm.  There are three real
+subfields in the totally real case, and one in the CM case.
+
+If $\mathfrak B=(\beta)$, write
+\[
+ N_{E/F_i}(\beta)=\pm\gamma_i\varepsilon_i^{2k_i+e_i},
+ \qquad e_i\in\{0,1\},
+ \qquad \beta'=\beta\prod_i\varepsilon_i^{-k_i}.
+\]
+The relative norm of $\varepsilon_i$ to its own subfield is its square;
+to a different quadratic subfield it is its rational norm $\pm1$.
+Consequently
+$|N_{E/F_i}(\beta')|=|\gamma_i\varepsilon_i^{e_i}|$.
+Only the at most eight parity tuples remain unknown.
+
+Let $s_{ik}=\pm1$ indicate which real embedding of $F_i$ is induced by
+the $k$th embedding of $E$, choosing the positive embedding of
+$\varepsilon_i$ first.  Put
+\[
+ \ell_i=\log\varepsilon_i,\quad
+ \delta_i=\log|\sigma_{i,1}(\gamma_i)/\sigma_{i,2}(\gamma_i)|,
+ \quad
+ T_k=-\frac14\sum_i s_{ik}(\delta_i+2e_i\ell_i).
+\]
+For the true parity tuple,
+\begin{equation}
+ \log|\sigma_k(\beta')|=\tfrac14\log B-T_k,
+ \qquad |T_k|=O(D_E\log(4D_E)).
+ \label{eq:qp-target}
+\end{equation}
+In the totally real case use
+$\prod_iN_{E/F_i}(\beta')=\beta'^2N_{E/\mathbb Q}(\beta')$.
+In the CM case use
+$\beta'\overline{\beta'}=N_{E/F^+}(\beta')$.
+Both identities give \eqref{eq:qp-target}; conjugate complex embeddings
+have equal weights, and the sum of all four $T_k$ is zero.
+
+Weight the Minkowski embedding by $e^{T_k}$, using $\sqrt2$ times the
+real and imaginary coordinates for one embedding in each complex pair.
+The vector $\beta'$ has length $2B^{1/4}$.  Every nonzero
+$x\in\mathfrak B$ has $|Nx|\geq B$, because $(x)\subset\mathfrak B$.
+Arithmetic--geometric mean and the zero total weight give the same lower
+bound $2B^{1/4}$ for its weighted length.  Thus $\beta'$ is a shortest
+vector.
+
+Approximate the weighted basis by a rational basis $Q$ with
+$\|(Q-V)V^{-1}\|\leq1/1000$, clear denominators, and apply exact LLL.
+In this approximating metric a true shortest vector has length at most
+$1.01\|b_1\|$.  Inequalities \eqref{eq:qp-lll}, followed by backward
+substitution in Gram--Schmidt coordinates, give successively
+\[
+ |c_4|\leq2,\qquad |c_3|\leq3,\qquad |c_2|\leq3,
+ \qquad |c_1|\leq5.
+\]
+It is enough to search the fixed box $[-8,8]^4$.  Convert its points to
+exact elements of $\mathfrak B$ and retain those of absolute norm $B$.
+They generate $\mathfrak B$; a principal ideal has at least one because
+its true parity tuple was tried.  For $\mathfrak B=\mathcal O_E$, retain
+\emph{all} norm-one candidates and all real-subfield fundamental units.
+Every unit is a product of such a balanced candidate and subfield units,
+by the parity normalization.  This includes the roots of unity and
+proves the full unit-generation assertion.
+
+For completeness, the approximation uses polynomially many bits.
+The unweighted embedding matrix of an ideal HNF has entries polynomially
+bounded in $D_E,Z$ and determinant of absolute value $B\sqrt{D_E}$.
+The adjugate formula bounds its inverse polynomially as well.  After
+weighting, the logarithms of both matrix norms are
+$O(D_E\log(4D_E)+\log(Z+2))$.  Entrywise interval precision of this
+order, with a sufficiently large absolute constant, certifies the
+required relative operator error.  Square roots and logarithms are
+computed by exact interval arithmetic.  For exponentials, scale the
+argument to a bounded interval, use its convergent series, and square
+with an explicit propagated error bound.  These operations have
+polynomial bit complexity at this precision.  Exact LLL and the
+subsequent exact norm computations therefore have the asserted
+polynomial cost.  No unit-cost real-arithmetic operation is assumed.
+
+Finally, if $1<\gcd(B,N)<N$, return this factor; since $B\leq Z<N$,
+a gcd larger than one cannot equal $N$.  A generator with norm coprime
+to $N$ has unit image, by its multiplication-matrix adjugate or the norm
+identity.  Integral-basis denominators divide four and are invertible
+modulo odd $N$.  This proves Theorem~\ref{thm:qp-enumeration}.
+
+\subsection{Bounded tests remove the ideal-class cocycle}
+\label{subsec:qp-characters}
+
+Let $q$ be an odd prime or the product of two distinct odd primes, and
+write $\chi$ for the Legendre or Jacobi character modulo $q$.
+For each field $K$, let $\mathfrak p_{K,j}$ be the kernel of its
+embedding to $\mathbb F_{p_j}$ and put
+$\mathfrak q_K=\prod_{p_j\mid q}\mathfrak p_{K,j}$.
+This is a product of selected degree-one primes, not necessarily the
+whole ideal $q\mathcal O_K$.
+
+\begin{lemma}[Field-specific character assembly]
+\label{lem:qp-assembly}
+For every required quadratic field $F$ and biquadratic triangle field
+$E$, put $M_K=\lceil\sqrt{|\Delta_K|}\rceil$.  Fix $Y\geq2$.  Assume
+that all these bounds and the following cutoffs are smaller than $P^-(q)$:
+\[
+ Z_F=\max(M_F^3,M_FY),\qquad
+ Z_E=\max\bigl(M_E^3,M_E\max_{F\subset E}M_F^2\bigr).
+\]
+Suppose $\chi(a)=1$ for $1\leq a\leq Y$, and that $\chi\circ\phi_K$
+is one on all units and all nonzero algebraic integers of absolute norm
+at most the corresponding cutoff.  Then it extends to completely
+multiplicative functions $\chi_K^*$ on integral ideals, zero exactly on
+ideals divisible by selected primes over $q$, with these properties:
+\begin{enumerate}
+\item $\chi_K^*((\gamma))=\chi(\phi_K(\gamma))$;
+\item every prime ideal in a quadratic field above a rational prime
+      $r\leq Y$ has value one;
+\item for $F\subset E$ and ideals $\mathfrak c$ coprime to the rational
+      integer $q$, one has
+      $\chi_E^*(\mathfrak c\mathcal O_E)=\chi_F^*(\mathfrak c)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Choose in each inverse ideal class $c^{-1}$ an integral representative
+$\mathfrak a_{K,c}$ of norm at most $\sqrt{|\Delta_K|}$, with
+$\mathfrak a_{K,1}=\mathcal O_K$.  It is coprime to $q$.
+For an ideal $\mathfrak c$ avoiding $\mathfrak q_K$, define
+\[
+ \chi_K^*(\mathfrak c)=\chi(\phi_K(\gamma)),
+ \qquad (\gamma)=\mathfrak a_{K,[\mathfrak c]}\mathfrak c,
+\]
+and set it to zero otherwise.  Unit triviality makes it independent of
+the generator.  For two ideal classes $c_1,c_2$, put
+$\mathfrak e=\mathfrak a_{K,(c_1c_2)^{-1}}$.  The identity
+\[
+ (\mathfrak a_{c_1}\mathfrak c_1)
+ (\mathfrak a_{c_2}\mathfrak c_2)(\mathfrak a_{c_1c_2}\mathfrak e)
+ =
+ (\mathfrak a_{c_1c_2}\mathfrak c_1\mathfrak c_2)
+ (\mathfrak a_{c_1}\mathfrak a_{c_2}\mathfrak e)
+\]
+is an identity between products of principal ideals.  Its two correcting
+principal factors have norms at most $M_K^2$ and $M_K^3$, so their
+characters are one.  Cancellation proves multiplicativity; the zero
+extension is multiplicative because selected prime divisibility is.
+
+A degree-one prime above $r\leq Y$ has its correcting principal ideal
+of norm at most $M_Fr$, hence has value one.  This includes ramified
+primes.  An inert prime ideal is $(r)$ and has value $\chi(r)=1$.
+For compatibility put $\mathfrak b=\mathfrak a_{F,[\mathfrak c]}$.
+Extending $(\gamma)=\mathfrak b\mathfrak c$ to $E$ gives
+\[
+ \chi_E^*(\mathfrak b\mathcal O_E)
+ \chi_E^*(\mathfrak c\mathcal O_E)=\chi_F^*(\mathfrak c).
+\]
+The principal correction defining the first factor has norm at most
+$M_E N_F(\mathfrak b)^2\leq M_E M_F^2$, so that factor is one.
+\end{proof}
+
+Only finite lists are needed to enforce these hypotheses.  A generating
+set of units implies triviality on every unit, including inverse powers.
+Any two generators of one principal ideal differ by a unit.  Thus the
+finite output of Theorem~\ref{thm:qp-enumeration} enforces every assertion
+in Lemma~\ref{lem:qp-assembly}; no class representatives or ideal
+characters are computed by the algorithm.
+
+\subsection{Sparse Gram positivity, with ramification retained}
+\label{subsec:qp-gram}
+
+Let $S$ be a finite set of distinct rational squareclasses, viewed in a
+finite $\mathbb F_2$-space, and put $H=|S|\geq2$.
+For every nonzero difference $a+b$, supply its quadratic field
+$F_{a+b}$ and the character from Lemma~\ref{lem:qp-assembly}.
+For every triangle of distinct vertices supply the compatible
+biquadratic field of its three edge classes.  Assume every prime ramified
+in an edge field is at most $Y$, and that all the small-prime characters
+in that lemma are one.  For $(n,q)=1$ put
+\[
+ b_\ell(n)=\sum_{N_F\mathfrak a=n}\chi_F^*(\mathfrak a),
+ \qquad F=F_\ell.
+\]
+Each $b_\ell$ is multiplicative.
+
+\begin{theorem}[Ramification-tolerant sparse Gram inequality]
+\label{thm:qp-gram}
+There is a multiplicative artificial diagonal $b_0$, with
+$0\leq b_0(n)\leq\tau(n)$, such that the matrix
+$B(n)=(b_{a+b}(n))_{a,b\in S}$ is positive semidefinite for every
+$(n,q)=1$.  For $Y$-smooth such $n$, $B(n)-J$ is positive
+semidefinite, where $J$ is the all-ones matrix.  Consequently, writing
+$\Psi_q(X,Y)$ for the number of $Y$-smooth integers at most $X$ coprime
+to $q$,
+\begin{equation}
+ \max_{\ell\in(S+S)\setminus\{0\}}
+ \sum_{\substack{n\leq X\\(n,q)=1}}b_\ell(n)
+ \geq \Psi_q(X,Y)-\frac{X(1+\log X)}{H-1}.
+ \label{eq:qp-gram-average}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+First let $r>Y$ be a prime not dividing $q$.  No edge field ramifies.
+Choose $h_a=\pm1$ for its local squareclass at $r$, so $F_{a+b}$
+splits precisely when $h_a=h_b$.  In a split field, the two prime-ideal
+signs are $\alpha$ and $\chi(r)\alpha$.  If $\chi(r)=1$, they are
+equal.  For three vertices of the same signature, the four primes of
+the compatible biquadratic field show that
+\[
+ \alpha_{a+b}\alpha_{b+c}\alpha_{a+c}=\chi(r)=1.
+\]
+Indeed the three extended quadratic primes have pairs of biquadratic
+prime signs whose product is the product of all four signs times a
+square; the former is $\chi_E^*((r))=\chi(r)$.
+Choosing an anchor in each signature class now gives
+$\alpha_{a+b}=v_av_b$ for signs $v_a$ within that class.  Only these
+triangles, not a full character family, are used.
+
+For $e\geq1$ define the diagonal
+\[
+ b_0(r^e)=
+ \begin{cases}
+ e+1,&\chi(r)=1,\\
+ 0,&\chi(r)=-1,\ e\text{ odd},\\
+ 1,&\chi(r)=-1,\ e\text{ even}.
+ \end{cases}
+\]
+The split Euler coefficient is
+$\sum_{j=0}^e\alpha^j(\chi(r)\alpha)^{e-j}$; the inert coefficient
+is zero for odd $e$, and $\chi(r)^{e/2}$ for even $e$.
+Thus the four possible matrices are
+\[
+\begin{array}{c|c}
+\text{case}&B(r^e)\\\hline
+\chi(r)=1,\ e\text{ odd}&
+ (e+1)\bigoplus_Cv_Cv_C^{\mathsf T}\\
+\chi(r)=1,\ e\text{ even}&
+ \frac{e+2}{2}J+\frac e2hh^{\mathsf T}\\
+\chi(r)=-1,\ e\text{ odd}&0\\
+\chi(r)=-1,\ e=2m&J\ (m\text{ even}),\quad hh^{\mathsf T}\ (m\text{ odd}).
+\end{array}
+\]
+All are positive semidefinite.
+
+Now let $r\leq Y$, allowing ramification and $r=2$.
+The local squareclass group has order four at odd $r$ and order eight
+at 2.  Its two-element subgroup $U$ consists of the trivial and the
+unramified quadratic class; at 2 these are represented by 1 and 5.
+Partition the vertices according to cosets of $U$, and let $v_0,v_1$
+be the indicator vectors of the two classes within one coset.
+The quotient of two equal local classes is split, of the two different
+classes in one coset is inert, and of classes in different cosets is
+ramified.  Their coefficients are respectively $e+1$, zero or one
+according to the parity of $e$, and one.  All prime-ideal signs are one
+by Lemma~\ref{lem:qp-assembly}.  The cross-coset entries of
+$B(r^e)-J$ vanish.  Within a coset its contribution is
+\[
+ \frac{e-1}{2}(v_0+v_1)(v_0+v_1)^{\mathsf T}
+ +\frac{e+1}{2}(v_0-v_1)(v_0-v_1)^{\mathsf T}
+ \quad(e\text{ odd}),
+\]
+or $e(v_0v_0^{\mathsf T}+v_1v_1^{\mathsf T})$ for even $e$.
+These are positive semidefinite, including repeated local classes.
+
+Multiplicativity makes $B(n)$ the entrywise product of its prime-power
+matrices; $B(1)=J$.  The Schur product theorem preserves positive
+semidefiniteness.  It also preserves the stronger assertion for smooth
+integers, since
+$(J+C)\circ(J+D)-J=C+D+C\circ D$ is positive semidefinite when
+$C,D$ are.  Therefore
+\[
+ \sum_{a,b\in S}b_{a+b}(n)
+ \geq H^2\mathbf1_{n\text{ is }Y\text{-smooth}}.
+\]
+Subtract the diagonal and sum; use
+$\sum_{n\leq X}\tau(n)\leq X(1+\log X)$.
+There are $H(H-1)$ ordered off-diagonal entries.  Dividing by this
+number proves \eqref{eq:qp-gram-average}, even when differences repeat.
+\end{proof}
+
+\subsection{A uniform quadratic-field Burgess bound}
+\label{subsec:qp-burgess}
+
+\begin{theorem}[Uniform prime-or-semiprime orbit estimate]
+\label{thm:qp-burgess}
+Let $F=\mathbb Q(\sqrt d)$ have discriminant absolute value $D$.
+Let $q$ be an odd prime or a product $p_1p_2$ of distinct odd primes,
+and suppose
+\[
+ P^-(q)>D,\qquad D\leq q^{1/200},\qquad
+ \chi(\phi_{F,q}(u))=1\quad(u\in\mathcal O_F^*).
+\]
+For an integral ideal $\mathfrak b$ of norm $B_0\leq\sqrt D$ and
+$q^{3/10}\leq W\leq q^{2/5}$, an effective absolute constant $C_B$
+satisfies
+\begin{equation}
+ \left|
+ \sum_{\substack{\gamma\in(\mathfrak b\setminus\{0\})/\mathcal O_F^*\\
+          1\leq|N\gamma|\leq B_0W}}
+       \chi(\phi_{F,q}(\gamma))
+ \right|
+ \leq C_BD^2Wq^{-1/4000}.
+ \label{eq:qp-burgess}
+\end{equation}
+\end{theorem}
+
+We give the full estimate, including the case of a small prime factor
+of $q$.  It follows the uniform sixteenth-moment argument in
+\cite{CogDet2026}, with the precise splitting-field form of
+\eqref{eq:qp-weil}.
+
+\subsubsection{Planar geometry and representative regions}
+
+If a lattice $\Lambda\subset\mathbb R^2$ has covolume $V$ and
+$\|w\|_\infty\geq\mu$ for $w\ne0$, put $\rho=2V/\mu$.
+For a rectangle of side lengths $S_1,S_2$,
+\begin{equation}
+ \frac{(S_1-2\rho)(S_2-2\rho)}V
+ \leq\#(\Lambda\cap Q)
+ \leq\frac{(S_1+2\rho)(S_2+2\rho)}V,
+ \label{eq:qp-rectangle}
+\end{equation}
+where the lower bound requires $S_i>2\rho$.
+Also
+\begin{equation}
+ \#(\Lambda\cap(z+[-S,S]^2))\leq(2S/\mu+1)^2.
+ \label{eq:qp-packing}
+\end{equation}
+Here is a proof independent of lattice shape.  Choose a shortest
+Euclidean vector $w_1$, complete it by a vector $w_2$ of least positive
+perpendicular height, and subtract a multiple of $w_1$ to make its
+projection at most $\|w_1\|/2$.  It is a basis.  With
+$h=V/\|w_1\|$, shortest-vector minimality gives
+$\|w_2\|^2\leq\|w_1\|^2/4+h^2\leq\|w_2\|^2/4+h^2$,
+and hence both basis lengths are less than $2V/\mu$.
+The centered fundamental parallelogram lies inside a sup-norm ball of
+radius $\rho$.  Its translates cover the shrunken rectangle and fit
+inside the enlarged one, proving \eqref{eq:qp-rectangle}.
+Disjoint open sup-norm balls of radius $\mu/2$ prove
+\eqref{eq:qp-packing}.
+
+Put $R_*=(B_0W)^{1/2}$.  In the imaginary case use the embedding
+$\iota(x)=(\Re x,\Im x)$ and the punctured disk of radius $R_*$.
+Divide its sum by $|\mathcal O_F^*|\in\{2,4,6\}$ to obtain the orbit
+sum.  In the real case each orbit has a unique representative with
+$\sigma_1(\gamma)>0$ and
+$0\leq\log|\sigma_1(\gamma)/\sigma_2(\gamma)|<2\log\varepsilon$.
+Split this last interval into $K_\varepsilon\leq D^2$ intervals
+$[k,k+\delta_k)$ of width at most one, using
+\eqref{eq:qp-unit-bounds}.  On a strip use
+$\iota_k(x)=(e^{-k/2}\sigma_1(x),e^{k/2}\sigma_2(x))$ and the region
+\[
+ \Omega_k=\{(v_1,v_2):v_1>0, e^{-\delta_k}v_1<|v_2|\leq v_1,
+                                   v_1|v_2|\leq R_*^2\}.
+\]
+Every region lies in $(-2R_*,2R_*)^2$.  For an ideal of norm $C_0$,
+the corresponding lattice has
+\begin{equation}
+ \tfrac12\sqrt D C_0\leq V(C_0)\leq\sqrt D C_0,
+ \quad \mu(C_0)\geq\sqrt{C_0/2},
+ \quad \rho(C_0)\leq2\sqrt D\sqrt{C_0}.
+ \label{eq:qp-ideal-lattice}
+\end{equation}
+The minimum bounds follow from $|Nx|\geq C_0$ for a nonzero ideal
+element, and are unchanged by the real rescaling.
+
+\subsubsection{The grid and bilinear shifts}
+
+Assume first $q\geq2^{8000}$.  Set
+\[
+ \epsilon_0=\epsilon_1=q^{-1/4000},\quad
+ M_g=\lceil2/\epsilon_0\rceil,\quad
+ \ell=2R_*/M_g,\quad B=q^{1/32},\quad
+ A=\frac{\epsilon_1\ell}{4\sqrt{B_0}B}.
+\]
+Thus $\frac23\epsilon_0R_*<\ell\leq\epsilon_0R_*$,
+$2\rho(\mathfrak b)/\ell<\epsilon_1$, and
+\begin{equation}
+ \tfrac18q^{0.11825}\leq A\leq\tfrac14q^{0.16825}.
+ \label{eq:qp-A-range}
+\end{equation}
+Tile $[-2R_*,2R_*)^2$ by squares of side $\ell$.
+Each contains at most $8\epsilon_0^2W/\sqrt D$ lattice points.
+The disk boundary is covered by four graphs of Lipschitz constant one.
+The real-strip boundary is covered by four rays, two hyperbola arcs
+with slope of absolute value at most one, and the axis segment.
+A graph meets at most $6M_g$ square closures; altogether at most
+$40M_g$ boundary squares occur.  Their total contribution is at most
+\begin{equation}
+ 960Wq^{-1/4000}
+ \label{eq:qp-boundary}
+\end{equation}
+for each strip.
+
+For an interior square $Q\subset\Omega_k$, let
+\[
+ \mathcal A=\{\beta\in\mathcal O_F\setminus\{0\}:
+       \|\iota(\beta)\|_\infty\leq A,
+       \,\phi_{F,q}(\beta)\in(\mathbb Z/q\mathbb Z)^*\},
+ \qquad
+ \mathcal B_k=\{\omega\in\mathfrak b:
+       \|\iota_k(\omega)\|_\infty\leq\sqrt{B_0}B\}.
+\]
+Here $\iota$ is the unscaled embedding.  The following effective bounds
+are uniform:
+\begin{equation}
+ \frac{A^2}{\sqrt D}<|\mathcal A|<\frac{16A^2}{\sqrt D},
+ \qquad
+ \frac{2B^2}{\sqrt D}<|\mathcal B_k|<\frac{16B^2}{\sqrt D}.
+ \label{eq:qp-shift-counts}
+\end{equation}
+To check the possible loss of units in the first set, let
+$V_0=V(\mathcal O_F)$ and let $\mathcal A_0$ include zero and all
+points of its box.  Since $\rho(\mathcal O_F)/A<1/8$,
+\eqref{eq:qp-rectangle} gives
+$|\mathcal A_0|>49A^2/(16V_0)$ and
+$|\mathcal A_0|<8A^2/V_0$.
+Every nonzero element has norm below $2A^2<\sqrt q$, so it cannot
+belong to the selected prime above $p_2\geq\sqrt q$ (or above a prime
+modulus $q$).  For the smaller prime $p_1>D\geq3$, if $p_1\leq A$,
+the same rectangle estimate bounds its kernel points by
+$81A^2/(80V_0)$; here $p_1\geq5$ and
+$\rho(\mathfrak p_1)/A\leq2\sqrt D/\sqrt A<1/8$.
+If $p_1>A$, packing bounds them by $16A<A^2/V_0$.
+Subtracting proves the first pair of bounds.
+The second pair follows from
+$\rho(\mathfrak b)/(\sqrt{B_0}B)\leq2\sqrt D/B<1/4$.
+
+For every pair of shifts,
+$\|\iota_k(\beta\omega)\|_\infty\leq2A\sqrt{B_0}B
+=\epsilon_1\ell/2=:h$.  The unmatched points when translating the
+square by $\beta\omega$ lie between its $h$-enlargement and
+$h$-shrinking.  Formula \eqref{eq:qp-rectangle} bounds their number by
+$16\epsilon_1\ell^2/(\sqrt D B_0)$.
+Define
+\[
+ \nu(z)=\#\{(\gamma,\beta)\in
+   (\mathfrak b\cap\iota_k^{-1}(Q))\times\mathcal A:
+             \phi(\gamma)\phi(\beta)^{-1}=z\},
+ \quad
+ T(z)=\sum_{\omega\in\mathcal B_k}\chi(z+\phi(\omega)).
+\]
+Averaging the translated sums and using
+$|\chi(\phi(\beta))|=1$ gives
+\begin{equation}
+ |S_Q|\leq\frac{\sum_{z\bmod q}\nu(z)|T(z)|}
+                  {|\mathcal A||\mathcal B_k|}
+             +\frac{16\epsilon_1\ell^2}{\sqrt D B_0}.
+ \label{eq:qp-shift-average}
+\end{equation}
+
+\subsubsection{Ratio collisions lift to exact identities}
+
+The first moment obeys
+\begin{equation}
+ \sum_z\nu(z)\leq K_0:=\frac{128A^2\ell^2}{DB_0}.
+ \label{eq:qp-first-moment}
+\end{equation}
+A collision of two ratios implies
+$\delta=\gamma_1\beta_2-\gamma_2\beta_1\in\mathfrak b\mathfrak q_F$.
+Indeed $\mathfrak b$ and $\mathfrak q_F$ are coprime, because
+$B_0\leq\sqrt D<P^-(q)$.  This ideal has norm $B_0q$, whereas
+\[
+ |N\delta|\leq16B_0WA^2\leq B_0q^{0.7365}<B_0q.
+\]
+Hence $\delta=0$.  For a fixed pair $(\gamma_1,\beta_2)$, the nonzero
+product $\mu=\gamma_1\beta_2$ has absolute norm below $q^2$.
+Every matching $\beta_1$ generates an ideal divisor of $(\mu)$.
+A quadratic field has at most $\tau(|N\mu|)^2$ such ideal divisors,
+since at most two primes lie over a rational prime.
+
+An effective constant $C_*$ satisfies $\tau(n)\leq C_*n^{1/800}$.
+For example take the product, over primes below $2^{800}$, of the
+maximum of $(j+1)\ell^{-j/800}$ over integers $j\geq0$; each maximum
+occurs in a finite effectively bounded range.  Primes at least
+$2^{800}$ need no factor because $2^j\geq j+1$.
+The number of admissible generators of one ideal divisor is at most
+$6\log q$.  In the real case every embedding absolute value of a
+generator in the $A$-box lies in $[A^{-1},A]$; two such generators
+differ by $\pm\varepsilon^n$ with
+$|n|<5\log A<\log q$, using \eqref{eq:qp-unit-bounds}.
+The imaginary case has at most six units.
+Since $\log q<1000q^{1/1000}$, we obtain
+\begin{equation}
+ \sum_z\nu(z)^2\leq C_1q^{3/500}K_0,
+ \qquad C_1=6000C_*^2.
+ \label{eq:qp-second-moment}
+\end{equation}
+
+\subsubsection{The sixteenth moment with a small semiprime factor}
+
+For each $p_j\mid q$ let
+$\psi_j:\mathcal B_k\longrightarrow\mathbb F_{p_j}$ be the
+evaluation map.  If two images agree, their difference lies in
+$\mathfrak b\mathfrak p_j$ and has norm at most $8B_0B^2$.
+Thus $\psi_j$ is injective whenever $p_j>8B^2$.  This always holds
+for the larger factor $p_2$ and for a prime modulus, since
+$8B^2=8q^{1/16}<\sqrt q$.  Otherwise each fiber has size at most
+\begin{equation}
+ \left(\frac{2\sqrt2 B}{\sqrt{p_j}}+1\right)^2
+ \leq\frac{32B^2}{p_j},
+ \label{eq:qp-fibers}
+\end{equation}
+by \eqref{eq:qp-packing}.
+
+Expand $\sum_z|T(z)|^{16}$ over ordered sixteen-tuples from
+$\mathcal B_k$.  If a residue modulo a prime has odd multiplicity,
+\eqref{eq:qp-weil} bounds its complete character sum by $16\sqrt p$;
+otherwise use $p$.  The tuple classes are:
+\begin{enumerate}
+\item Every individual $\omega$ occurs an even number of times.
+Pairing the sixteen positions gives at most
+$16!|\mathcal B_k|^8<16!16^8q^{1/2}$ tuples, each contributing at most
+$q$.
+\item Some residue modulo $p_1$ has odd multiplicity.
+For a semiprime, some individual element then has odd multiplicity,
+and injectivity at $p_2$ gives an odd residue there too.  The complete
+sum is at most $256\sqrt q$ across fewer than $16^{16}q$ tuples.
+For a prime modulus the same upper bound is valid.
+\item Individual multiplicities are not all even, but all residues
+modulo $p_1$ have even multiplicity.  Necessarily
+$q=p_1p_2$ and $p_1\leq8B^2$.  Pairing and \eqref{eq:qp-fibers}
+give at most $16!512^8q p_1^{-8}$ tuples.  Their sums are at most
+$16p_1\sqrt{p_2}=16\sqrt q\sqrt{p_1}$, hence total
+$O(q^{3/2}p_1^{-15/2})$.
+\end{enumerate}
+Chinese remaindering multiplies the two prime sums, including zero
+character values.  Therefore
+\begin{equation}
+ \sum_{z\bmod q}|T(z)|^{16}\leq C_2q^{3/2},
+ \quad C_2=16!16^8+256\cdot16^{16}+16!16\cdot512^8.
+ \label{eq:qp-sixteenth}
+\end{equation}
+The third case is why no balance assumption on the two prime factors
+is needed.
+
+\subsubsection{The power saving and effective constants}
+
+Apply H\"older to
+$\nu^{7/8}(\nu^2)^{1/16}(|T|^{16})^{1/16}$, using
+\eqref{eq:qp-first-moment}--\eqref{eq:qp-sixteenth} and
+\eqref{eq:qp-shift-counts}.  The first term of
+\eqref{eq:qp-shift-average} is at most
+\[
+ 64(C_1C_2)^{1/16}\frac{\ell^2}{B_0}
+ D^{1/16}
+ \left(\frac{B_0}{A^2\ell^2}\right)^{1/16}
+ B^{-2}q^{3/32+3/8000}.
+\]
+Substitute $A=\epsilon_1\ell/(4\sqrt{B_0}B)$ and
+$B_0/\ell^2<4\epsilon_0^{-2}q^{-3/10}$.
+With $D\leq q^{1/200}$ the resulting exponent of $q$ is
+\[
+ \frac1{3200}+\frac1{16000}-\frac3{80}
+ +\frac1{32000}-\frac{15}{256}+\frac3{32}+\frac3{8000}
+ =-\frac1{640}<-\frac1{4000}.
+\]
+Thus each interior square contributes at most
+$(C_3+16)\ell^2B_0^{-1}q^{-1/4000}$, where
+$C_3=128(C_1C_2)^{1/16}$.  There are at most
+$16B_0W/\ell^2$ squares.  Add \eqref{eq:qp-boundary} and at most
+$D^2$ real strips to obtain \eqref{eq:qp-burgess}, for example with
+$C_B=\max(32004,16C_3+1216)$.
+
+For $q<2^{8000}$, each orbit gives a distinct integral ideal
+$\gamma\mathfrak b^{-1}$ of norm at most $W$.  Hence its count is
+at most $\sum_{n\leq W}\tau(n)\leq W(1+\log W)$, which is
+absorbed by $32004Wq^{-1/4000}$.  This proves
+Theorem~\ref{thm:qp-burgess} with an effective absolute constant.
+
+\subsection{From orbit sums to rationally coprime ideal sums}
+
+\begin{corollary}
+\label{cor:qp-ideal-sum}
+Assume Lemma~\ref{lem:qp-assembly} and the hypotheses of
+Theorem~\ref{thm:qp-burgess}.  For $q^{3/10}\leq W\leq q^{2/5}$,
+\[
+ U_F(W):=\sum_{N\mathfrak a\leq W}\chi_F^*(\mathfrak a)
+ \quad\text{satisfies}\quad
+ |U_F(W)|\leq C_BD^3Wq^{-1/4000}.
+\]
+At $X=q^{1/3}$,
+\begin{equation}
+ \left|\sum_{\substack{n\leq X\\(n,q)=1}}b_F(n)\right|
+ \leq 2C_BD^3Xq^{-1/4000}
+       +Xq^{-1/50}(1+\log X).
+ \label{eq:qp-coprime-sum}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+There are at most $D$ ideal classes: choose representatives of norm at
+most $\sqrt D$, use at most $\tau(n)\leq n$ ideals of norm $n$, and
+sum $n\leq\sqrt D$.  Multiplication by the chosen inverse-class
+representative identifies each class sum with an orbit sum in an ideal
+of norm at most $\sqrt D$.  The first assertion follows.
+
+A prime modulus exceeds $X$, so its rational divisibility removes
+nothing.  If $q=p_1p_2$, the larger factor also exceeds $X$.
+At $p_1$, terms divisible by the selected ideal already have character
+zero.  Terms divisible by the other degree-one prime ideal sum to its
+sign times $U_F(X/p_1)$, by multiplicativity.  If
+$p_1\leq q^{1/50}$, then
+$q^{47/150}\leq X/p_1\leq q^{1/3}$, within the orbit estimate's
+range.  Otherwise the elementary divisor bound gives at most
+$Xq^{-1/50}(1+\log X)$.  This proves \eqref{eq:qp-coprime-sum}.
+\end{proof}
+
+\subsection{An elementary smooth-number lower bound}
+\label{subsec:qp-smooth}
+
+We only need the following weak, effective estimate; no smooth-number
+asymptotic or heuristic is used:
+\begin{equation}
+ \pi(Y)-\pi(Y/2)>\frac{Y}{12\log Y}\qquad(Y\geq4096).
+ \label{eq:qp-elementary-primes}
+\end{equation}
+We include an elementary proof, as in \cite{CogDet2026}; stronger
+classical explicit bounds are available in \cite{RosserSchoenfeld1962}.
+First $\prod_{r\leq x}r\leq4^x$.  Induct on the integer part of $x$.
+An even endpoint greater than two is composite.  For an odd endpoint
+$2k+1$, every prime between $k+1$ and $2k+1$ divides
+$\binom{2k+1}{k}\leq4^k$; multiply this by the inductive bound
+$4^{k+1}$ for the remaining primes.
+
+Now put $n=\lfloor Y/2\rfloor\geq2048$.  In the prime factorization
+of $\binom{2n}{n}$, the contribution of each prime power is at most
+$2n$.  Primes greater than $\sqrt{2n}$ occur to exponent at most one,
+and primes in $(2n/3,n]$ do not occur.  Hence
+\[
+ \frac{4^n}{2n+1}\leq\binom{2n}{n}
+ \leq (2n)^{\sqrt{2n}}4^{2n/3}
+                    (2n)^{\pi(2n)-\pi(n)}.
+\]
+After taking base-two logarithms and dividing by $n$, the two error
+terms $\log_2(2n+1)/n$ and
+$\sqrt{2n}\log_2(2n)/n$ decrease for $n\geq2048$.
+At 2048 their sum is less than $781/2048$, so
+\[
+ \frac{\pi(2n)-\pi(n)}n\log_2(2n)
+ >\frac23-\frac{781}{2048}>\frac14.
+\]
+Since $n>2047Y/4096$, $\pi(Y/2)=\pi(n)$, and $\log2>0.69$,
+this implies \eqref{eq:qp-elementary-primes}.
+In particular $\pi(Y)>Y/(12\log Y)$ on this entire range.
+
+If
+$Y=\lfloor X^{1/u}\rfloor$ is sufficiently large and
+$u\leq Y/(24\log Y)$, distinct products of $u$ primes in that
+interval are distinct integers at most $X$.  If $P^-(q)>Y$, none is
+divisible by $q$.  Writing $P_Y$ for the number of available primes,
+\[
+ \Psi_q(X,Y)\geq\binom{P_Y}{u}
+ \geq(P_Y/u)^u
+ \geq X(25\log X)^{-u}.
+\]
+For the final inequality use
+$Y\geq(4096/4097)X^{1/u}$ once $X^{1/u}\geq4097$, and
+$u\log Y\leq\log X$; the constants 12 and 25 leave ample slack.
+All thresholds are effective.
+
+\subsection{A conservative explicit scale certificate}
+
+\begin{lemma}[One common numerical threshold]
+\label{lem:qp-explicit-scale}
+Let $m\geq4096$, $L=2^m$,
+$R=2^{\lceil\sqrt{256Lm}\rceil}$, $V=\log R$,
+$L\leq\theta<2L$, and $X=e^{\theta/3}$.
+Let $u=\lceil(\log X)/V\rceil$ and
+$Y_1=\lfloor X^{1/u}\rfloor$.  Then the prime-product hypotheses
+above hold, and
+\[
+ \Psi_q(X,R)\geq Xe^{-V/8}\quad(P^-(q)>R),
+ \qquad
+ \frac{X(1+\log X)}{\pi(R)}\leq Xe^{-3V/4}.
+\]
+If $q=e^\theta$ is a permitted integer modulus, $D\leq4R^3$, and
+the other hypotheses of Corollary~\ref{cor:qp-ideal-sum} hold, its
+right-hand side is at most $Xe^{-\theta/8000}$, strictly less than
+$\frac12Xe^{-V/8}$.  In particular $D\leq q^{1/200}$ and
+$q\geq2^{8000}$ on this range.
+\end{lemma}
+
+\begin{proof}
+We give coarse bounds so that the natural-logarithm and binary-scale
+conventions are explicit.  They are
+\[
+ 11\sqrt{Lm}<V<17\sqrt{Lm},\qquad
+ V^2>121Lm,\qquad V\geq704m.
+\]
+The first two follow from $0.69<\log2<1$; the last follows from
+$2^m\geq m^2$ and $\sqrt m\geq64$ for $m\geq4096$.
+The ratio $\sqrt{m/2^m}$ decreases for $m\geq2$.
+Thus $3V/\theta\leq51\sqrt{m/2^m}<1/2$ and $u\geq2$.
+It follows that
+$\log Y_1\geq2V/3-\log2\geq V/2$.
+Also $u\leq L$ and
+$\log(24VL)\leq2m+7<V/2$.
+Consequently $Y_1\geq4096$ and
+$u\leq Y_1/(24\log Y_1)$.
+Finally
+\[
+ \frac{u\log(25\log X)}V
+ \leq\frac{2(m+3)}{363m}+\frac{m+3}{704m}<\frac18,
+\]
+which proves the smooth lower bound.  By
+\eqref{eq:qp-elementary-primes}, the logarithm of the factor multiplying
+$e^{-V}$ in the diagonal bound is at most
+$\log(12V(1+2L/3))<3m<V/4$.
+
+The constants in the Burgess proof can also be bounded explicitly.
+For $j\geq0$, $(j+1)2^{-j/800}\leq2048$; for example write
+$j=800k+r$ and use $k+1\leq2^k$.
+Hence $C_*\leq2048^{2^{800}}$ in
+\eqref{eq:qp-second-moment}.  The displayed formulas for $C_1,C_2,C_3$
+and $C_B$ give the convenient bound
+$\log(4C_B)<2^{810}$.
+Now $3\log D\leq12V\leq204\sqrt{Lm}$.
+At $m=4096$,
+\[
+ 2^{810}+204\sqrt{Lm}<2^{2063}
+       <2^{4083}<L/8000.
+\]
+Both ratios to $L$ decrease thereafter.  Thus
+$\log(4C_B)+3\log D\leq\theta/8000$,
+and the first term in \eqref{eq:qp-coprime-sum} is at most
+$\frac12Xe^{-\theta/8000}$.
+The other term satisfies the same bound because
+\[
+ \log\bigl(2(1+\theta/3)\bigr)\leq m+1
+ <L/100\leq\theta(1/50-1/8000).
+\]
+The inequality $D\leq q^{1/200}$ follows separately from
+$4V\leq68\sqrt{Lm}<L/200$, first at $m=4096$ and then by the same
+monotonic ratio.  The condition $q\geq2^{8000}$ is immediate.
+The preceding budget also implies
+$\theta/8000>V/8+\log2$, which proves the final strict comparison.
+\end{proof}
+
+The threshold is deliberately conservative.  It is a certificate of
+effectivity, not a recommendation to run the numerical guards at that
+scale.  The algorithms use an elementary terminating fallback for the
+finite range below it.  This concludes the common package.

@@ -1,0 +1,297 @@
+\begin{abstract}
+Given an odd prime $p$, a quadratic nonresidue is a nonzero residue which
+is not a square modulo $p$.  We give a deterministic construction using
+\[
+ \exp\!\bigl(O(\sqrt{\log p\log\log(p+16)})\bigr)
+\]
+bit operations, with effective absolute constants.  The algorithm does
+not require a factorization of $p-1$.  It tests a rigorously specified
+finite list of rational integers and modular images of units and small
+principal-ideal generators in quadratic and biquadratic fields.
+A sparse positive-semidefinite Gram average, including ramified primes,
+forces one negative character value; a uniform varying-field Burgess
+estimate supplies the contradiction if none exists.  This manuscript
+contains the complete compatible-root construction, parameter choice,
+enumeration algorithm, character assembly, and analytic proof.  Its
+certificate is simply Euler's criterion, so the output is independently
+verified by one modular exponentiation.
+\end{abstract}
+
+\tableofcontents
+
+\section{Statement and an elementary certificate}
+
+For an odd prime $p$, the quadratic character is
+\[
+ \chi_p(a)=
+ \begin{cases}
+ 0,&p\mid a,\\
+ 1,&a\not\equiv0\pmod p\text{ is a square},\\
+ -1,&a\text{ is a nonsquare}.
+ \end{cases}
+\]
+Euler's criterion says
+$a^{(p-1)/2}\equiv\chi_p(a)\pmod p$ for $a\ne0$.
+Thus a proposed nonresidue has a short, deterministic certificate:
+modular exponentiation must return $p-1$.
+For example, $3^3\equiv-1\pmod7$, so 3 is a nonresidue modulo 7.
+The issue is not verification; it is finding a successful candidate
+without an unproved hypothesis about the first small nonsquare.
+
+All unqualified logarithms are natural, and
+$\operatorname{bitlen}(p)=\lfloor\log_2p\rfloor+1$.
+
+\begin{theorem}[Deterministic nonresidue construction]
+\label{thm:qnr-main}
+Given an odd prime $p$ in binary, one can deterministically produce
+$a\in\{1,\ldots,p-1\}$ with $\chi_p(a)=-1$ in
+\begin{equation}
+ \exp\!\bigl(O(\sqrt{\log p\log\log(p+16)})\bigr)
+ \label{eq:qnr-cost}
+\end{equation}
+bit operations.  The implied constant is effective and absolute.
+No factorization of $p-1$, generalized Riemann hypothesis, or
+unproved distribution assumption is used.
+\end{theorem}
+
+This is the nonresidue specialization of a sparse ideal-character
+construction.  In the pinned deterministic Cogentic source
+\cite{CogDet2026}, the corresponding bound is
+$\exp(O(\sqrt{\log p}\log\log p))$.
+The difference here is the use of a sparse triangle-compatible Gram
+family and the retention of all ramified small primes.
+With
+$L_p[\alpha,c]=\exp((c+o(1))(\log p)^\alpha
+(\log\log p)^{1-\alpha})$, the new scale is
+$L_p[1/2,O(1)]$.  No optimized leading $L$-constant is asserted.
+
+\section{Compatible roots without knowing a nonresidue}
+\label{sec:qnr-roots}
+
+It might appear circular to enumerate number fields modulo $p$ when a
+square-root algorithm often starts by finding a nonresidue.  The
+construction below avoids that circularity: it creates square roots of
+\emph{selected products} of small signed primes, using only two-group
+comparisons.  It never calls a general square-root routine.
+
+Write $p-1=2^tu$ with $u$ odd; this only strips trailing binary zeroes.
+Let $q_0=-1$ and let $q_1,\ldots,q_K<p$ be distinct positive primes.
+First test all $q_j$ by Euler's criterion.  A negative value ends the
+algorithm.  Otherwise put $z_j=q_j^u\pmod p$ and find its order
+$2^{r_j}$ by repeated squaring.  Choose a pivot $j_*$ of maximal
+$r_j$, and set $\zeta=z_{j_*}$, $r_*=r_{j_*}$.
+Because $z_0=-1$, $r_*\geq1$.
+
+To recover $m_j$ with $z_j=\zeta^{m_j}$, start with $m=0$ and maintain
+\[
+ (z_j\zeta^{-m})^{2^{r_*-\nu}}=1\pmod p.
+\]
+At step $\nu$, its half-power is one of the two field roots $\pm1$ of
+$X^2-1$.  In the $+1$ case leave $m$ unchanged; in the $-1$ case add
+$2^\nu$.  This flips the half-power because
+$\zeta^{2^{r_*-1}}=-1$.  At the end $z_j=\zeta^{m_j}$, with
+$0\leq m_j<2^{r_*}$.
+This proof only uses the two roots of $X^2-1$ in an odd prime field;
+there is no hidden discrete-logarithm search of exponential length.
+
+Let $i_1,\ldots,i_K$ be the nonpivot indices.  Define
+\[
+ \delta_r=m_{i_r}\bmod2,\qquad
+ d^{(r)}=q_{j_*}^{\delta_r}q_{i_r},\qquad
+ s^{(r)}=(d^{(r)})^{(u+1)/2}
+          \zeta^{-(m_{i_r}+\delta_r)/2}\pmod p.
+\]
+Then $(s^{(r)})^2=d^{(r)}\pmod p$.  For a binary vector $\ell$, write
+$\sum_r\ell_r\delta_r=2k(\ell)+\epsilon(\ell)$ and put
+\begin{equation}
+ d_\ell=q_{j_*}^{\epsilon(\ell)}\prod_{\ell_r=1}q_{i_r},
+ \qquad
+ s_\ell=q_{j_*}^{-k(\ell)}\prod_{\ell_r=1}s^{(r)}\pmod p.
+ \label{eq:qnr-compatible-roots}
+\end{equation}
+The nonzero vectors give distinct nontrivial signed squarefree
+radicands, and $s_\ell^2=d_\ell$.
+For $\ell_3=\ell_1+\ell_2$, cancellation gives
+\[
+ s_{\ell_1}s_{\ell_2}=\eta_{12}s_{\ell_3}\pmod p,
+ \qquad
+ d_{\ell_3}=d_{\ell_1}d_{\ell_2}/\gcd(|d_{\ell_1}|,|d_{\ell_2}|)^2,
+\]
+where $|\eta_{12}|$ is the gcd and its sign is negative exactly when
+both radicands are negative.  This is the compatibility condition for
+the corresponding biquadratic modular embedding.
+
+If $q_K\leq R$, vectors of weight at most two give
+$|d_\ell|\leq R^3$.  Only those vectors will be used.
+The base construction costs
+$O(K(\log p)^4)$ elementary bit operations, including powering and
+two-group comparisons; each requested sparse root needs only
+polynomially many further bit operations.  In particular the
+$2^K$ possible vectors are never enumerated.
+
+\section{The finite candidate family}
+\label{sec:qnr-family}
+
+For an integer $m\geq1$ set
+\begin{equation}
+ L=2^m,\quad R=2^{\lceil\sqrt{256Lm}\rceil},\quad
+ K=\pi(R),\quad S=\{0,e_1,\ldots,e_K\},\quad H=K+1.
+ \label{eq:qnr-scale}
+\end{equation}
+These parameters use exact integer square roots and powers of two.
+Every edge difference of $S$ has weight at most two.
+By Section~\ref{sec:qnr-roots}, its field has discriminant at most
+$4R^3$.  Each triangle compositum has discriminant at most
+\[
+ D_*=256R^{12},
+\]
+using the order basis
+$1,\sqrt{d_1},\sqrt{d_2},\sqrt{d_1d_2}$.
+Only primes at most $R$ ramify in these fields.
+
+For every field use its actual discriminant to define
+$M_F=\lceil\sqrt{|\Delta_F|}\rceil$ or
+$M_E=\lceil\sqrt{|\Delta_E|}\rceil$, and set
+\[
+ Z_F=\max(M_F^3,M_FR),\qquad
+ Z_E=\max\bigl(M_E^3,M_E\max_{F\subset E}M_F^2\bigr).
+\]
+The effective integer guard
+\begin{equation}
+ B_m=64D_*^4(R+1)
+ \label{eq:qnr-guard}
+\end{equation}
+dominates $R$, all norm cutoffs, and 64 times every field discriminant.
+At a scale with $p>B_m$, all hypotheses of
+Theorem~\ref{thm:qp-enumeration} hold with $N=p$.
+That algorithm cannot return a proper factor of the prime input, so it
+returns the required lists of unit and principal-generator images.
+
+The candidates are $-1$, the integers $1,\ldots,R$, and all images
+from every edge and triangle field.  Test them by Euler's criterion.
+Their number and construction cost are
+\begin{equation}
+ \exp(O(\log R))\operatorname{poly}(\log p),
+ \label{eq:qnr-family-cost}
+\end{equation}
+since there are at most $H^2$ edge occurrences and $H^3$ triangles,
+and each fixed-degree enumeration has polynomial cost in its numerical
+discriminant and cutoff.  Testing an image is a single modular
+exponentiation of bit cost $\operatorname{poly}(\log p)$.
+
+\section{The contradiction if every candidate is a square}
+\label{sec:qnr-proof}
+
+Suppose $L\leq\log p<2L$, $p>B_m$, and every candidate has
+character one.  Triviality on the listed unit generators implies
+triviality on every unit.  A generator of a principal ideal differs
+from a listed generator by a unit, so all principal-generator
+hypotheses of Lemma~\ref{lem:qp-assembly} hold as well.
+We obtain compatible multiplicative ideal characters in the edge and
+triangle fields.  At all primes at most $R$, including ramified primes,
+the small-prime values are one.
+
+Write $X=p^{1/3}$, $V=\log R$, and
+\[
+ u_0=\lceil(\log X)/V\rceil,
+ \qquad Y_1=\lfloor X^{1/u_0}\rfloor\leq R.
+\]
+Lemma~\ref{lem:qp-explicit-scale} verifies the following inequalities
+throughout the explicit conservative range $m\geq4096$.
+The elementary prime-product bound gives
+\begin{equation}
+ \Psi_p(X,R)\geq X(25\log X)^{-u_0}\geq Xe^{-V/8}.
+ \label{eq:qnr-smooth}
+\end{equation}
+Indeed $u_0\leq2L/(3V)+1$ and
+$V^2\geq256(\log2)L\log L$, so
+$u_0\log(25\log X)/V<1/8$ eventually.
+There are enough primes in $(Y_1/2,Y_1]$, and all are coprime to $p$.
+Also $H-1=\pi(R)\geq cR/\log R$ gives
+\[
+ \frac{X(1+\log X)}{H-1}\leq Xe^{-3V/4}.
+\]
+The ramification-tolerant Gram inequality
+\eqref{eq:qp-gram-average} therefore supplies an edge field with ideal
+sum at least $\frac12Xe^{-V/8}$.
+
+Every edge discriminant obeys $D\leq4R^3$, so
+$D\leq p^{1/200}$ eventually, since $V=o(\log p)$.
+The least-prime condition is simply $p>D$ and is ensured by the guard.
+The uniform orbit estimate and class summation in
+Corollary~\ref{cor:qp-ideal-sum} give
+\[
+ \left|\sum_{N\mathfrak a\leq X}\chi_F^*(\mathfrak a)\right|
+ \leq C_BD^3Xp^{-1/4000}
+ \leq Xe^{-(\log p)/8000}
+\]
+on that range.
+Because $p>X$, there are no ideals of norm at most $X$ divisible by
+the rational prime $p$, so this is the same sum as in the Gram bound.
+The two estimates contradict each other.  Thus some enumerated image
+is a nonresidue.  Its actual value is found by the Euler tests; the proof
+does not require computing the ideal character or the witnessing
+number field's class group.
+
+\section{A total algorithm and its bit complexity}
+
+\begin{algorithm}[Deterministic quadratic nonresidue]
+\label{alg:qnr-full}
+Input an odd prime $p$.
+\begin{enumerate}
+\item Test $p-1$ by Euler's criterion and return it if negative.
+      Put $n=\operatorname{bitlen}(p)$ and form the guards
+      \eqref{eq:qnr-guard} for
+      $1\leq m\leq\lfloor\log_2n\rfloor$.
+      Let $B_{\max}$ be their maximum, or 2 for an empty list.
+\item If $B_{\max}\geq p$, scan $a=1,\ldots,p-1$ with Euler's
+      criterion and return the first nonresidue.
+\item Otherwise, at each scale construct the base roots as in
+      Section~\ref{sec:qnr-roots}, returning any nonresidue detected
+      there.  Enumerate all edge and triangle candidate images of
+      Section~\ref{sec:qnr-family}; test and return the first negative
+      Euler value.
+\item If all scales fail, finish by scanning $a=1,\ldots,p-1$.
+\end{enumerate}
+Reduce every returned residue to $\{1,\ldots,p-1\}$ and verify its
+Euler value equals $-1$.
+\end{algorithm}
+
+Half of the nonzero residues are nonsquares: the squaring map on
+$\mathbb F_p^*$ has kernel $\{1,-1\}$.  Hence the scans terminate.
+For all sufficiently large $p$, $B_{\max}<p$ because
+$\log B_{\max}=O(\sqrt{n\log(n+2)})=o(n)$.
+The scale $m_* =\lfloor\log_2\log p\rfloor$ is included and tends
+to infinity.  Section~\ref{sec:qnr-proof} makes its candidate list
+succeed whenever $m_*\geq4096$.  Thus the last scan is used on a
+finite explicitly bounded range only; no large threshold needs to be
+computed or stored by the algorithm.
+The first scan has cost at most
+$B_{\max}\operatorname{poly}(\log p)$ whenever it is invoked.
+
+There are $O(\log n)$ scales.  At every one,
+$\log R=O(\sqrt{n\log(n+2)})$; formula
+\eqref{eq:qnr-family-cost} bounds the full candidate construction and
+testing cost.  Polynomial logarithmic factors are absorbed into its
+exponential.  This proves Theorem~\ref{thm:qnr-main}.
+
+\section{What the result does and does not provide}
+
+The output certificate is elementary and independent of the
+construction: an arbitrary implementation can check the answer by
+Euler's criterion.  The substantial work in the proof is a guaranteed
+small enough candidate family, not that last verification.
+The argument supplies a first $L$-parameter of $1/2$; it does not prove a
+polylogarithmic bound for the least positive nonresidue, and the output
+need not be a small rational integer.  It may be the modular image of a
+unit or of a principal-ideal generator in an auxiliary field.
+
+The provided exact verification programs check finite algebraic
+identities and exponent accounting.  They are not an implementation of
+all numerical-discriminant enumeration steps or evidence of practical
+speed.  All effective constructions and their bit costs are specified
+in the following appendix.  No formal verification of this entire
+manuscript is claimed.
+
+\appendix
+\input{manuscripts/shared/quadratic_package.tex}

@@ -1,0 +1,430 @@
+\begin{abstract}
+We study a concrete short-relation constructor in the quadratic algebra
+$(\mathbb Z/N\mathbb Z)[X]/(X^2-b)$.  Suppose $b$ is a square modulo
+one prime divisor $p$ of the odd integer $N$, a nonsquare modulo another
+prime divisor $q$, and an even supplied exponent $M$ is divisible by
+$p-1$.  A coefficient-gcd chain finds a proper factor with probability
+at least $(p+3)/(2p)>1/2$, using $O(\log M)$ quadratic-algebra operations.
+Other prime factors and arbitrary prime-power multiplicities are
+allowed.  The proof continues to work when $M$ annihilates both local
+quadratic unit groups, a case in which the one-shot relation can be
+uninformative.  For a distinct-prime semiprime, the resulting factor
+also constructs the actual selected value and a logarithmic-size
+division-free section circuit of an earlier succinct rank-three bundle.
+We prove this transfer directly from its chart equations.  The result
+is an auxiliary supplied-input theorem, not a new general-factorization
+exponent.
+\end{abstract}
+
+\tableofcontents
+
+\section{A short relation with a precise input promise}
+
+A relation in a small algebra is useful for factoring when its
+coefficients vanish in one hidden prime component but not another.
+A short expression alone does not guarantee this discrepancy.
+The theorem below gives both an explicit expression and a proof of
+uniform success under a supplied-exponent promise.
+
+The core algorithm and its proof are in Sections~\ref{sec:qr-algorithm}
+and~\ref{sec:qr-success}.  Section~\ref{sec:qr-saturation} explains why
+the intermediate chain matters.  Section~\ref{sec:qr-section} gives the
+selected-section transfer, including its explicit circuit.
+
+\begin{theorem}[Mixed-prime quadratic relation chain]
+\label{thm:qr-main}
+Let $N$ be odd, let $b$ be a unit modulo $N$, and suppose there are
+distinct primes $p,q\mid N$ with
+\[
+ \left(\frac bp\right)=1,\qquad
+ \left(\frac bq\right)=-1.
+\]
+Supply a positive even integer $M$ satisfying $p-1\mid M$.
+The primes need not be known to the algorithm.  There is a randomized
+algorithm which, on each independent trial, returns a verified proper
+factor of $N$ with probability at least
+\[
+ \frac{p+3}{2p}>\frac12,
+\]
+and otherwise reports failure.  A trial uses $O(\log M)$ quadratic-ring
+multiplications and gcd operations, hence
+$O(\operatorname{bitlen}(M)(\log N)^2)$ elementary bit operations.
+The theorem permits repeated prime factors and additional prime divisors
+of $N$.  It does not require $q-1\mid M$ or a factorization of $M$.
+\end{theorem}
+
+Repeated trials give a Las Vegas algorithm with fewer than two expected
+trials: every returned factor is checked, and only the running time is
+random.  The assumption on $M$ is a genuine supplied input.  If it is
+constructed by another algorithm, that construction and its output
+bitlength must be charged separately.
+
+This develops the earlier short-root-algebra relation specification
+N1101 and its selected-section specialization N1505 in the retained
+catalogue \cite{BroxCatalogue2026}.  Randomized factor extraction from a
+supplied order multiple is classical; the contribution here is the
+explicit quadratic coefficient construction, its saturation-resistant
+proof, and the checked transfer to that particular section target.
+No claim of a new randomized general-factoring complexity class is made.
+
+\section{The algorithm uses two coefficients}
+\label{sec:qr-algorithm}
+
+Set
+\[
+ R=\mathbb Z/N\mathbb Z,
+ \qquad A=R[X]/(X^2-b).
+\]
+An element is represented exactly as $c+dX$.  Multiplication is
+\begin{equation}
+ (c+dX)(c'+d'X)=(cc'+bdd')+(cd'+dc')X,
+ \label{eq:qr-multiply}
+\end{equation}
+so its dimension is fixed and its coordinates have $O(\log N)$ bits.
+Its conjugate is $c-dX$ and its norm is $c^2-bd^2$.
+
+\begin{algorithm}[One coefficient-chain trial]
+\label{alg:qr-chain}
+Input $N,b,M$ as in Theorem~\ref{thm:qr-main}.
+\begin{enumerate}
+\item Sample $a$ uniformly from $\{0,\ldots,N-1\}$.
+      Compute $g=\gcd(a^2-b,N)$ and return it if $1<g<N$.
+\item Write $M=2^tu$ with $u$ odd, and compute
+      $z_0=(X-a)^u\pmod{X^2-b,N}$ by binary powering.
+\item For $j=0,\ldots,t$, write $z_j=c_j+d_jX$ and test
+      \[
+       \gcd(N,d_j),\qquad \gcd(N,c_j-1,d_j).
+      \]
+      Return any proper factor found.  If $j<t$, set
+      $z_{j+1}=z_j^2$ using \eqref{eq:qr-multiply}.
+\item If no proper gcd was found, report failure for this trial.
+\end{enumerate}
+\end{algorithm}
+
+Under the stated promise, $\gcd(a^2-b,N)$ cannot equal $N$: the
+nonsquare condition modulo $q$ makes $a^2-b$ nonzero modulo $q$ for
+every $a$.  An implementation may nevertheless treat this value as an
+unsuccessful trial on inputs outside the promise.
+Exact uniform sampling takes an expected bounded number of
+$\operatorname{bitlen}(N)$-bit draws by rejection.
+The initial powering and the entire squaring chain together use
+$O(\operatorname{bitlen}(M))$ ring operations.  The two gcd tests per
+stage use the same bit bound.  Nothing of degree $M$ is expanded.
+
+\section{Why more than half the samples succeed}
+\label{sec:qr-success}
+
+\begin{proof}[Proof of Theorem~\ref{thm:qr-main}]
+Choose $r\in\mathbb F_p^*$ with $r^2=b$.  The quadratic algebra
+modulo $p$ is the product of two fields, with
+\[
+ X-a\longmapsto(r-a,-r-a).
+\]
+Modulo $q$ it is the field $\mathbb F_{q^2}$.
+Put $e=v_2(p-1)$, and write $p-1=2^em$ with $m$ odd.
+Because $p-1\mid M=2^tu$, one has $e\leq t$ and $u/m$ odd.
+
+Suppose first
+\begin{equation}
+ \left(\frac{a^2-b}{p}\right)=-1.
+ \label{eq:qr-good-a}
+\end{equation}
+The two nonzero split coordinates have opposite quadratic characters,
+since their product is $a^2-b$.
+At stage $e-1$, raising to $u2^{e-1}$ therefore gives the two opposite
+values $1,-1$; Euler's criterion applies because $u/m$ is odd.
+At stage $e$ both coordinates are one.  Consequently
+\begin{equation}
+ d_{e-1}\ne0\pmod p,
+ \qquad c_e-1=d_e=0\pmod p.
+ \label{eq:qr-two-levels}
+\end{equation}
+
+In the field modulo $q$ there are two possibilities.
+If $z_e\ne1$, at least one of $c_e-1,d_e$ is nonzero modulo $q$.
+The content gcd $\gcd(N,c_e-1,d_e)$ contains $p$ and excludes $q$,
+so it is proper.  If $z_e=1$, then $z_{e-1}^2=1$ in a field of odd
+characteristic, so $z_{e-1}=1$ or $-1$.  Its linear coefficient is zero
+modulo $q$ but nonzero modulo $p$ by \eqref{eq:qr-two-levels}.
+Thus $\gcd(N,d_{e-1})$ contains $q$ and excludes $p$, again proper.
+Other primes or larger prime-power multiplicities cannot invalidate
+either conclusion: a gcd containing one prime and excluding another
+is neither one nor $N$.
+
+The two residues $a=\pm r\pmod p$ also always succeed, through
+the first norm gcd, because $a^2-b$ is never zero modulo $q$.
+It remains to count \eqref{eq:qr-good-a}.  Counting pairs $(a,y)$ with
+$y^2=a^2-b$ gives $p-1$ pairs: the equivalent equation
+$(a-y)(a+y)=b$ has one pair for each nonzero first factor, since 2 is
+invertible.  Therefore
+\[
+ \sum_{a\bmod p}\left(\frac{a^2-b}{p}\right)=-1.
+\]
+There are two zeros, hence exactly $(p-1)/2$ negative values.
+Including the two norm-zero residues gives $(p+3)/2$ guaranteed
+successful residues modulo $p$.  A uniform residue modulo $N$
+projects uniformly to $\mathbb F_p$, proving the claimed probability.
+The cost follows from Algorithm~\ref{alg:qr-chain}.
+\end{proof}
+
+\begin{corollary}[The distinct-prime semiprime promise]
+\label{cor:qr-semiprime}
+Let $N=pq$ be a product of distinct odd primes and supply an even $M$
+divisible by both $p-1$ and $q-1$.  A unit $b$ with Jacobi symbol
+$(b/N)=-1$ satisfies the mixed-type hypothesis after relabeling the
+primes.  Such a $b$ can itself be found by random sampling and Jacobi
+tests in expected polynomial time in $\log N$, or a norm gcd may
+already produce a factor.  Thus the complete supplied-exponent
+quadratic-relation algorithm has expected polynomial bit cost in
+$\log N+\operatorname{bitlen}(M)$.
+\end{corollary}
+
+\begin{proof}
+The two Legendre signs have product $-1$, so one is positive and one
+negative.  Exactly half of the units modulo a distinct-prime semiprime
+have Jacobi sign $-1$, by the Chinese remainder theorem and the two
+equal-sized square/nonsquare classes in either field.
+Their density among all residues is
+$\frac12(1-1/p)(1-1/q)\geq4/15$, since distinct odd primes are at
+least 3 and 5.  Gcd and Jacobi tests require polynomial bit cost and
+do not require the factorization.  Apply Theorem~\ref{thm:qr-main}.
+\end{proof}
+
+For a general odd integer, Jacobi sign $-1$ alone does not guarantee
+both a split and a nonsplit prime component.  The mixed-prime statement
+of Theorem~\ref{thm:qr-main}, rather than that semiprime shortcut, is
+the appropriate general promise.
+
+\section{Why a saturated endpoint is not enough}
+\label{sec:qr-saturation}
+
+Consider the simpler test which uses only
+$(X-a)^M-1$, together with its initial norm gcd.
+For this section let $N=pq$ have the mixed types, and assume additionally
+$q-1\mid M$.  In the nonsplit field choose $\alpha^2=b$; then
+$\alpha^q=-\alpha$.  The map
+\begin{equation}
+ a\longmapsto v(a)=\frac{-\alpha-a}{\alpha-a}
+                  =(\alpha-a)^{q-1}
+ \label{eq:qr-norm-one-map}
+\end{equation}
+is a bijection from $\mathbb F_q$ to the norm-one group of
+$\mathbb F_{q^2}^*$ with the identity removed.
+Its values have norm one and are not one; injectivity follows by cross
+multiplication, and the target has $q$ elements.
+Equivalently its inverse is
+$a=\alpha(v+1)/(v-1)$, fixed by Frobenius for norm-one $v$.
+
+It follows that the number of $a\bmod q$ with $(\alpha-a)^M=1$ is
+\begin{equation}
+ d-1,\qquad d=\gcd(M/(q-1),q+1).
+ \label{eq:qr-one-shot-zeros}
+\end{equation}
+Indeed this is the number of solutions to $v^{M/(q-1)}=1$ in a cyclic
+group of order $q+1$, with its identity removed.  Thus the exact number
+of successful residues $a\bmod N$ for the one-shot test is
+\begin{equation}
+ N-(p-2)(d-1).
+ \label{eq:qr-one-shot-count}
+\end{equation}
+The failure choices are precisely the $p-2$ nonzero-norm residues at
+the split prime and the $d-1$ vanishing-relation residues at the
+nonsplit prime.
+
+If $M$ is divisible by both $p^2-1$ and $q^2-1$, the relation vanishes
+on every unit input, and only the initial norm check remains useful.
+The chain in Algorithm~\ref{alg:qr-chain} still succeeds with
+probability above one half.  It inspects the adjacent stages at which
+the split coordinates acquire different signs, rather than relying
+only on the final value.
+
+As a finite exact illustration, for $N=35$, $b=2$, and $M=48$, the
+split prime is 7 and the nonsplit prime is 5.
+Formula \eqref{eq:qr-one-shot-count} gives exactly 10 successful
+one-shot residues out of 35.  The supplied verification program
+enumerates all 35 residues and finds a proper factor on every full-chain
+trial.  That finite statement is an example, not the universal
+probability proof, which was given above.
+
+\section{The actual selected section of the earlier bundle}
+\label{sec:qr-section}
+
+We now connect the relation theorem to a specific earlier construction,
+not merely to the general phrase ``selected scalar.''
+Let $N=p_0q_0$ with distinct odd primes $p_0<q_0$, let
+$R=\mathbb Z/N\mathbb Z$, and set
+\[
+ t_0=\lfloor\sqrt N\rfloor,
+ \qquad m=\lfloor t_0/2\rfloor+1,
+ \qquad G(X)=(1+X)^N-1.
+\]
+On the two standard charts of the projective line use the rank-two
+transition
+\begin{equation}
+ T_N(X)=\begin{pmatrix}X^{-m}&X^{-m}G(X)\\0&X^m\end{pmatrix}.
+ \label{eq:qr-bundle}
+\end{equation}
+Adding the line bundle of degree $m$ gives the earlier rank-three
+construction.  Its selected coordinate is the second coordinate at
+infinity of a section of the rank-two bundle twisted by $-m$.
+The Laurent transition has an $O(\log N)$-gate expression by binary
+powering; this succinctness by itself does not construct a section.
+
+The selected coordinate and its ideal can be determined directly from
+the chart equations, without a splitting theorem for bundles.
+Write a section on the finite chart as $(u_0(X),c_0(X))$ and on the
+infinity chart as $(u_\infty(X^{-1}),c_\infty(X^{-1}))$.
+The twisted transition equation is
+\[
+ \binom{u_0}{c_0}
+ =\begin{pmatrix}X^{-2m}&X^{-2m}G(X)\\0&1\end{pmatrix}
+   \binom{u_\infty}{c_\infty}.
+\]
+The second coordinate must lie in
+$R[X]\cap R[X^{-1}]=R$, so it is a constant $c$.
+The first equation becomes
+\begin{equation}
+ X^{2m}u_0=u_\infty+cG(X).
+ \label{eq:qr-gluing}
+\end{equation}
+Comparing nonpositive powers forces $u_\infty=0$, since $G$ has zero
+constant term.  Comparing powers $1,\ldots,2m-1$ shows that a section
+exists exactly when
+\begin{equation}
+ c\binom Nj=0\pmod N\qquad(1\leq j\leq2m-1).
+ \label{eq:qr-prefix-annihilator}
+\end{equation}
+
+\begin{proposition}[The selected ideal is exactly $p_0R$]
+\label{prop:qr-selected}
+The possible constants $c$ in \eqref{eq:qr-gluing} form the ideal
+$p_0R$.  Every nonzero section has a nonzero such constant, and
+$\gcd(c,N)=p_0$ for every nonzero $c\in p_0R$.
+\end{proposition}
+
+\begin{proof}
+We have
+$p_0\leq t_0\leq2m-1\leq t_0+1<q_0$.
+The last inequality follows from
+$p_0\leq q_0-2$ and $p_0q_0<(q_0-1)^2$.
+Modulo $q_0$, Frobenius gives
+$(1+X)^N=(1+X^{q_0})^{p_0}$, so every coefficient in the prefix
+$1\leq j\leq2m-1$ vanishes.
+Modulo $p_0$, the coefficient at $j=p_0$ equals $q_0\ne0$.
+The prefix coefficient ideal in $R$ is therefore $q_0R$, and its
+annihilator is $p_0R$.  Equation \eqref{eq:qr-prefix-annihilator}
+proves the first claim.  If $c=0$, \eqref{eq:qr-gluing} forces
+$u_0=u_\infty=0$, so the section is zero.  A nonzero element of
+$p_0R$ is divisible by $p_0$ and not by $q_0$, proving the gcd claim.
+\end{proof}
+
+\begin{proposition}[A division-free section from one selected value]
+\label{prop:qr-section-circuit}
+Given any nonzero $c\in p_0R$, one can construct a complete section
+circuit with $O(\log N)$ arithmetic gates.  Conversely, a nonzero
+section's selected value gives a proper factor in polynomial time.
+\end{proposition}
+
+\begin{proof}
+Compute $p_0=\gcd(c,N)$ and $q_0=N/p_0$, and write
+$S_k(U)=1+U+\cdots+U^{k-1}$.
+The chart vectors are
+\begin{equation}
+ s_\infty=\binom0c,
+ \qquad
+ s_0=\binom{cX^{q_0-2m}S_{p_0}(1+X^{q_0})}{c}.
+ \label{eq:qr-section-circuit}
+\end{equation}
+The exponent is nonnegative because $2m-1<q_0$.
+Modulo $p_0$ all relevant multiples of $c$ vanish.
+Modulo $q_0$,
+\[
+ cG(X)=c((1+X^{q_0})^{p_0}-1)
+       =cX^{q_0}S_{p_0}(1+X^{q_0}).
+\]
+Chinese remaindering proves \eqref{eq:qr-gluing} over $R$.
+Joint binary recursion computes $U^k$ and $S_k(U)$ using
+\[
+ S_{2k}(U)=S_k(U)(1+U^k),\qquad
+ S_{2k+1}(U)=S_{2k}(U)+U^{2k}.
+\]
+Together with binary powering for the displayed monomials, this gives
+the gate bound and uses no polynomial division.
+The converse is Proposition~\ref{prop:qr-selected}.
+\end{proof}
+
+Theorem~\ref{thm:qr-main} supplies a factor $h$ on its promised
+semiprime input.  Set $p_0=\min(h,N/h)$ and $c=p_0\pmod N$;
+Proposition~\ref{prop:qr-section-circuit} then constructs the
+\emph{actual requested section}.
+This explicitly reuses the previous selected-section reconstruction,
+which has just been reproved from its equations.
+It does not give a fast section constructor from
+\eqref{eq:qr-bundle} alone: the supplied exponent and the useful local
+type are extra data.  Factoring equivalence is a description of this
+interface, not a reason to reject other possible section constructors.
+
+\section{Two additional exact readouts and their limits}
+
+\subsection{A local rank witness from two characteristic coefficients}
+
+Multiplication by $z_j=c_j+d_jX$ is the matrix
+\[
+ U_j=\begin{pmatrix}c_j&bd_j\\d_j&c_j\end{pmatrix},
+ \quad \tau_j=2c_j,\quad\delta_j=c_j^2-bd_j^2.
+\]
+The two quantities
+\[
+ D_j=1-\tau_j+\delta_j=\det(U_j-I),
+ \qquad E_j=\tau_j^2-4\delta_j=4bd_j^2
+\]
+give the same success guarantee by testing their gcds with $N$.
+At the later decisive stage in \eqref{eq:qr-two-levels},
+$U_j-I$ is zero modulo $p$; if the element is not one in the nonsplit
+field modulo $q$, that multiplication operator is invertible there,
+so $D_j$ separates.  Otherwise $E_{j-1}$ separates because
+$d_{j-1}$ vanishes only at the nonsplit one of these two primes.
+This is an explicit constant-dimensional rank witness, not a generic
+high-dimensional implicit-rank algorithm.
+
+For comparison, over $\mathbb F_2$ the symmetric matrix
+$\bigl(\begin{smallmatrix}1&1\\1&1\end{smallmatrix}\bigr)$ has rank
+one and square zero.  It and the zero matrix have the same characteristic
+polynomial $T^2$ and every positive power trace zero.  Thus generic
+kernel dimensions are not determined by those invariants alone.
+This does not exclude specially structured matrix algorithms.
+
+\subsection{A quotient coefficient is not an arbitrary prefix}
+
+Binary powering computes
+\[
+ (X-a)^E\bmod(X^2-b)=c_E+d_EX,
+ \quad
+ d_E=\sum_{k\text{ odd}}\binom Ek(-a)^{E-k}b^{(k-1)/2},
+\]
+in $O(\log E)$ ring operations.  The squaring recurrences are
+$c_{2E}=c_E^2+bd_E^2$ and $d_{2E}=2c_Ed_E$.
+This is an inexpensive selected coefficient in a fixed-degree quotient.
+It does not recover a general truncation: $X^h(X^2-b)$ has quotient
+value zero but prefix through degree $h$ equal to $-bX^h$, with unit
+coefficient.  The local exponent theorem, not the quotient operation
+alone, makes the coefficients here factor-sensitive.
+
+\section{Reproducibility and unresolved construction costs}
+
+The implementation takes only $N,b,M,a$ and uses exact modular
+arithmetic and gcds.  Known prime factors occur in the verification
+harness solely to check the universal local success implication on
+finite examples, including $p^2q$, $pq^2$, and additional prime
+components.  The one-shot formula \eqref{eq:qr-one-shot-count}, the
+matrix identities, and the section gluing equations have separate exact
+checks.  Such finite tests supplement, and do not replace, the proofs.
+
+The unresolved costs are specific.  General factoring still needs an
+appropriate supplied exponent or a different useful relation.  The
+semiprime mixed type can be obtained by randomized Jacobi sampling, but
+a deterministic sufficiently short successful list is not supplied by
+this coefficient-chain argument.  The selected section is constructed
+under that same extra promise, not from its succinct transition alone.
+No claim of a general algorithm with first $L$-parameter below $1/3$
+is made.

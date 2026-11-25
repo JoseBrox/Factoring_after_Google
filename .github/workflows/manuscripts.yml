@@ -1,0 +1,51 @@
+name: Build manuscripts and verify upstream sources
+on:
+  push:
+    paths:
+      - 'manuscripts/**'
+      - 'scripts/build_manuscripts.py'
+      - 'scripts/fetch_sources.py'
+      - 'references/sources.lock.json'
+      - '.github/workflows/manuscripts.yml'
+  pull_request:
+    paths:
+      - 'manuscripts/**'
+      - 'scripts/build_manuscripts.py'
+      - '.github/workflows/manuscripts.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  manuscripts:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Install the TeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y latexmk texlive-latex-extra texlive-fonts-recommended lmodern poppler-utils
+      - name: Verify immutable source PDFs
+        run: python3 scripts/fetch_sources.py
+      - name: Compile all five manuscripts
+        run: python3 scripts/build_manuscripts.py
+      - name: Record PDF metadata
+        run: |
+          python3 - <<'PY'
+          import pathlib, subprocess
+          for p in sorted(pathlib.Path('papers').glob('*.pdf')):
+              print(p)
+              subprocess.run(['pdfinfo', str(p)], check=True)
+          PY
+      - name: Preserve manuscripts, source PDFs, and build evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: manuscripts-and-sources
+          retention-days: 30
+          path: |
+            papers/*.pdf
+            references/upstream/*.pdf
+            build/**/*.log
+            build/**/*.blg
+            build/tool_versions.json
+            build/source_receipt.json

@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "comparison_date": "2026-11-25",
+  "files": [
+    {
+      "id": "deterministic-pdf",
+      "repository": "google-research/google-research",
+      "commit": "4a7bc8ab0bc770e71a259b7966c500496b99010a",
+      "path": "cogentic_research_papers/deterministic_factoring_l34/paper.pdf",
+      "local_path": "references/upstream/deterministic-paper.pdf",
+      "git_blob_sha1": "973002e0eb92acf3964fc020ca52ba6f1ac384ac",
+      "raw_url": "https://raw.githubusercontent.com/google-research/google-research/4a7bc8ab0bc770e71a259b7966c500496b99010a/cogentic_research_papers/deterministic_factoring_l34/paper.pdf",
+      "license": "CC-BY-4.0",
+      "copyright": "2026 Google LLC"
+    },
+    {
+      "id": "deterministic-md",
+      "repository": "google-research/google-research",
+      "commit": "4a7bc8ab0bc770e71a259b7966c500496b99010a",
+      "path": "cogentic_research_papers/deterministic_factoring_l34/README.md",
+      "local_path": "references/upstream/deterministic-README.md",
+      "git_blob_sha1": "0ace537853fa19ebe20edca585a27197d3f6a4a4",
+      "raw_url": "https://raw.githubusercontent.com/google-research/google-research/4a7bc8ab0bc770e71a259b7966c500496b99010a/cogentic_research_papers/deterministic_factoring_l34/README.md",
+      "license": "CC-BY-4.0",
+      "copyright": "2026 Google LLC"
+    },
+    {
+      "id": "randomized-pdf",
+      "repository": "google-research/google-research",
+      "commit": "4a7bc8ab0bc770e71a259b7966c500496b99010a",
+      "path": "cogentic_research_papers/integer_factorization/paper.pdf",
+      "local_path": "references/upstream/randomized-paper.pdf",
+      "git_blob_sha1": "19f36b2f189ed41ec8e112b92aa9b88a96c6bd1e",
+      "raw_url": "https://raw.githubusercontent.com/google-research/google-research/4a7bc8ab0bc770e71a259b7966c500496b99010a/cogentic_research_papers/integer_factorization/paper.pdf",
+      "license": "CC-BY-4.0",
+      "copyright": "2026 Google LLC"
+    },
+    {
+      "id": "randomized-md",
+      "repository": "google-research/google-research",
+      "commit": "4a7bc8ab0bc770e71a259b7966c500496b99010a",
+      "path": "cogentic_research_papers/integer_factorization/README.md",
+      "local_path": "references/upstream/randomized-README.md",
+      "git_blob_sha1": "6f5a38e10c3b1ee2d8508e7f37ced5f55c95c2c9",
+      "raw_url": "https://raw.githubusercontent.com/google-research/google-research/4a7bc8ab0bc770e71a259b7966c500496b99010a/cogentic_research_papers/integer_factorization/README.md",
+      "license": "CC-BY-4.0",
+      "copyright": "2026 Google LLC"
+    }
+  ],
+  "text_extraction": {
+    "origin_workflow": "https://github.com/JoseBrox/factoring-algorithms/actions/runs/45666731595",
+    "source_git_blobs_verified_before_extraction": true,
+    "method": "PyMuPDF page text from pinned source PDFs; workflow preamble and cleanup removed; page markers retained",
+    "pages": {
+      "deterministic": 59,
+      "randomized": 54
+    },
+    "authoritative_format": "upstream PDF"
+  }
+}

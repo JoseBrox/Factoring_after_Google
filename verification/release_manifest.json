@@ -1,0 +1,95 @@
+{
+  "version": "0.1.0",
+  "date": "2026-11-25",
+  "author": "Jose Brox",
+  "python": "3.12.14",
+  "node": "v24.22.3",
+  "verification": "All eight exact verification programs passed; outputs recorded in expected_results.json.",
+  "proof_scope": "Finite checks are not analytic or formal proof verification.",
+  "files": {
+    "examples/quadratic_relation_example.py": {
+      "sha256": "9d81becd2e1f46a890957f6c52bf8cc7cd664901564c9c092d9342ca815df5d4",
+      "bytes": 652
+    },
+    "references/sources.lock.json": {
+      "sha256": "a83cbf9824a6a98383776603edbb10aa6dda1178bd0c9e2c8e240a2134c855e2",
+      "bytes": 2989
+    },
+    "references/upstream/deterministic-README.md": {
+      "sha256": "22ca183ec37ab19ecdee3798c38015620ea0c4ba6f86099ed56fea7a5f34738e",
+      "bytes": 3282
+    },
+    "references/upstream/deterministic-paper.txt": {
+      "sha256": "1eb0d8ab28762e6438e25bc8d0f0a8277917c28b475841cce916eb8a510188ac",
+      "bytes": 407615
+    },
+    "references/upstream/randomized-README.md": {
+      "sha256": "01213d2cb85f4132e3e6b77882a4c4ecd620663daebc65309f1b153475f36b12",
+      "bytes": 2333
+    },
+    "references/upstream/randomized-paper.txt": {
+      "sha256": "9fd8a34e4c0dcf37131f747f12b7641d0a4f00c23d5b90c22a180135f1c3a336",
+      "bytes": 322520
+    },
+    "scripts/build_manuscripts.py": {
+      "sha256": "662cdc3a5c2d16599e310903ffd472ad9d9e8b6c8725e8d110811a43093013dd",
+      "bytes": 1591
+    },
+    "scripts/fetch_sources.py": {
+      "sha256": "e8df83d3b8f4f4edf863ca186afc0260b03854760798c168a2f02886c42a7df0",
+      "bytes": 1660
+    },
+    "scripts/verify_repository.py": {
+      "sha256": "25f7db75c4aeffa0317935205b5f2fa5526310bb0fdefa1f5e20ea3e02735a43",
+      "bytes": 4352
+    },
+    "src/factoring_after_google/__init__.py": {
+      "sha256": "efd727782fbddbf55b657182d04e061223a6c1d1f27ff56e627576243a6ffe1b",
+      "bytes": 349
+    },
+    "src/factoring_after_google/quadratic_relations.py": {
+      "sha256": "70cc3993d298adae8f8583656a47c31ed4d173d8718e570c09de3e13dc80a7b2",
+      "bytes": 2907
+    },
+    "verification/expected_results.json": {
+      "sha256": "614ee1e2a48d7d6b5b0b984369fd74bcf8ac77251463af05fe1aedcaf69be394",
+      "bytes": 4594
+    },
+    "verification/run_all.py": {
+      "sha256": "054d64290b73ef96de2789c0ec43c9fc3c90d23f1bbab9aa8a91d215e7b9703c",
+      "bytes": 1787
+    },
+    "verification/verify_deterministic_parameters.py": {
+      "sha256": "487e18bbb8a35b4bc7523f3e79cc0113309df2d2e4af3288eab074e0e37bba51",
+      "bytes": 2398
+    },
+    "verification/verify_enumeration_burgess_audit.py": {
+      "sha256": "4de9c8ffa853c8fbee29f455c23e8040d26e483c0efcffd764d2e4e688d4c5b9",
+      "bytes": 1857
+    },
+    "verification/verify_mixed_prime_chain.py": {
+      "sha256": "2302a2b01487a2650d2da076ca8172152d61e8451c70ab547e7448c9766ccc6f",
+      "bytes": 2318
+    },
+    "verification/verify_public_implementation.py": {
+      "sha256": "0addfbd4e36c7ff39c5dab2b96301b95d625df75ab680244dabd4971b19304b2",
+      "bytes": 2531
+    },
+    "verification/verify_ramification_and_relation.py": {
+      "sha256": "2e4733eaac8cb6fd233b12532782bd15be8bbe08e6368fcf1d59f9b0ff27a778",
+      "bytes": 5390
+    },
+    "verification/verify_recursion_budget.py": {
+      "sha256": "bf495df42512b7372adb5aaaf5ec84913c0436d66e36606762c0033157b2170a",
+      "bytes": 2940
+    },
+    "verification/verify_sparse.js": {
+      "sha256": "8e471a40759ec584018e87a469002ffefcf9eb5514d2701fc0474fb8cce1a652",
+      "bytes": 5419
+    },
+    "verification/verify_selected_sections.py": {
+      "sha256": "b9a249f15294344a852379860c179f0da7aba6e50f6e718a377fc06f09c90f96",
+      "bytes": 3962
+    }
+  }
+}

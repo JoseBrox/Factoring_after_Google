@@ -1,0 +1,1847 @@
+% Body only.  The repository wrapper supplies the title, author, preamble,
+% bibliography and document environment.
+\newcommand{\RFLC}[1]{L_N[1/3,#1]}
+\newcommand{\RFLT}[1]{L_N[2/3,#1]}
+\newcommand{\RFF}{\mathbb F}
+\newcommand{\RFZ}{\mathbb Z}
+\newcommand{\RFQ}{\mathbb Q}
+\newcommand{\RFPr}{\mathop{\rm Pr}}
+\newcommand{\RFE}{\mathop{\rm E}}
+
+\begin{abstract}
+We give an explicit conditional improvement of the recursive randomized
+factoring construction in the pinned Cogentic manuscript
+\emph{Unconditional Integer Factorization in Time
+$L_N[1/3,O(1)]$}.  Its announced constants are $105$ for expected time and
+$40$ for deterministic workspace; its printed induction already yields
+$104$ and $38$.  We replace dense linear algebra by a verified sparse
+kernel algorithm, retain only the hidden roots belonging to accepted
+relations, and enlarge the root-prime scale while adjusting the base-pair
+scale.  The resulting conditional bounds are
+\[
+ \RFE T(N)\le L_N[1/3,91.4],\qquad S(N)\le L_N[1/3,19].
+\]
+The conditional qualification is part of the theorem: the weighted
+progression estimates, modular polynomial coupling, global descent
+readiness, and algebraic square-certification assertions are specified
+as a proof contract in the enlarged parameter range.  The source's
+fixed-parameter statements alone do not establish that contract.  We
+prove the sparse kernel and hidden-root statements independently,
+derive the revised recurrence, and supply explicit checks of the
+changed parameter inequalities.  An initially proposed schedule fails
+a root progression-modulus condition; the repaired schedule uses
+$\tau=19/16$ and $g=43/8$ and is recorded with that failure visible.
+An exact rational verifier certifies the finite coefficient inequalities,
+but does not certify the analytic contract.  The first $L$-parameter
+remains $1/3$; no unconditional new factoring record, practical running
+time claim, or bound with first parameter below $1/3$ is asserted.
+\end{abstract}
+
+\tableofcontents
+
+\section{Scope, notation, and comparison}
+\label{rf:scope}
+
+The goal of this manuscript is to make a proposed optimization
+reconstructible and to state exactly which parts are proved here.
+The underlying factoring construction is the version of
+\cite{CogRand2026} at Google Research commit
+\texttt{4a7bc8ab0bc770e71a259b7966c500496b99010a}; the PDF has Git blob
+\texttt{19f36b2f189ed41ec8e112b92aa9b88a96c6bd1e} and 54 pages.
+Source page numbers below refer to that PDF, rather than to an evolving
+repository version.  The separate provenance record and source-fetch
+script identify the same bytes.
+
+For $N>e^e$, put
+\begin{equation}
+ L=\log N,\quad \ell=\log L,\quad
+ U=(L/\ell)^{1/3},\quad
+ \Lambda=L^{1/3}\ell^{2/3},\quad
+ \Xi=L^{2/3}\ell^{1/3}.
+ \label{rf:scales}
+\end{equation}
+Thus $\Lambda=U\ell$, $\Xi=U\Lambda$, and $L=U\Xi$.
+We use the source's distinction between
+\[
+ L_N(\alpha,c)=\exp\{c(\log N)^\alpha
+                         (\log\log N)^{1-\alpha}\}
+\]
+and the assertion $T(N)\le L_N[\alpha,c]$, which means that the
+corresponding normalized logarithmic limsup is at most $c$.
+Writing $\exp((c+o(1))\Lambda)$ always concerns a uniform asymptotic
+upper bound over the inputs and internal states under discussion.
+Constants in a proof contract must be effective when effectivity is
+used in the algorithmic conclusion.
+
+The machine model is a uniform classical probabilistic multitape
+Turing machine.  Time counts bit operations.  Workspace includes all
+active recursive tapes and is bounded for every coin tape.  Sparse
+matrix operations below are implemented by sequential sorting and
+merging; constant-time random access to an exponentially long array
+is not assumed.
+
+\begin{center}
+\begin{tabular}{p{.38\textwidth}ccp{.24\textwidth}}
+\toprule
+Construction or assertion & Time & Space & Status in this manuscript\\
+\midrule
+Pinned source, Theorem 1.1, p.~2
+ & $L_N[1/3,105]$ & $L_N[1/3,40]$ & Source theorem claim\\
+Pinned source, induction, pp.~47--49
+ & $L_N[1/3,104]$ & $L_N[1/3,38]$ & Stronger printed accounting\\
+Sparse implementation with the old root-prime scale
+ & $L_N[1/3,102]$ & $L_N[1/3,19]$ & Conditional precursor\\
+Repaired enlarged-cap schedule studied here
+ & $L_N[1/3,91.4]$ & $L_N[1/3,19]$ & Conditional on the stated contract\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+This table compares the present construction with the pinned source;
+it is not a certification of a world record.  Lenstra and Pomerance
+proved a classical expected-time bound $L_N[1/2,1]$
+\cite{LenstraPomerance1992}.  The familiar
+$L_N[1/3,(64/9)^{1/3}]$ analysis of the general number field sieve uses
+heuristic assumptions \cite{GNFS1993}.  The much larger second
+constants in the present conditional construction therefore should
+not be interpreted as a practical improvement on number field sieve
+implementations.
+
+\subsection{What is changed, and what is retained}
+
+There are three changes with different purposes.
+First, a sparse, verifiable kernel routine replaces dense Gaussian
+elimination.  This changes the leading workspace accounting.
+Second, rejected trial roots are erased, while accepted roots remain
+sealed until a square relation has been selected.  This removes an
+unnecessary array of all trial roots.
+Third, the accepted top-level numerator and denominator are products
+of fewer, larger primes.  Their occurrence probability improves,
+reducing the number of recursive factorizations of integers near
+$\sqrt N$.
+
+The last change is not free.  It enlarges some progression moduli and
+some descendant norms.  Increasing only the prime cap fails; the
+base-pair scale must also increase.  Section~\ref{rf:rootrepair}
+derives this failure and its repair.  The polynomial degree,
+coefficient-height constant, factor-base constant, two-field descent,
+exact square-root tests, and final congruence-of-squares verification
+are retained.
+
+\section{The conditional theorem and its proof contract}
+\label{rf:contract}
+
+We state the main conclusion before describing the construction in
+detail.  The contract below is operational: it identifies the exact
+uniform success and certification statements used in the complexity
+proof.  Section~\ref{rf:analyticcontract} states the corresponding
+analytic and coupling obligations more explicitly.
+
+\begin{assumption}[Enlarged-parameter source contract]
+\label{rf:assumption}
+There is an effective threshold $N_0$ such that the following
+assertions hold for every odd composite, non-perfect-power integer
+$N\ge N_0$ having no prime divisor at most $B$, with the parameters
+and finite procedures in Sections~\ref{rf:parameters}--\ref{rf:algorithm}.
+\begin{enumerate}[label=\textup{(C\arabic*)},leftmargin=*]
+\item \textbf{Setup and uniform global readiness.}
+The capped base-pair and polynomial setup succeeds with probability
+at least $3/4$ and produces a tuple
+$(g_0,g_1,f_1,f_2)$ satisfying all of its stated exact algebraic checks.
+For each such good tuple there is a set
+\[
+ \mathcal Q_{\rm good}\subseteq
+ \{q\text{ prime}:Q_0/2<q\le Q_0,
+                   \ q\nmid 3Ng_0g_1c_{1,d}c_{2,d}\}
+\]
+with at least $3/4$ as many elements as
+$\mathcal P_0=\{q\text{ prime}:Q_0/2<q\le Q_0,
+q\nmid3Ng_0g_1\}$.
+For every fixed $q\in\mathcal Q_{\rm good}$, with the tuple held fixed,
+the capped procedure $\operatorname{DescentTree}(q)$ returns a valid
+tree or a certified proper factor of $N$ with probability at least
+$1-L^{-2}$.  This probability is over fresh tree coins.  The sets of
+good primes are analytical objects and need not be computed.
+
+\item \textbf{Algebraic relation bookkeeping.}
+Every accepted tree has the exact signed relation described in
+Section~\ref{rf:relations}.  After all degree-one parity rows and
+sampled character rows vanish, its class lies in the joint residual
+square-class obstruction space of the two fields.  The local length
+formulas and the enlarged obstruction groups of source Lemma~5.1
+apply to the resulting lists.  They apply also at ramified primes
+in the polynomial order, in the precise length sense used there.
+
+\item \textbf{Character certification.}
+For each tuple from \textup{(C1)}, the capped character sampler of
+source Lemma~5.1 succeeds and leaves a joint residual obstruction
+space of dimension at most two with probability at least $98/100$.
+Its time and deterministic space are at most
+$\exp((8+o(1))\Lambda)$ and $\exp((4+o(1))\Lambda)$,
+respectively.  Its coins are independent of the future sealed roots.
+
+\item \textbf{Exact algebraic square extraction.}
+For the forms and positive factor lists used below, source
+Lemma~5.2 is valid as a deterministic decision and extraction
+algorithm.  With
+\[
+ B_{\rm bit}=\left\lceil
+ 4d^3\log_2(2dM)+M_{\rm fac}\log_2(2N)+d\log_2(2M)
+ \right\rceil,
+\]
+it decides the required field-square predicate and, when true,
+returns the integral polynomial square root in
+$O(d^3B_{\rm bit}^2)$ bit operations and
+$O(d^2B_{\rm bit})$ space.  Final roots and modular squares are
+checked exactly.
+
+\item \textbf{Uniformity of the source procedures.}
+The capped samplers, descent filters, weight evaluation, and
+bookkeeping have the finite bit-operation bounds specified below;
+there is no uncharged factoring oracle, unbounded precision oracle,
+or unbounded-memory random loop.  All errors in \textup{(C1)}--\textup{(C4)}
+and the underlying analytic statements are uniform in their stated
+parameters.  The range changes in
+Section~\ref{rf:analyticcontract} are part of this assumption.
+\end{enumerate}
+\end{assumption}
+
+The principal unproved part of this contract in the present manuscript
+is the independent certification of the source's analytic, conditional
+moment, and global-readiness arguments in the enlarged parameter
+range.  The contract is not an assumption that a factor is known.
+Every factor returned by the machine is verified without it.  Its
+role is to justify the promised expected running time.
+
+\begin{theorem}[Conditional enlarged-cap factoring bound]
+\label{rf:main}
+Assume Assumption~\ref{rf:assumption}.  The modified machine described
+below completely factors every integer $N\ge2$, with verified prime
+outputs, and has
+\[
+ \RFE T(N)\le L_N[1/3,91.4],\qquad
+ S(N)\le L_N[1/3,19].
+\]
+The time bound is worst-case expected time over input integers of
+the given size.  The space bound holds on every coin tape.  The
+machine retains deterministic background trial division and hence
+terminates on every coin tape, including inputs below $N_0$.
+\end{theorem}
+
+The conditional nature of the theorem is essential.  The source
+lemmas are stated using $\tau=1/3$ and $g=3$.  They cannot simply be
+substituted as black boxes after those constants change.  Our
+parameter audit derives the replacements needed in their proofs,
+including one condition that the first proposed schedule violated;
+it does not purport to certify every line of the source's long
+analytic argument.
+
+\section{Parameters, exact data, and the source interface}
+\label{rf:parameters}
+
+\subsection{The modified schedule}
+
+Use
+\begin{equation}
+ \delta=\frac12,\quad \tau=\frac{19}{16},\quad
+ g=\frac{43}{8},\quad \mu=8,\quad \beta=18,\quad
+ \eta_0=2,\quad \rho=\frac34.
+ \label{rf:constants}
+\end{equation}
+Dyadic approximations are taken as in source Definition~2.7:
+the coarse logarithmic scales have fixed absolute error at most
+$2^{-20}$, and fine logarithms and exponentials use precision
+$P_{\log}=\lceil60\widehat\ell^{,2}+40\rceil$.
+Rounding the fine approximations gives errors at most
+$2^{-P_{\log}}$ in logarithms and relative errors of that order in
+exponentials.  All integer formulas below mean these deterministic
+dyadic implementations, rather than access to exact real numbers.
+
+Set
+\begin{align}
+ d&=2\left\lfloor\frac{\delta}{2}\widehat U\right\rfloor+1,
+ &r_0&=\left\lceil\frac{\widehat U}{2\tau}\right\rceil,
+ &Q_0&=\max\{q\in\RFZ_{\ge1}:4q^{2r_0}\le N\},
+ \label{rf:dqr}\\
+ B&=\lceil\exp(\beta\widehat\Lambda)\rceil,
+ &G&=\lceil\exp(g\widehat\Xi)\rceil,
+ &M&=3\lceil\exp(\mu\widehat\Xi)\rceil.
+ \label{rf:bgm}
+\end{align}
+In particular,
+\begin{equation}
+ d=(1/2+o(1))U,\quad
+ r_0=(8/19+o(1))U,\quad
+ \log Q_0=(19/16+o(1))\Xi,
+ \quad \frac N8\le Q_0^{2r_0}\le\frac N4
+ \label{rf:rootasymptotics}
+\end{equation}
+for sufficiently large $N$.  The lower bound follows from
+$Q_0>(N/4)^{1/(2r_0)}-1$ and $r_0/Q_0\longrightarrow0$.
+
+Retain
+\begin{align*}
+ K_\xi&=\lceil\exp(30\widehat\ell^{,2})\rceil,
+ &W&=\lfloor M/(6K_\xi)\rfloor,
+ &W_{\rm cut}&=\lceil W\exp(-\widehat\Xi)\rceil,\\
+ \Lambda_0&=\lceil32\widehat\Lambda\rceil,
+ &S_{\rm skew}&=\lceil\exp(\widehat\Lambda/2)\rceil,
+ &M_{\rm bins}&=\lceil\exp(19\widehat\Lambda/100)\rceil,\\
+ M_{\rm wed}&=\lceil\exp(45\widehat\ell^{,2})\rceil,
+ &H_0&=\lceil\exp(21\widehat\Lambda/5)\rceil,
+ &K_0&=\lceil\exp(160\widehat\ell^{,2})\rceil,\\
+ E_{\rm gcd}&=\lceil\exp(\widehat L^{,1/4})\rceil.
+\end{align*}
+For integer $q>B$, let
+\[
+ E_q=8\left\lceil\frac18\sqrt q\exp(2\widehat\Lambda)\right\rceil,
+ \qquad
+ \mathcal B_q=
+ \bigl([3E_q/4,E_q]\times[E_q/8,E_q/4]\bigr)\cap\RFZ^2.
+\]
+For sufficiently large $N$,
+$\log E_q=\tfrac12\log q+2\Lambda+o(1)$.
+The factor eight makes the box endpoints integral.
+
+Define the geometric ladder by
+\[
+ J=\min\{j\ge1:\rho^j\widehat{\log Q_0}
+                       \le\widehat{\log B}+1\},\qquad
+ Y_0=Q_0,\quad
+ Y_j=\lfloor\exp(\rho^j\widehat{\log Q_0})\rfloor\ (0<j<J),
+ \quad Y_J=B.
+\]
+The bucket $I_j=(Y_{j+1},Y_j]$ has child cap
+$y(j)=Y_{\min(j+2,J)}$.  Children move at least two buckets downward.
+For fixed constants as in \eqref{rf:constants},
+\begin{equation}
+ J\le1.2\ell,\quad
+ r_{\max}\le\lceil J/2\rceil\le0.65\ell,\quad
+ \frac{\log q}{\log y(j)}\le\frac{16}{9}+10^{-3},\quad
+ E_q\le q\exp(-6.9\Lambda)
+ \label{rf:ladderbounds}
+\end{equation}
+eventually.  Rounding changes neither these strict inequalities nor
+their effective eventual validity.
+
+Two analytical quantities used only in proofs are
+\begin{equation}
+ M_{\rm pair}=\lceil\exp(0.19\Lambda)\rceil,
+ \qquad M_G=\lceil\exp(30\ell^2)\rceil.
+ \label{rf:analyticaux}
+\end{equation}
+The source used $M_{\rm pair}=\exp(0.15\Lambda)$.
+Changing $M_{\rm pair}$ does not add an algorithmic search loop.
+Similarly, exceptional conductor sets introduced later are not
+computed by the algorithm.
+
+\subsection{Tuned smoothness parameters and exact weights}
+
+Let $u_{\rm cap}=\lceil4\widehat U\rceil$,
+$L_{\rm grid}=\lceil6u_{\rm cap}\widehat{\log Q_0}\rceil$, and
+$\kappa_0=(\log2)/2$.  For $2\le k\le J$ and
+$0\le v\le L_{\rm grid}$, predefine on demand
+\[
+ y_{k,v}=\left\lfloor
+      Y_k\exp\{-v/(10u_{\rm cap})\}\right\rfloor.
+\]
+For a positive rational $X\in[2,N]$, set
+\begin{align}
+ u(X,Y_k)&=
+ \left\lceil\frac{\widehat{\log X}}
+                   {4(\widehat{\log Y_k}-1/2)}\right\rceil,
+ \label{rf:tune-u}\\
+ v(X,Y_k)&=
+ \left\lfloor10u_{\rm cap}
+ \left(\widehat{\log Y_k}-\widehat\kappa_0-
+       \frac{\widehat{\log X}}{4u(X,Y_k)}\right)\right\rfloor,
+ \label{rf:tune-y}
+\end{align}
+and $y(X,Y_k)=y_{k,v(X,Y_k)}$.
+Out-of-range values use the source sentinel $(y,u)=(0,10)$ and are
+rejected.  All factorization calls below precede evaluation of the
+weight; there is no inexpensive smoothness oracle hidden here.
+
+For an integer $y\ge2^{100}$, let
+$\mathcal P(y)=\{p\text{ prime}:y/2<p\le y\}$ and
+$\mathcal I(y)=(y/2,y]\cap\RFZ$.  Define
+\begin{equation}
+ \widetilde w_{y,u}(n)=\frac1{(4u)!}
+ \#\left\{(m,p_1,\ldots,p_{4u-1}):
+ \begin{array}{l}
+ m\in\mathcal I(y),\ p_i\in\mathcal P(y),\\
+ n=mp_1\cdots p_{4u-1}
+ \end{array}\right\},
+ \label{rf:weight}
+\end{equation}
+and set it to zero for $n\le0$.  It lies in $[0,1]$ and its support
+consists of $y$-smooth integers in $((y/2)^{4u},y^{4u}]$.
+For clarity, its exact evaluation requires only the complete prime
+factorization of $n$.  Write
+\[
+ n=M_{\rm sm}\prod_{p\in\mathcal P(y)}p^{e_p},
+ \quad P^+(M_{\rm sm})\le y/2,\quad E=\sum e_p.
+\]
+If $n$ has a prime factor greater than $y$, the weight is zero.
+Otherwise it is
+\begin{equation}
+ \widetilde w_{y,u}(n)=
+ \begin{cases}
+ (\prod e_p!)^{-1},&M_{\rm sm}=1,\ E=4u,\\
+ (4u\prod e_p!)^{-1},&M_{\rm sm}\in\mathcal I(y),\ E=4u-1,\\
+ 0,&\text{otherwise}.
+ \end{cases}
+ \label{rf:weightformula}
+\end{equation}
+Indeed the free integer $m$ either is the one remaining large prime
+or is exactly $M_{\rm sm}$.  Thus a rational Bernoulli acceptance
+probability can be evaluated and sampled exactly with capped uniform
+integer draws.
+
+\subsection{The polynomial ensemble}
+
+Choose a base pair uniformly from
+\[
+ \mathcal G=\{(g_0,g_1)\in([G,2G]\cap\RFZ)^2:
+       \gcd(g_0,g_1)=\gcd(g_0g_1,3N)=1\}.
+\]
+Choose a monic irreducible $h_0\in\RFF_3[X]$ of the odd degree $d$.
+Let $m_N\equiv g_0g_1^{-1}\pmod N$ and pin the coefficients modulo
+three as in source Definition~4.1.  Explicitly, if
+$h_0=X^d+\sum_{i<d}\bar h_iX^i$, put
+\begin{gather*}
+ \bar c=(\bar h_0,\ldots,\bar h_{d-1},M+3W+1),\qquad
+ c(\widetilde c)=\bar c+3\widetilde c,\\
+ f_{\widetilde c}(X,Y)=\sum_{i=0}^d c_i(\widetilde c)X^iY^{d-i}.
+\end{gather*}
+The affine lattice condition is
+\begin{gather*}
+ \widetilde{\mathcal L}_N=
+ \left\{\widetilde c\in\RFZ^{d+1}:
+       \sum_{i=0}^d\widetilde c_i m_N^i\equiv r_N\pmod N\right\},\\
+ 3g_1^dr_N\equiv-f_0(g_0,g_1)\pmod N.
+\end{gather*}
+On $\widetilde{\mathcal B}=[-W,W]^{d+1}\cap\RFZ^{d+1}$ use the
+weight
+\[
+ \exp\{-\Lambda_0\|\widetilde c\|_1/W\}.
+\]
+Its normalized law before the lattice condition is $P_0$; the law
+conditioned on $\widetilde{\mathcal L}_N$ is $P_{\rm Lap}$.
+The source's finite layer-cake/LLL sampler, with the stated dyadic
+precision and rejection caps, is used to sample two independent
+forms.  It expresses the product Laplace law as a mixture of centered
+integer boxes, samples the box radii, and samples lattice points in a
+box by tiling with an LLL fundamental parallelepiped.  Its finite
+sampling law $P_{\rm alg}$ is within $\RFLT{-1/2}$ of $P_{\rm Lap}$
+in total variation under the contract.  LLL itself is a deterministic
+polynomial-time lattice algorithm \cite{LLL1982}.
+
+For every sampled coefficient vector, the following are exact
+algebraic properties or direct size estimates:
+\[
+ f(g_0,g_1)\equiv0\pmod N,\quad
+ f(X,1)\bmod3=h_0(X),\quad
+ c_d\in[M+1,M(1+2K_\xi^{-1})],
+\]
+and for $(a,b)\in\mathcal B_q$,
+\begin{equation}
+ Ma^d(1-K_\xi^{-1})\le f(a,b)
+                   \le Ma^d(1+2K_\xi^{-1}).
+ \label{rf:normsize}
+\end{equation}
+Reduction modulo three proves irreducibility over $\RFQ$ and excludes
+three from values at primitive pairs.
+
+\subsection{Finite guards and all-coin correctness}
+
+Retain the source's exact guards
+\begin{gather*}
+ d\ge9,\quad r_0\ge10,\quad J\ge4,\quad
+ 2^{100}\le B=Y_J<2B-1<Y_{J-1}<\cdots<Y_0,\\
+ d>J+4,\qquad G^{d-J-4}>N,\qquad W\ge8W_{\rm cut},\\
+ W_{\rm cut}\ge16(d+1)
+       \left\lceil(d+1)2^{(d+3)/2}G\right\rceil.
+\end{gather*}
+If they fail, use deterministic trial division.  Every recursive
+call inside a randomized phase is additionally guarded by the exact
+range $2\le m\le\lfloor\sqrt N/2\rfloor$.  An out-of-range candidate
+is rejected.  A proper gcd is verified before it is returned.
+Primality tests and perfect-power extraction are deterministic;
+AKS provides a suitable certified primality test \cite{AKS2004}.
+These conditions guarantee correctness independently of any density
+claim.  The asymptotic contract guarantees that the fallback and
+range rejections do not spoil the claimed expected bound above an
+effective threshold.
+
+\section{The modified algorithm}
+\label{rf:algorithm}
+
+\subsection{Complete factorization and a single phase}
+
+The full procedure maintains a worklist of unresolved factors.
+It strips powers of two, extracts perfect powers, certifies primes,
+and trial-divides unresolved non-perfect-power composites by all
+integers up to $B$.  It calls the following splitting procedure only
+on the remaining odd composites.  Each returned proper divisor is
+checked before the worklist is updated.  On completion, sorted prime
+powers are certified and their product is checked against $N$.
+
+\begin{algorithm}[A capped randomized splitting phase]
+\label{rf:phasealgorithm}
+For a guarded input $N$, run the following phase.  Repeat fresh
+phases after a failure, overwriting their scratch space.  Interleave
+every transition with one transition of deterministic trial division
+on $N$; either thread may finish the split.
+\begin{enumerate}[leftmargin=*]
+\item Sample $(g_0,g_1)$ and two forms from the ensemble above.
+Check the leading-coefficient and derivative gcds required for
+modular evaluation.  Return any proper gcd; restart on an invalid
+tuple or sampling timeout.
+\item Enumerate the rational primes and degree-one polynomial-order
+prime ideals over $p\le B$.  Sample the character pairs of source
+Lemma~5.1.  Let
+\[
+ D_{\rm row}=3+\pi(B)+|\mathcal F_1(B)|+|\mathcal F_2(B)|+2L_{\rm ch},
+ \quad R_{
+ \rm tot}=D_{\rm row}+3,
+ \quad L_{\rm ch}=4\lceil(\widehat L+1)^2\rceil+40.
+\]
+Only sparse relation records are allocated.
+\item Put $\epsilon_N=\ell^{-1/2}$, using a positive dyadic
+approximation of error $o(\epsilon_N)$, and set
+\begin{equation}
+ M_{\rm cap}=\left\lceil8R_{\rm tot}
+       \exp\left((16/19+\epsilon_N)\widehat\Lambda\right)\right\rceil.
+ \label{rf:trialcap}
+\end{equation}
+Attempt at most $M_{\rm cap}$ independent blind trials, stopping
+when $R_{\rm tot}$ relations have been accepted.
+\begin{enumerate}[label=\textup{(\alph*)},leftmargin=*]
+\item Draw $z$ uniformly from $\{1,\ldots,N-1\}$.
+A nontrivial $\gcd(z,N)$ is returned immediately.  Otherwise seal
+$z$ and expose only $w=z^2\bmod N$.
+\item By Lagrange--Gauss reduction, compute a shortest nonzero
+vector $(x,y)$ of
+$\{(x,y)\in\RFZ^2:x\equiv wy\pmod N\}$, with the deterministic
+sign convention $x>0$.  Check units and
+$2\le x,y\le\lfloor\sqrt N/2\rfloor$.  Call the full factorer on
+both integers.  Require that they are products of disjoint
+$r_0$-element sets of distinct primes in $\mathcal P_0$, none
+dividing $c_{1,d}c_{2,d}$.
+\item Descend each of these $2r_0$ primes by
+$\operatorname{DescentTree}$.  A verified split terminates the
+phase successfully; any failure rejects the trial.  If all trees
+succeed, assemble the signed relation and its sparse parity column.
+Retain its sealed root.  Erase the root of every rejected trial.
+\end{enumerate}
+\item If too few relations were collected, restart.  Otherwise run
+at most three independent attempts of the sparse kernel routine in
+Section~\ref{rf:sparse}, obtaining three verified independent binary
+null vectors or restarting on failure.
+\item Test the seven nonzero combinations of those vectors by the
+exact algebraic square-root routine.  Select the first combination
+that passes both field-square tests, construct the modular root
+$Y$, and verify that it is a unit and
+$Y^2=\prod_{m\in T}w_m\pmod N$.
+\item Only now unseal the accepted roots indexed by $T$, put
+$Z=\prod_{m\in T}z_m\pmod N$, and test $\gcd(Z-Y,N)$.
+Return it if proper; otherwise restart.
+\end{enumerate}
+\end{algorithm}
+
+All elementary uniform draws have the source cap
+$\lceil10(\widehat L+1)^2\rceil$ attempts.  The other source
+sampler caps are retained: polynomial/box draws have polynomial
+caps, character outer proposals have cap
+$\lceil\exp(2\widehat\Lambda)\rceil$, and finite-field polynomial
+splitting uses the prescribed polynomial cap.  The sparse kernel
+uses exact uniform bit strings and finite loops.  The result is a
+single specified machine with an all-coin space bound, rather than
+a procedure that assumes every randomized subroutine eventually
+finishes within its expected budget.
+
+\subsection{Root and algebraic descent steps}
+\label{rf:descent}
+
+For reproducibility, the descent interface is described here rather
+than hidden inside the time recurrence.  A prime $q$ and a residue
+$r$ define
+$\Lambda_{q,r}=\{(a,b):a\equiv br\pmod q\}$.
+It is non-skewed when its shortest nonzero vector has Euclidean
+length at least $\sqrt q/S_{\rm skew}$.  The source's exact lattice
+box sampler draws uniformly from $\Lambda_{q,r}\cap\mathcal B_q$,
+with success per proposal at least $1/825$ when non-skewed.
+
+At a root prime $q_0$, put $r=g_0g_1^{-1}\pmod{q_0}$ and use
+\[
+ T_{\rm try,0}=\left\lceil
+ 8(\widehat L+1)^3\left\lceil\frac{E_{q_0}^2}{31q_0}\right\rceil
+       \exp(-2.75\widehat\Lambda)\right\rceil.
+\]
+For each proposal, require $(a,b)$ primitive, check the gcd of
+$ag_1-bg_0$ with $N$, and form
+\[
+ n_{\rm rat}=(ag_1-bg_0)/q_0,\qquad
+ n_{
+ \rm alg}=f_1(a,b),\qquad n'_{
+ \rm alg}=f_2(a,b).
+\]
+Check all three size guards.  Factor $n_{\rm rat}$ and $n_{\rm alg}$.
+Require the rational weight, tuned to $(n_{\rm rat},B)$, to be
+positive and its primes in $\mathcal P(y)$ to have valuation at most
+one.  Accept with exact probability equal to the algebraic weight
+tuned to $(Ma^d,Y_2)$.  After acceptance, factor $n'_{\rm alg}$ for
+the recorded history, and recurse on the primes $p>B$ occurring
+with odd valuation in $n_{\rm alg}$, omitting primes dividing
+$c_{1,d}$ and enforcing the source unit and residue guards.
+
+An algebraic node has data $(\iota,q,r;\mathcal H)$, where
+$\iota\in\{1,2\}$, $\iota'=3-\iota$, and the history records the
+ancestor pairs and both of their form values.  If $q\in I_j$, put
+\[
+ T_{\rm try}(q)=\left\lceil
+ 8(\widehat L+1)^3\left\lceil\frac{E_q^2}{31q}\right\rceil
+             \exp(-2\widehat\Lambda)\right\rceil.
+\]
+Check non-skewness, all required cross-value nondivisibilities,
+and that $q$ does not divide any determinant between two ancestors.
+For each sampled primitive pair $\boldsymbol a=(a,b)$, let
+\[
+ \Delta_t=|b_t^*a-a_t^*b|,\qquad
+ \Delta'_t=\Delta_t/q^{v_q(\Delta_t)}.
+\]
+Check the source bounds $1\le\Delta_t\le\sqrt N/2$ and
+$M_{\rm wed}\Delta_t\ge a_t^*E_q$, factor every $\Delta'_t$, and
+perform the following exact pruning tests:
+\begin{enumerate}[label=\textup{(\roman*)},leftmargin=*]
+\item $\gcd(\Delta'_t,y_{t,1}^*y_{t,2}^*)\le E_{\rm gcd}$;
+\item the product of primes dividing both $\Delta'_t$ and an
+ancestor determinant is at most $E_{\rm gcd}$;
+\item
+$\prod_{p\mid\Delta'_t,\ p^2\le H_0,\ v_p(\Delta'_t)\ge2}
+ p^{\min(v_p(\Delta'_t),e_{H_0}(p))}\le K_0$,
+where $e_{H_0}(p)=\max\{e:p^e\le H_0\}$.
+\end{enumerate}
+Form $C_\iota=f_\iota(a,b)/q$ and
+$C_{\iota'}=f_{\iota'}(a,b)$, check the exact ranges, and factor
+both.  Accept with probability
+\[
+ \widetilde w_{y_1,u_1}(C_\iota)
+ \widetilde w_{y_2,u_2}(C_{\iota'}),
+\]
+where the parameters are tuned to $(Ma^d/q,y(j))$ and
+$(Ma^d,y(j))$.  Record the relation and recurse on each required
+odd-valuation prime in $(B,y(j)]$, with the enlarged history.
+A failed guard, trial exhaustion, or child failure gives the specified
+failure outcome.  This is source Definition~4.5 with the new global
+parameters, not a replacement of recursive factorization by a
+heuristic smoothness test.
+
+\begin{proposition}[Deterministic descendant bounds]
+\label{rf:treebounds}
+For the modified parameters, every guarded descent has at most
+$\exp(O(\ell^2))$ nodes.  Uniformly over its prospective evaluated
+integers,
+\[
+ |f_\iota(a,b)|\le N^{19/64+o(1)},\qquad
+ \log n_{\rm rat}\le(153/32+o(1))\Xi,\qquad
+ \log\Delta_t=O(\Xi).
+\]
+For sufficiently large $N$, all are below $\sqrt N/2$.
+\end{proposition}
+\begin{proof}
+The ladder gives depth at most $0.65\ell$.  By
+\eqref{rf:normsize},
+\[
+ \log|f_\iota(a,b)|\le\log(2M)+d\log E_{Q_0}
+                    =(\delta\tau/2+o(1))L
+                    =(19/64+o(1))L.
+\]
+The product of two algebraic cofactors has exponent at most
+$19/32+o(1)<1$, so the number of distinct potential children is
+at most $\log_2N$; exact range guards also preserve this crude
+bound on all finite inputs.  Summing the resulting geometric tree
+bound gives $\exp(O(\ell^2))$ nodes.  The rational estimate follows
+from $n_{\rm rat}\le4E_{Q_0}G/Q_0$, and determinants are bounded
+by products of two special-box scales.  Since $\Xi=o(L)$ and
+$19/64<1/2$, the asserted size guards eventually hold.
+\end{proof}
+
+\section{Analytic obligations and parameter transfer}
+\label{rf:analyticcontract}
+
+This section states which source ranges must be widened and proves
+the numerical comparisons used in that proposed transfer.  The
+logical status is deliberate: the calculations are proofs of
+parameter inequalities.  They are not a substitute for an
+independent proof of the analytic and conditional-probability
+statements listed next.
+
+\subsection{The weighted progression obligation}
+
+For $y\in[B^{0.99},Q_0]$, call $(y,u)$ admissible when
+\[
+ \max(10,U/30)\le u\le u_{\rm cap},\qquad
+ 4u\le0.96U,\qquad (8u\log y)^u\le\exp(0.25\Lambda).
+\]
+Put $Q_{\rm AP}(y,u)=\lfloor y^{u/2-1/16}\rfloor$ and
+$\theta_{\rm ls}=\exp(-0.6\Lambda)$,
+$T_{\rm Mel}=\exp(\Lambda)$.
+The enlarged version of source Lemma~3.5 required here has the
+same formulas and error bounds as its original version, but must
+hold for this enlarged $Q_0$ and the full tuned grid.
+It provides exceptional conductor sets
+$\mathcal F_{\rm bad}(y,u)\subset(y^{3/5},Q_{\rm AP}]$ of size at
+most $\exp(1.46\Lambda)$ and a density
+\begin{equation}
+ \nu(X;y,u)=\frac1{(4u)!}
+ \sum_{p_1,\ldots,p_{4u-1}\in\mathcal P(y)}
+ \frac{\boldsymbol1_{X/y\le P\le2X/y}}P,
+ \qquad P=p_1\cdots p_{4u-1}.
+ \label{rf:density}
+\end{equation}
+For $|4u(\log y-\kappa_0)-\log X|\le2$, it requires in particular
+\begin{equation}
+ \nu(X;y,u)\ge\tfrac12(5u\log y)^{-4u}
+                  \ge\exp(-0.97\Lambda),
+ \label{rf:densitylower}
+\end{equation}
+the source's short-scale continuity estimate, and its polynomial
+comparability for nearby tuned scales.
+
+More precisely, let $z_0,R,m\ge1$ be integers,
+$g_m=\gcd(z_0,m)\le y^{3/10}$,
+$\omega(m)\le2\log N$, and
+$|4u(\log y-\kappa_0)-\log z_0|\le2$.
+Write $H=2mR$ and $X_0=z_0-mR$.  When
+\begin{equation}
+ m\le Q_{\rm AP},\quad
+ f\nmid m\quad(f\in\mathcal F_{\rm bad}),\quad
+ X_0e^{-0.2\Lambda}\le H\le X_0e^{-29\ell^2},
+ \label{rf:apconditions}
+\end{equation}
+the required conclusion is
+\begin{equation}
+ \left|\frac1{2R+1}\sum_{t=-R}^R
+       \widetilde w_{y,u}(z_0+mt)-\nu(z_0;y,u)\right|
+ \le e^{-27\ell^2}\nu(z_0;y,u).
+ \label{rf:apclaim}
+\end{equation}
+The unconditional upper-bound portion of the same obligation is
+\begin{equation}
+ \frac1{2R+1}\sum_{t=-R}^R\widetilde w_{y,u}(z_0+mt)
+ \le20\sqrt u\,(u'+1)\{3(u'+1)\log y\}^{u'}\nu(z_0;y,u)
+ \label{rf:roughclaim}
+\end{equation}
+for $1\le u'\le2u$, $H\le z_0/2$, and
+$(y/2)^{u'+1}\ge6m(z_0/H)$, without the good-conductor
+condition.  The associated bad-child estimate from source
+Lemma~3.6(3) has the factor
+$\{3(u'+1)\log y\}^{u'}\exp(-0.93\Lambda)$ and the slightly
+stronger prefix condition $(y/2)^{u'}\ge6m(z_0/H)$.
+
+The exceptional sets are united over the grid to form
+$\mathcal S_{\rm bad}$, and primes $q>B$ dividing $N$ or one of
+its members form $\mathcal Q_{\rm exc}$.  The needed cardinalities
+are $\exp(1.48\Lambda)$ and $\exp(1.49\Lambda)$.
+They are proof devices, not extra input to the finite descent.
+
+\subsection{The coupling and conditional-moment obligations}
+
+The enlarged version of source Lemma~4.2 must allow
+$g=43/8$ and evaluation vectors
+$\boldsymbol v_1,\ldots,\boldsymbol v_R$ with
+\[
+ R\le\lceil J/2\rceil+3,\quad
+ v_{s,1}\ge3v_{s,2}\ge3,\quad
+ \prod_s(2v_{s,1})\le\exp((34/25)\Xi),\quad
+ \gcd(v_{s,1}g_1-v_{s,2}g_0,N)=1.
+\]
+The vectors are primitive and pairwise non-collinear.  The slice
+may also impose $f(r_q,1)=0\pmod q$ for $B<q\le Q_0$,
+$q\nmid3N$.  With
+$\widetilde{\mathcal B}_{\rm core}
+=\{\|\widetilde c\|_1\le W/4\}$ and
+$\widetilde{\mathcal B}_{\rm mid}
+=\{\|\widetilde c\|_1\le W/2\}$,
+the required conclusions are the original fibre tail and transfer
+bounds: a slice meeting the core has tail outside the middle box
+at most $e^{-5\Lambda}$, and any $[0,1]$-valued function of the
+listed evaluations changes expectation under the mod-$N$
+conditioning by at most
+\[
+ 2e^{-5\Lambda}\RFE_{P_0}(\Psi)+5e^{-5\Lambda}.
+\]
+The source's multiplicative Laplace sub-averaging bound is retained
+for shifts satisfying its norm and tail hypotheses.
+
+Source Lemma~4.4 must then hold for all valid histories of the new
+ladder, rather than only for the original prime cap.  A history
+contains primitive ancestor pairs at levels separated by at least
+two buckets, their two form values, a current non-skewed prime
+$q\notin\mathcal Q_{\rm exc}$, and the stated nondivisibilities by
+ancestor determinants and opposite-field values.  Its conditional
+polynomial slices must meet the core.  For the source's clean set
+of candidate pairs, the required local conclusions are
+\begin{gather*}
+ \mu_{\rm node}\ge e^{2.04\Lambda},\qquad
+ \RFPr\{Z_{\rm clean}<\mu_{\rm node}/2\}\le e^{-25\ell^2},\\
+ \RFE X_{\boldsymbol a}\le
+ (1+e^{-26\ell^2})\nu_1(\boldsymbol a)\nu_2(\boldsymbol a),\qquad
+ \RFE\sum X_{\boldsymbol a}\boldsymbol1_{\rm bad\ child}
+       \le e^{-0.4\Lambda}\mu_{\rm node}.
+\end{gather*}
+At a rational root the corresponding weight is the single
+algebraic weight, the mean is at least $e^{2.80\Lambda}$, and the
+same concentration and bad-child conclusions are required.
+Source Lemma~4.6's backwards conditional-expectation argument must
+apply to these enlarged slices, giving \textup{(C1)}.  It is this
+uniform conditional statement, not merely an average smoothness
+probability, that is needed for adaptive descent.
+
+\begin{remark}[Limits of the transfer audit]
+The source's Fourier, large-sieve, local-limit, lattice-conditioning,
+and backwards-telescoping arguments have not all been independently
+reproved here.  The displays above state the actual enlarged
+assertions required.  The following sections verify the changed
+size inequalities and locate the original constants that must be
+replaced.  They do not turn the assertions into unconditional
+theorems by referring to a fixed-parameter source statement.
+\end{remark}
+
+\subsection{Grid size and universal admissibility}
+
+The number of grid index pairs is now bounded by $40L\ell$ for
+sufficiently large $N$, in place of the source's $12L\ell$.
+Including $u$ gives at most $200L^2$ admissible triples.
+Polynomial unions therefore preserve the exceptional-set
+coefficients $1.48$ and $1.49$.
+For actual algebraic-node scales, the source tuning calculation gives
+\[
+ \frac{4u}{U}\le
+ \frac{\mu+\delta\eta_0}{\beta}+
+       \frac{\delta}{2\rho^2}+o(1)
+ =\frac{17}{18}+o(1)<0.96.
+\]
+At every algebraic node, $\log y\le\log q$ and
+$\log(Ma^d/q)\ge(d/2-1)\log q+O(\Xi)$ give the lower bound
+\begin{equation}
+ 2u\ge(1/8+o(1))U.
+ \label{rf:algu-lower}
+\end{equation}
+This lower bound is stronger than the universal admissibility bound
+and is used in the close-pair estimate below.
+
+In the general admissible domain, $u\le0.24U$ and
+$\log y=O(\Xi)$ imply
+$\log(8u\log y)\le\ell+O(1)$; hence the printed
+$\exp(0.25\Lambda)$ bound is retained.
+The source's dispensable inequality $5u\log y<L$ need not remain
+literal throughout the enlarged abstract domain.  Replacing it by
+$5u\log y\le C L$ changes the density logarithm only by $O(U)$,
+which is $o(\Lambda)$, and preserves \eqref{rf:densitylower}.
+Also $\log(y^u)\le(0.24\tau+o(1))L=(0.285+o(1))L<L$;
+the large-sieve support and conductor prefactors bounded using
+$\log N$ remain in range.  The estimate
+$6000(\log y)^3\le L^3$ holds eventually for every fixed cap
+coefficient, because $\Xi^3=L^2\ell=o(L^3)$.
+
+\subsection{Exact algebraic path-modulus bounds}
+\label{rf:path}
+
+Let $t=\rho^2=9/16$.  At depth $r$, with ancestors $p_j$ and
+current prime $q$, the ladder gives uniformly
+\[
+ \log p_j\le(\tau t^j+o(1))\Xi\quad(0\le j<r),\qquad
+ \log q\le(\tau t^r+o(1))\Xi.
+\]
+The cumulative special-box contribution is
+$O(\Lambda\ell)=o(\Xi)$.  In the two-point shift of source
+Lemma~4.4, put
+$\Delta_j=|b_j^*a_1-a_j^*b_1|$.  The two moduli are
+\begin{equation}
+ m_1=3\prod_{j<r}\Delta_j
+                 \frac{|b_2a_1-a_2b_1|}{q},\qquad m_2=qm_1.
+ \label{rf:pathmoduli}
+\end{equation}
+Since $\Delta_j\le2E_{p_j}E_q$ and
+$|b_2a_1-a_2b_1|/q\le E_q^2/q=\exp(O(\Lambda))$,
+\[
+ \log m_1\le(\tau F_r+o(1))\Xi,\qquad
+ \log m_2\le(\tau G_r+o(1))\Xi,
+\]
+where
+\[
+ F_r=\frac12\left(\sum_{j<r}t^j+rt^r\right),\qquad
+ G_r=F_r+t^r.
+\]
+Their exact differences are
+\begin{equation}
+ F_{r+1}-F_r=t^r\frac{25-7r}{32},\qquad
+ G_{r+1}-G_r=t^r\frac{11-7r}{32}.
+ \label{rf:fdiff}
+\end{equation}
+Thus
+\begin{equation}
+ \max F_r=F_4=\frac{40261}{32768},\qquad
+ \max G_r=G_2=\frac{181}{128}.
+ \label{rf:fmax}
+\end{equation}
+
+For an algebraic scale $X=Ma^d/q$ or $Ma^d$, tuning gives
+$4u(\log y-\kappa_0)=\log X+O(1)$.  Since $q\ge B$,
+\begin{align*}
+ \log X&\ge(\mu+\delta\eta_0+o(1))\Xi+(d/2-1)\log q,\\
+ \log Q_{\rm AP}&\ge\tfrac18\log X-\tfrac1{16}\log y+O(1)
+             \ge(27/16+o(1))\Xi.
+\end{align*}
+For the last inequality, the coefficient of $\log q$ is eventually
+positive, so minimizing at $q=B$ absorbs degree-rounding errors
+into $O(\Lambda)$.  The exact worst-case comparison is
+\begin{equation}
+ \frac{27}{16}-\tau\max G_r
+ =\frac{27}{16}-\frac{3439}{2048}
+ =\frac{17}{2048}>0.
+ \label{rf:algapgap}
+\end{equation}
+This replaces the source's displayed $0.51$ and $0.85$ envelopes;
+their literal values do not hold for the new cap.
+
+\subsection{A failed schedule and its fixed-root repair}
+\label{rf:rootrepair}
+
+There is a different progression in the root rational first moment
+of source Lemma~4.3, p.~33.  Fix $(a,b)$ and $g_0$.
+The allowed $g_1$ values form a progression of step $q_0$, and
+\[
+ z=(ag_1-bg_0)/q_0=z_{\min}+as.
+\]
+The modulus is $a$, rather than a pair determinant divided by
+$q_0$.  Uniformly for $q_0\in(Q_0/2,Q_0]$,
+\[
+ \log a=(\tau/2+o(1))\Xi,\quad
+ \log z=(g-\tau/2+o(1))\Xi,\quad
+ \log Q_{\rm AP}=((g-\tau/2)/8+o(1))\Xi.
+\]
+Therefore this first moment requires $g>9\tau/2$.
+Keeping $g=3$ with $\tau=19/16$ gives the negative margin
+\begin{equation}
+ \frac{3-\tau/2}{8}-\frac\tau2=-\frac{75}{256}.
+ \label{rf:failedgap}
+\end{equation}
+That schedule is invalid even though \eqref{rf:algapgap} holds.
+With $g=43/8$, the margin is instead
+\begin{equation}
+ \frac{g-\tau/2}{8}-\frac\tau2=\frac1{256}>0.
+ \label{rf:rootapgap}
+\end{equation}
+
+The repair increases the root smoothness parameter:
+\[
+ \log z=(153/32+o(1))\Xi,\qquad
+ \frac{4u}{U}=\frac{g-\tau/2}{18}+o(1)=\frac{17}{64}+o(1).
+\]
+Replace the source's root bound $4u\le0.16U$ by $4u\le0.27U$.
+The lower admissibility margin is
+$17/64-2/15=127/960>0$.
+The density must now be estimated using its actual scale, not the
+crude universal $\log(5u\log y)\le\ell+O(1)$:
+\[
+ u\log y=(153/128+o(1))\Xi,\qquad
+ \log(5u\log y)=(2/3+o(1))\ell.
+\]
+Equation~\eqref{rf:densitylower} therefore gives
+\begin{equation}
+ \nu_{\rm rat}\ge
+ \exp\{-(17/96+o(1))\Lambda\}.
+ \label{rf:ratdensity}
+\end{equation}
+Since $E_q^2/q=\exp((4+o(1))\Lambda)$, the root first moment
+satisfies
+\begin{equation}
+ \mu_{\rm rat}\ge
+ \exp\{(4-17/96+o(1))\Lambda\}\ge e^{3.82\Lambda},
+ \qquad 4-17/96-3.82=\frac7{2400}>0.
+ \label{rf:ratmean}
+\end{equation}
+Thus the source's rationally good threshold
+$|\mathcal R_q|\ge e^{3.80\Lambda}$ survives.
+
+\subsection{Rounding, root fibres, and close pairs}
+
+All root scales for fixed $q$ lie in
+$[E_qG/(4q),2E_qG/q]$, an interval of logarithmic length $\log8$.
+The ceiling defining $u$ has at most one jump in that range for
+sufficiently large $N$.  On each constant-$u$ interval, the
+unrounded grid index has derivative in $\log X$ of magnitude
+\[
+ \frac{10u_{\rm cap}}{4u}=\frac{2560}{17}+o(1).
+\]
+There are consequently fewer than $320$ ideal rounding
+boundaries, preserving the source bound $1000$.
+For the actual dyadic implementation, enlarge each boundary by
+its logarithm-approximation error band.  No monotonicity of an
+arbitrary approximation routine is assumed.  The error is at
+most $\exp(-(60\log2+o(1))\ell^2)$, much smaller than the
+$\exp(-30\ell^2)$ relative width of a $G$-block.  Outside these
+bands the parameters agree with the ideal formulas.  Within a
+single block, the possible $u$ values differ by at most one and
+the grid indices for each fixed $u$ differ by at most one; the
+at-most-four candidate parameter pairs are still valid.  This
+band formulation is sufficient for the source's boundary-area
+estimate.
+
+Keep the root fibre cutoff
+$T_{\min}=\lceil e^{-0.19\Lambda}L_G/E_q\rceil$,
+where $L_G\asymp G/M_G$.
+Using \eqref{rf:ratdensity}, its boundary contribution relative to
+the square of the mean has coefficient at most
+\[
+ -0.19+17/96+o(1)=-31/2400+o(1)<-0.01.
+\]
+The same margin applies to the boundary term in the slope-bin
+second moment.  On the long interior fibres, the original lower
+interval bound is $H/X\ge e^{-0.195\Lambda}$; the factors $G$
+and $E_q$ cancel.  On short-determinant fibres, the rough bound
+uses $u'=2$, because $6D(z/H)\le9z/T_{\min}\le e^{4.21\Lambda}
+\ll(y/2)^3$.  Thus no extension of the AP interval range
+\eqref{rf:apconditions} is needed.  The source slope-bin conclusion
+and its later root algebraic mean lower bound $e^{3.30\Lambda}$
+retain strict margins.
+
+For algebraic close pairs, increasing $M_{\rm pair}$ gives
+frequency at most $e^{-0.18\Lambda}$.
+Well-separated pairs still have $H/X\ge e^{-0.195\Lambda}$.
+For the remaining close pairs choose
+\begin{equation}
+ u'=\left\lceil\frac{1.47\Xi}{\log(y/2)}\right\rceil+4.
+ \label{rf:roughprefix}
+\end{equation}
+Here $1.47>\tau\max F_r$, and the extra four factors cover the
+standalone $q$ and $B$ factors in the rough prefix conditions.
+Indeed $\log q/\log y\le16/9+o(1)$ and
+$\log B/\log y\le1/0.99+o(1)$, whose sum is below three.
+Since $\log y\ge(17.82+o(1))\Lambda$,
+$u'<0.083U<2u$ by \eqref{rf:algu-lower}.
+Each rough weight loss is at most $e^{0.084\Lambda}$;
+the two-field loss is at most $e^{0.17\Lambda}$.
+After the polynomial comparability factors, the close-pair
+contribution is at most $\exp((-0.01+o(1))\Lambda)$ times the
+squared mean.  The
+bad-child factor $e^{-0.93\Lambda}$ still leaves a bound stronger
+than the source's $e^{-0.80\Lambda}$ target.
+
+\subsection{Coefficient widths and sampling margins}
+
+For the ancestor product together with two current evaluation
+vectors, the coefficient on the $\Xi$ scale is at most
+\[
+ \tau\left(\frac12\sum_{j<r}t^j+t^r\right)
+ =\tau\left(\frac87-\frac{t^r}{7}\right)
+ <\frac{8\tau}{7}=\frac{19}{14}.
+\]
+This is below the fixed $34/25$ bound used in the coupling
+obligation.  Including a possible modulus $q$ and the base scale,
+the limiting tile-displacement coefficient is bounded by
+\begin{equation}
+ g+\tau+8\tau/7=\frac{887}{112}<8,
+ \qquad 8-\frac{887}{112}=\frac9{112}>0.
+ \label{rf:tilegap}
+\end{equation}
+With the fixed $34/25$ envelope the margin is still $31/400$.
+Since $\Xi/\Lambda=U\longrightarrow\infty$, either positive
+fixed margin makes the tile errors smaller than all required
+$e^{-c\Lambda}$ errors.  Ancestor factors cancel in the ratio of
+the inner and outer fibre boxes, so the tail argument's
+$\Lambda$-scale combinatorial cost does not grow.
+
+The global sampler satisfies
+\[
+ \log(W_{\rm cut}/G)=(13/8+o(1))\Xi,
+ \qquad(d-J-4)\log G=(43/16+o(1))L>L.
+\]
+Its volume errors therefore remain smaller than the printed
+$\RFLT{-0.98}$ error used before the total-variation bound.
+The leading-coefficient and derivative shifts have width with
+coefficient $8-g=21/8$, still much greater than the factor-base
+scale.  Algebraic convolution shifts have width coefficient at
+least $8-8\tau/7=93/14$, compared with a current coordinate of
+coefficient at most $19/32$.  The extra $q$-preserving shifts
+have width coefficient at least $8-\tau-8\tau/7=611/112$,
+greater than $19/16$.  These replace, rather than reuse literally,
+the source's displayed $3.01$, $4.20$, $4.9$, and $7.40$ envelopes.
+
+The coefficient degree and height are unchanged.  Character primes
+have size $x_{\rm ch}=2^{K_{\rm ch}}$ with
+$K_{\rm ch}=\lceil e^{(8/15)\widehat\Lambda}\rceil$.
+Thus $x_{\rm ch}\gg Q_0,M$ for the new cap as well.
+The source's discriminant and character bit-size estimates need
+no changed leading constant.  Their analytic certification remains
+part of the contract.
+
+\section{Sparse relation assembly and exact modular squares}
+\label{rf:relations}
+
+For $\iota=1,2$, let $K_\iota=\RFQ(\alpha_\iota)$,
+$f_\iota(\alpha_\iota,1)=0$, and
+$\theta_\iota=c_{\iota,d}\alpha_\iota$.
+The polynomial
+$\widetilde f_\iota(X)=c_{\iota,d}^{d-1}
+ f_\iota(X/c_{\iota,d},1)$ is monic, and
+$A_\iota=\RFZ[\theta_\iota]$ has the evaluation map
+\[
+ \phi_\iota:A_\iota\longrightarrow\RFZ/N\RFZ,
+ \qquad\theta_\iota\longmapsto c_{\iota,d}m_N.
+\]
+Set $\gamma_\iota(a,b)=c_{\iota,d}a-b\theta_\iota$.
+Then
+\[
+ \phi_\iota(\gamma_\iota(a,b))
+ =c_{\iota,d}g_1^{-1}(ag_1-bg_0)\pmod N.
+\]
+The exact root identity and algebraic-node identity are
+\begin{align*}
+ q_0&\equiv c_{1,d}^{-1}g_1n_{\rm rat}^{-1}
+                     \phi_1(\gamma_1(a,b))\pmod N,\\
+ 1&\equiv c_{\iota,d}c_{\iota',d}^{-1}
+       \phi_\iota(\gamma_\iota(a,b))^{-1}
+       \phi_{\iota'}(\gamma_{\iota'}(a,b))\pmod N.
+\end{align*}
+All inverted residues pass the unit checks; a failed inverse can
+itself yield a proper gcd.
+
+Propagating signs down the trees produces, for accepted trial $m$,
+lists of primitive pairs with signs $\sigma_{m,\iota,\nu}\in\{\pm1\}$
+and a relation
+\begin{align}
+ w_m&\equiv c_{1,d}^{e_{m,1}}c_{2,d}^{e_{m,2}}g_1^{e_{m,g}}
+       \prod_{p\le B}p^{u_{m,p}}
+       \phi_1(\Gamma_{m,1})\phi_2(\Gamma_{m,2})\pmod N,
+ \label{rf:assembled}\\
+ \Gamma_{m,\iota}&=\prod_\nu\gamma_\iota(a_{m,\iota,\nu},b_{m,\iota,\nu})
+                            ^{\sigma_{m,\iota,\nu}}.
+ \notag
+\end{align}
+The parity column has three scalar rows, rational-prime rows,
+degree-one local-length rows in each field, and the sampled
+quadratic-character rows.  Store only nonzero entries, labelled by
+their type and prime or ideal data.  Sorting labels gives row
+indices.  Signed exponents and the original factor lists are
+retained to reconstruct \eqref{rf:assembled}; a parity column
+alone is insufficient for square-root extraction.
+
+Each relation contains at most
+$2r_0\exp(O(\ell^2))$ nodes, each with polynomially many
+prime-factor occurrences and character entries.  Therefore
+\begin{equation}
+ D_{\rm row},R_{\rm tot}=\exp((18+o(1))\Lambda),\qquad
+ s_A=\exp((18+o(1))\Lambda),
+ \label{rf:matrixsizes}
+\end{equation}
+where $s_A$ is the number of nonzero matrix entries.  This is an
+actual sparse representation bound; no dense parity vector is
+allocated and later discarded.
+
+Given three independent binary null vectors, their combinations
+map linearly into the joint obstruction space.  Under the
+dimension-two event in \textup{(C3)}, some nonzero combination has
+both $\Gamma_{T,\iota}=\prod_{m\in T}\Gamma_{m,\iota}$ square in
+$K_\iota$.  Testing all seven combinations is a finite exact way
+to find one, without computing the obstruction space itself.
+For each field, put
+\[
+ P^-_{T,\iota}=\prod_{m\in T,\ \nu:\sigma_{m,\iota,\nu}=-1}
+                         \gamma_\iota(a_{m,\iota,\nu},b_{m,\iota,\nu}).
+\]
+The positive product tested by the square-root routine is
+\[
+ \widetilde\Gamma_{T,\iota}
+  =\widetilde f_\iota'(\theta_\iota)^2
+      (P^-_{T,\iota})^2\Gamma_{T,\iota}
+  =\widetilde f_\iota'(\theta_\iota)^2
+       \prod_{m\in T,\nu}\gamma_\iota(a_{m,\iota,\nu},b_{m,\iota,\nu}).
+\]
+The derivative factor places a true square root in the polynomial
+order as required by source Lemma~5.2.  Odd degree and irreducibility
+modulo three permit initialization in $\RFF_{3^d}$ and quadratic
+Newton--Hensel lifting.  The lifted polynomial is accepted only
+after its exact square is checked in $\RFZ[X]/(\widetilde f_\iota)$.
+Dividing the evaluated root by
+$\widetilde f_\iota'(c_{\iota,d}m_N)\phi_\iota(P^-_{T,\iota})$
+and multiplying by the half-exponents of the scalar and rational
+parts in \eqref{rf:assembled} gives $Y$.
+The final modular check $Y^2=\prod_{m\in T}w_m$ remains mandatory.
+
+\section{A verified sparse rectangular kernel algorithm}
+\label{rf:sparse}
+
+The following result is independent of the factoring contract.
+It is a specialization of classical black-box/Wiedemann linear
+algebra \cite{Wiedemann1986}, with the three-vector deficiency and
+deterministic space requirements made explicit.
+
+\begin{theorem}[Sparse binary kernel with three outputs]
+\label{rf:kerneltheorem}
+Let $A\in\RFF_2^{a\times b}$, $b\ge a+3$, be stored as a list of
+$s$ nonzero entries, and put $n=a+b$.  A finite randomized attempt
+returns either failure or three verified independent vectors in
+$\ker_{\RFF_2}A$.  It never returns incorrect vectors, succeeds
+with probability at least $3/4$, and uses
+\begin{align*}
+ O\bigl(n(n+s)\operatorname{polylog}n\bigr)
+ &\quad\text{bit operations},\\
+ O\bigl((n+s)\operatorname{polylog}n\bigr)
+ &\quad\text{bits of space}
+\end{align*}
+on a multitape machine.  A fixed number of attempts preserves
+these bounds and gives the corresponding amplified success
+probability.
+\end{theorem}
+
+\subsection{Preconditioning without a rank oracle}
+
+If $A=0$, return three coordinate vectors.  Otherwise construct
+$\RFF_Q$, where
+\[
+ h=\lceil\log_2(128n)\rceil,\qquad Q=2^h.
+\]
+An irreducible binary polynomial of degree $h$ can be found by
+enumeration in $O(Q\operatorname{poly}(h))$ bit operations and
+$\operatorname{poly}(h)$ space.  For example, test divisibility
+of $X^{2^h}-X$ and the usual gcd conditions against
+$X^{2^j}-X$; all powers are reduced modulo the candidate.
+Since $Q=O(n)$ this initialization fits the theorem's bounds.
+
+Choose independent uniform diagonal matrices
+$D\in\RFF_Q^{b\times b}$ and $E\in\RFF_Q^{a\times a}$.
+Zero diagonal values are allowed.  Define the implicit map
+\begin{equation}
+ P=ADA^{\mathsf T}E:\RFF_Q^a\longrightarrow\RFF_Q^a.
+ \label{rf:preconditioner}
+\end{equation}
+It is applied using two sparse matrix-vector products and two
+diagonal products, without forming its entries.
+
+\begin{lemma}[Semisimple zero with high probability]
+\label{rf:precondlemma}
+Let $r=\operatorname{rank}A$.  With probability at least
+$1-2r/Q$, the map $P$ has rank $r$, image $\operatorname{im}A$,
+and
+\[
+ \RFF_Q^a=\ker P\oplus\operatorname{im}P.
+\]
+On this event its restriction to $\operatorname{im}A$ is invertible.
+\end{lemma}
+\begin{proof}
+The coefficient of $z^r$ in $\det(I+zP)$ is
+\[
+ \sum_{|I|=|J|=r}
+      \det(A_{I,J})^2\prod_{i\in I}E_i\prod_{j\in J}D_j.
+\]
+This follows by principal minors and Cauchy--Binet.  A rank-$r$
+minor is nonzero, and different pairs $(I,J)$ give different
+monomials, so the polynomial is nonzero even in characteristic
+two.  Its degree is $2r$.  A nonzero polynomial of total degree
+$k$ on independent uniform elements of $\RFF_Q$ vanishes with
+probability at most $k/Q$; induction on the number of variables
+proves this elementary polynomial zero bound.
+
+On the nonvanishing event, rank $P$ is at least $r$, and it is
+always at most rank $A=r$.  Its image is therefore
+$\operatorname{im}A$.  The algebraic multiplicity of zero is
+$a-r$, equal to its geometric multiplicity.  Thus zero has no
+nontrivial Jordan block, giving the displayed direct sum and
+invertibility on the image.
+\end{proof}
+
+The good event is not tested and the rank need not be computed.
+It is used only to lower-bound the success probability.
+
+\subsection{Krylov solution and exact verification}
+
+Draw $v\in\RFF_Q^b$ uniformly and let $b_0=Av$.
+If $b_0=0$, use $x=0$.
+Otherwise draw a uniform row $w\in\RFF_Q^{1\times a}$ and compute
+\[
+ s_i=wP^ib_0\qquad(0\le i<2a).
+\]
+Berlekamp--Massey gives the monic minimal recurrence polynomial
+$f(X)=\sum_{j=0}^e f_jX^j$ for this prefix, with $e\le a$.
+If $f_0=0$, reject this attempt.  Otherwise form
+\begin{equation}
+ x=-f_0^{-1}\sum_{j=1}^e f_jP^{j-1}b_0,
+ \label{rf:krylovsolve}
+\end{equation}
+and verify $Px=b_0$ exactly.  The powers are replayed in a fresh
+pass; storing all Krylov vectors is unnecessary.
+
+For an explicit recurrence implementation, start with connection
+polynomials $C=B_{
+m BM}=1$, order $e=0$, shift $m=1$, and
+nonzero discrepancy $b_{
+m BM}=1$.  At position $i$, compute
+$\Delta=s_i+\sum_{j=1}^e C_js_{i-j}$.
+If $\Delta=0$, increment $m$.
+Otherwise save $T=C$ and replace
+$C$ by $C-(\Delta/b_{
+m BM})X^mB_{
+m BM}$.
+When $2e\le i$, also replace
+$e$ by $i+1-e$, $B_{
+m BM}$ by $T$,
+$b_{
+m BM}$ by $\Delta$, and $m$ by one;
+otherwise increment $m$.
+After $2a$ positions, return $f(X)=X^eC(X^{-1})$.
+This is the standard finite-field recurrence algorithm; its
+quadratic polynomial updates use $O(a^2)$ field operations and
+$O(a)$ field elements of storage.
+
+\begin{lemma}[Projection loses the true recurrence rarely]
+\label{rf:krylovlemma}
+Conditional on the good event in Lemma~\ref{rf:precondlemma},
+for each fixed $b_0\in\operatorname{im}A$ the above solve succeeds
+with probability at least $1-a/Q$.  When it succeeds,
+\eqref{rf:krylovsolve} is the unique solution in
+$\operatorname{im}A$.
+\end{lemma}
+\begin{proof}
+For $b_0\ne0$, its true Krylov minimal polynomial $f_*$ has degree
+at most $a$ and has nonzero constant term, because $P$ is
+invertible on its image.  If a scalar projection loses a factor
+of $f_*$, then for some distinct irreducible factor $g$ of $f_*$,
+the scalar sequence is annihilated by $f_*/g$.  In particular,
+\[
+ w\,(f_*/g)(P)b_0=0.
+\]
+The vector after $w$ is nonzero by minimality of $f_*$.
+Each such event has probability $1/Q$, and there are at most $a$
+distinct irreducible factors.  Their union has probability at
+most $a/Q$.
+
+A prefix of length $2a$ suffices: a candidate recurrence of order
+at most $a$ which annihilates that prefix gives a difference
+sequence with at least $a$ initial zeros.  That difference
+sequence obeys the true order-at-most-$a$ recurrence, hence is
+identically zero.  On the no-loss event the returned polynomial
+is $f_*$.  The identity $f_*(P)b_0=0$ proves
+$Px=b_0$.  The polynomial expression for $x$ lies in
+$\operatorname{im}A$, where the solution is unique.  Even in the
+loss event, the explicit verification prevents an incorrect
+linear solve from being used.
+\end{proof}
+
+Set
+\begin{equation}
+ k=v-DA^{\mathsf T}Ex
+ \label{rf:kernelprojection}
+\end{equation}
+and verify $Ak=0$.
+On the good preconditioner event, the exact-image solution makes
+\eqref{rf:kernelprojection} a linear projection onto $\ker A$;
+it is the identity on that kernel.  Thus its ideal output for
+uniform $v$ is uniform on $\ker_{
+ \RFF_Q}A$.
+
+Choose a fixed binary basis $e_1,\ldots,e_h$ of $\RFF_Q$ and
+write $k=\sum_{j=1}^h e_jk_j$.
+Since $A$ is binary, every $k_j$ lies in
+$\ker_{
+ \RFF_2}A$.  A uniform element of the extension-field kernel has
+independent uniform binary components in that kernel.  Its
+dimension is at least three.  Projecting onto any three-dimensional
+quotient and taking a union bound over the seven nonzero binary
+linear forms shows
+\[
+ \RFPr\{\operatorname{span}(k_1,\ldots,k_h)
+                  \text{ has dimension less than three}\}
+ \le7\,2^{-h}=7/Q.
+\]
+Extract three independent components by binary elimination and
+verify each matrix product and their independence.
+
+\begin{proof}[Proof of Theorem~\ref{rf:kerneltheorem}]
+Compare the algorithm with the ideal exact projection for each
+good preconditioner.  Its failure probability is at most
+\[
+ \frac{2r}{Q}+\frac aQ+\frac7Q
+ \le\frac{3a+7}{Q}<\frac14.
+\]
+This comparison is made before conditioning on verified success;
+no claim of uniformity after a biased acceptance event is needed.
+All returned vectors are checked, so there is no false success.
+
+There are $O(a)$ applications of $P$ for the sequence and the
+polynomial replay.  Field operations use
+$\operatorname{poly}(h)$ bit work.  To multiply a sparse matrix
+by a vector on a multitape machine, sort its index/value records,
+merge them with the vector entries, then sort and sum by output
+index.  Sequential merge sort uses
+$O((n+s)\operatorname{polylog}n)$ bit work and space per product.
+The vector, diagonal, recurrence, and component data have at
+most $O(n\operatorname{polylog}n)$ bits; no dense $P$ is formed.
+The recurrence's $O(a^2)$ field operations fit the time bound.
+Every loop is finite, proving the deterministic space bound.
+\end{proof}
+
+Applying the theorem to \eqref{rf:matrixsizes} costs
+$\exp((36+o(1))\Lambda)$ time and
+$\exp((18+o(1))\Lambda)$ space per attempt.
+Three independent attempts fail with probability at most $1/64$.
+This factor is harmless in the phase success probability.
+
+\section{Hidden-root symmetry and streaming}
+\label{rf:blindness}
+
+The permission to discard rejected roots and use randomized
+linear algebra follows from an exact finite-group fact.
+
+\begin{theorem}[Several blind dependencies]
+\label{rf:blindtheorem}
+Let $G$ be a finite abelian group, $h:G\to G$ a homomorphism,
+and $H=\ker h$.  Draw $z_1,\ldots,z_m$ independently uniformly
+from $G$.  Reveal $h(z_i)$ and an independent random tape.
+Conditional on that transcript, let an integer matrix
+$E\in\RFZ^{r\times m}$ and elements $Y_1,\ldots,Y_r$ be fixed,
+with
+\[
+ h(Y_j)=\prod_i h(z_i)^{E_{ji}}.
+\]
+Then $(\prod_i z_i^{E_{ji}}Y_j^{-1})_{j=1}^r$ is uniform on a
+coset of the image of the homomorphism $E:H^m\to H^r$.
+For squaring, if $H$ is elementary abelian two-torsion and
+$E\bmod2$ has full row rank, this image is $H^r$.
+\end{theorem}
+\begin{proof}
+Conditional on the transcript, each $z_i$ is uniform on its
+$H$-coset, independently of the others.  A homomorphism of finite
+groups maps the uniform distribution onto the uniform distribution
+on its image, because every nonempty fibre is a coset of its
+kernel.  If $H\cong\RFF_2^k$, a full-row-rank binary matrix induces
+a surjection on each of the $k$ coordinates, proving the last
+assertion.
+\end{proof}
+
+For odd $N$ with $k\ge2$ distinct prime divisors,
+$H=\{\varepsilon\in(\RFZ/N\RFZ)^*:\varepsilon^2=1\}$
+has $2^k$ elements, including when $N$ has repeated prime factors.
+For a single verified nonempty dependency, $ZY^{-1}$ is uniform
+on $H$.  The gcd is trivial exactly at the two global signs,
+so its split probability is $1-2^{1-k}\ge1/2$.
+For $r$ independent verified dependencies selected before any
+unsealing, the conditional probability that all give trivial
+gcds is $(2^{1-k})^r$.
+
+The main algorithm needs only one dependency.  Keeping three
+independent null vectors and checking their seven combinations
+is for the dimension-two square-class obstruction, not for an
+unjustified independence assumption about chosen relations.
+If several successful dependencies are desired, collecting
+$s+r$ extra columns when the obstruction dimension is at most
+$s$ yields a good-combination subspace of dimension at least $r$.
+For fixed $s+r$, exhaustive exact tests add only a constant factor.
+Every test and selection must finish before any root is unsealed.
+
+Only the current trial's root and roots of accepted relations need
+be stored.  Acceptance, sparse preconditioning, Krylov projections,
+and square-root selection depend only on exposed squares and
+independent coins.  Erasing rejected roots therefore does not
+change the conditional coset law.  A later failure must not be
+used to adapt a supposedly blind selection using roots that have
+already been revealed; a fresh phase uses fresh roots.
+
+\section{Collection probability and the exact time recurrence}
+\label{rf:recurrence}
+
+\subsection{Fewer, larger root primes}
+
+The source proves a parameter-general rational smoothing
+proposition, Proposition~2.3(2).  In the rough-input regime used
+here, a shorter counting argument gives the needed estimate
+independently.
+
+\begin{lemma}[Square-class counting for rough inputs]
+\label{rf:rough-ratios}
+Let $N$ be odd, let $\mathcal Q$ be a set of $m$ distinct primes
+coprime to $N$ and at most $Q_0$, and let $r\ge1$ satisfy
+$Q_0^r\le\sqrt N/2$.  Put
+$H=|(\RFZ/N\RFZ)^*/Q_N|=2^{\omega(N)}$.
+If $Hr^2/m\le1/2$, then a uniform $w\in Q_N$ has probability
+at least
+\[
+ \frac1{2\varphi(N)}\binom mr^2
+\]
+of having its normalized shortest lattice vector equal to the
+products of two disjoint $r$-element subsets of $\mathcal Q$.
+For the $B$-rough inputs and good-prime sets of this manuscript,
+the condition $Hr_0^2/|\mathcal Q_{\rm good}|\le1/2$ holds
+eventually.
+\end{lemma}
+\begin{proof}
+Partition the $r$-element subsets by the square class of their
+prime product.  If the class sizes are $c_1,\ldots,c_H$, then
+the number of ordered pairs in the same class is
+\[
+ \sum_jc_j^2\ge H^{-1}\left(\sum_jc_j\right)^2
+                  =H^{-1}\binom mr^2.
+\]
+For each first subset, the number of second subsets intersecting
+it is at most $r\binom{m-1}{r-1}$.
+The total number of intersecting ordered pairs is therefore at
+most $(r^2/m)\binom mr^2$.  Subtracting all of them leaves at
+least $(2H)^{-1}\binom mr^2$ disjoint pairs in the same class.
+
+Write their products as $x,y$.  They are coprime units, and
+$x/y\bmod N$ is a square.  Different pairs give different ratios:
+congruence of two ratios makes $xy'-x'y$ a multiple of $N$ of
+absolute value less than $N$, hence zero; coprimality and unique
+factorization recover the same two subsets.  For such a ratio,
+the vector $(x,y)$ has squared norm at most $N/2$.  A shortest
+vector $(x_1,y_1)$ in the same lattice has determinant
+$x_1y-y_1x$ divisible by $N$ and absolute value at most $N/2$,
+so it is parallel to $(x,y)$.  Primitivity and shortestness make
+it equal to $(x,y)$ up to sign; the normalization $x_1>0$
+chooses the positive pair.  Dividing the pair count by $|Q_N|$
+and using $H|Q_N|=\varphi(N)$ proves the bound.
+
+For a $B$-rough input,
+$\log H\le(\log2)L/\log B=o(\Xi)$.
+The good-prime set has logarithmic cardinality
+$(\tau+o(1))\Xi$, while $\log r_0=O(\ell)$.
+Thus $Hr_0^2/|\mathcal Q_{\rm good}|\longrightarrow0$.
+\end{proof}
+
+The prime number theorem and \textup{(C1)} give
+$m=|\mathcal Q_{\rm good}|\ge3Q_0/(10\log Q_0)$ eventually.
+Using $\binom mr\ge(m/r)^r$, $\varphi(N)\le N$, and
+$Q_0^{2r_0}\ge N/8$, the lemma gives
+\[
+ p_{\rm ratio}\ge\frac1{16}
+     \left(\frac{10r_0\log Q_0}{3}\right)^{-2r_0}.
+\]
+Since $r_0\longrightarrow\infty$, this implies the convenient
+weaker bound
+\begin{equation}
+ p_{\rm ratio}\ge
+ \frac18(4r_0\log Q_0)^{-2r_0}.
+ \label{rf:ratiobound}
+\end{equation}
+Excluding divisors of the fixed setup integers removes only
+polynomially many primes.  The bound refers
+to the actual shortest-vector rational-smoothing interface, not
+to independent uniform numerator and denominator samples.
+
+Here
+\[
+ 2r_0=(16/19)U+O(1),\qquad
+ 4r_0\log Q_0=2L+O(1),
+\]
+so \eqref{rf:ratiobound} gives
+\begin{equation}
+ p_{\rm ratio}\ge
+ \exp\{-(16/19)\Lambda-O(U+\ell)\}.
+ \label{rf:acceptance}
+\end{equation}
+The union bound over $2r_0$ independent fresh
+tree attempts loses only a factor tending to one, since each
+eligible prime fails with probability at most $L^{-2}$.
+
+The $\epsilon_N\Lambda=U\sqrt\ell$ term in
+\eqref{rf:trialcap} dominates $O(U+\ell)$.
+Conditional on a good setup, independent capped trials therefore
+have mean accepted count at least $16R_{\rm tot}$ eventually.
+Chebyshev's inequality, or a binomial tail bound, makes the
+probability of collecting fewer than $R_{\rm tot}$ at most
+$1/100$ for all sufficiently large $N$.
+If a nonunit draw occurs before enough relations are collected,
+its gcd already splits $N$.  Conditioning on the unit-indicator
+vector leaves independent uniform units before that first event,
+exactly as required by Theorem~\ref{rf:blindtheorem}.
+
+The logarithmic number of expensive root trials is consequently
+\begin{equation}
+ \log M_{\rm cap}=(A+o(1))\Lambda,
+ \qquad A=18+\frac{16}{19}=\frac{358}{19}.
+ \label{rf:A}
+\end{equation}
+For comparison, the old $\tau=1/3$ gives coefficient
+$18+3=21$, after removing the source's fixed cap slack.
+
+\subsection{A phase has constant success probability}
+
+Under the contract, multiply the setup probability $3/4$, the
+character probability $98/100$, collection probability $99/100$,
+and three-attempt sparse-kernel probability $63/64$.
+The dimension-two argument provides a certified square
+dependency, and the sealed-root theorem splits with conditional
+probability at least $1/2$.  The product exceeds $1/3$; all
+remaining capped-draw errors tend to zero and can be absorbed
+while retaining a positive absolute lower bound.  Using a slightly
+larger effective threshold retains the source's at-most-three
+expected phases if desired.  Only a fixed positive phase
+probability is needed for the leading-constant analysis.
+
+\subsection{Solving the recursive costs}
+
+Suppose the strong-induction majorant for complete factorization
+has coefficient $C$.  Each root trial makes at most two recursive
+calls on integers at most $\sqrt N/2$.  Since
+\[
+ \frac{\Lambda(N^\alpha)}{\Lambda(N)}
+ =\alpha^{1/3}
+   \left(1+\frac{\log\alpha}{\ell}\right)^{2/3}
+ =\alpha^{1/3}+o(1)
+\]
+for fixed $0<\alpha<1$, the root-call cost has coefficient
+\begin{equation}
+ A+2^{-1/3}C.
+ \label{rf:rootrec}
+\end{equation}
+There are at most $2r_0M_{\rm cap}$ descent trees and
+$\exp(O(\ell^2))$ nodes per tree.  The node trial caps are at
+most $\exp(2.05\Lambda)$, and each trial makes only polynomially
+many recursive calls.  Proposition~\ref{rf:treebounds} therefore
+gives the second coefficient
+\begin{equation}
+ A+2.05+(19/64)^{1/3}C.
+ \label{rf:descrec}
+\end{equation}
+The determinant and rational calls are smaller; the displayed
+bound safely includes them.
+
+Factor-base enumeration costs at most
+$\exp((36+o(1))\Lambda)$, even when roots modulo each prime are
+found by exhaustive evaluation.  Sparse linear algebra costs
+$\exp((36+o(1))\Lambda)$, and the exact square-root extraction
+bound is below coefficient $38$.  Character preparation and
+all polynomial overhead fit below that same threshold.
+It suffices that
+\begin{equation}
+ C>\max\left\{
+ 38,\quad \frac{358/19}{1-2^{-1/3}},\quad
+ \frac{358/19+41/20}{1-(19/64)^{1/3}}
+ \right\}.
+ \label{rf:threshold}
+\end{equation}
+The two recursive thresholds are approximately $91.33375329$
+and $62.75798$.  Take the rational value
+$C=457/5=91.4$.
+The exact certificates are
+\begin{align}
+ 2(C-A)^3-C^3&=\frac{370059927}{857375}>0,
+ \label{rf:cert1}\\
+ 64(C-A-41/20)^3-19C^3
+             &=\frac{6795396287504}{857375}>0.
+ \label{rf:cert2}
+\end{align}
+All quantities cubed are positive, so these inequalities are
+equivalent to the required strict recurrence inequalities.
+Numerically their left-hand cost coefficients before comparison
+with $C$ are about $91.38633334$ and $81.86508294$.
+
+\begin{proof}[Time part of Theorem~\ref{rf:main}]
+Use strong induction on the integer input.  Exact preprocessing
+and proper splitting imply only $O(\log N)$ unresolved worklist
+items need be split.  A phase on any such item has the three
+cost bounds above, uniformly over its tuple.  Every recursively
+factored integer is smaller, and the induction applies to its
+complete factorization, not just to one split.
+
+The strict gaps in \eqref{rf:threshold} absorb all polynomial
+factors, $\exp(O(\ell^2))$ factors, the expected constant number
+of phases, step-for-step background interleaving, and the
+uniform $o(1)$ terms.  Explicitly, choose a sufficiently large
+effective threshold so their total coefficient is below $C$ by
+a fixed positive amount.  A finite multiplicative constant
+handles all smaller inputs, which terminate by trial division.
+The induction majorant may be taken as
+$K\operatorname{poly}(\log N)\exp(C\Lambda(N))$.
+This proves the asserted logarithmic limsup bound.
+\end{proof}
+
+The recurrence allows every fixed $C$ above its dominant threshold;
+$91.4$ is the convenient rational value certified in
+\eqref{rf:cert1}--\eqref{rf:cert2}.  This calculation is a
+conditional upper-bound analysis, not a lower bound for the source
+algorithm or for factoring.
+
+\section{Deterministic workspace}
+\label{rf:space}
+
+Every accepted relation has a factor list and sparse column of
+size $\exp(o(\Lambda))$.  Equation~\eqref{rf:matrixsizes} therefore
+bounds the whole relation collection, its sealed accepted roots,
+and its sparse parity data by $\exp((18+o(1))\Lambda)$ bits.
+An accepted root has only $O(L)$ bits; a rejected root is erased.
+The trial counter has $O(\Lambda)$ bits even though its numerical
+cap is exponentially large on that scale.
+
+The factor base occupies $O(dB\log N)=\exp((18+o(1))\Lambda)$
+bits.  Character data and their arithmetic use the smaller bound
+in \textup{(C3)}.  The sparse kernel theorem uses
+$\exp((18+o(1))\Lambda)$ bits.  Across the fixed number of
+tested dependencies, the positive factor-list length satisfies
+\[
+ M_{\rm fac}\le R_{\rm tot}\,2r_0\exp(O(\ell^2))
+              =\exp((18+o(1))\Lambda),
+\]
+so \textup{(C4)} also uses
+$\exp((18+o(1))\Lambda)$ bits.  Sequential multiplication and
+replay are used rather than retaining every intermediate product.
+
+Each recursive call operates on an integer at most $\sqrt N/2$
+by an exact guard.  Recursive calls are executed sequentially,
+reusing the child's workspace when it returns.  The active
+stack has depth $O(\log\log N)$, and the sum of its per-level
+spaces is $\exp((18+o(1))\Lambda(N))$.
+For a formal slack argument, bound each sufficiently large
+phase by $e^{18.5\Lambda}$ and compare it with the majorant
+$e^{19\Lambda}$; the first child has coefficient at most
+$19\,2^{-1/3}<19$.  Strong induction absorbs the finite small
+range and all stack overhead.
+Every random loop has a finite cap and failed phases overwrite
+their storage.  Thus the space bound is deterministic over coin
+tapes, completing the space part of Theorem~\ref{rf:main}.
+
+\section{Limits of two proposed shortcuts}
+\label{rf:shortcuts}
+
+The following elementary screens explain why two inexpensive
+modifications do not automatically remove the top recursive
+factoring stage.  They concern the present sampler, not arbitrary
+factoring algorithms.
+
+\begin{proposition}[Asymmetric rational boxes]
+For a uniform square $w$ in the square subgroup $Q_N$ of
+$(\RFZ/N\RFZ)^*$, the probability that some unit ratio $x/y=w$
+has $1\le x\le X$ and $1\le y\le Y$ is at most $XY/|Q_N|$.
+For a $B$-rough $N$, a success probability
+$\exp(-O(\Lambda))$ therefore requires
+$XY\ge N^{1-o(1)}$; at least one coordinate bound is
+$N^{1/2-o(1)}$.
+\end{proposition}
+\begin{proof}
+There are at most $XY$ possible ordered pairs and hence at most
+that many ratios.  For odd $N$,
+$|Q_N|=\varphi(N)/2^{\omega(N)}$.
+Roughness gives $\omega(N)\le L/\log B$ and
+$N/\varphi(N)=1+o(1)$, so $|Q_N|=N^{1-o(1)}$.
+\end{proof}
+
+This does not exclude a partial factorization routine, a different
+sampling law, or an algorithm avoiding complete factorization
+of both coordinates.  It excludes the argument that merely
+skewing the current box makes both recursive inputs much smaller.
+
+\begin{proposition}[Accidental reuse of eligible root primes]
+For $T=\exp(O(\Lambda))$ independent blind trials, each retaining
+at most two positive coordinates bounded by $\sqrt N/2$, the
+probability that an eligible prime $q\in(Q_0/2,Q_0]$ divides
+coordinates in two different trials is
+\[
+ \exp\{-(\tau+o(1))\Xi\}=o(1).
+\]
+\end{proposition}
+\begin{proof}
+For a fixed $q$, there are $O(N/q)$ possible coordinate pairs
+with $q$ dividing either coordinate.  Uniformity of the exposed
+square bounds the probability in one trial by
+$O(N/(q|Q_N|))$.  Independence and a union bound over trial
+pairs and primes, using
+$\sum_{q>Q_0/2}q^{-2}=O(1/Q_0)$ even over all integers, give
+\[
+ O\left(\frac{T^2}{Q_0}
+            \left(\frac{N}{|Q_N|}\right)^2\right).
+\]
+Here $\log(N/|Q_N|)=O(L/\log B)=o(\Xi)$ and
+$\log T=O(\Lambda)=o(\Xi)$, proving the claim.
+Filtering to accepted trials cannot create a collision absent
+from the complete presampled list.
+\end{proof}
+
+Thus a product-tree batch gcd of these same blind candidates
+almost never obtains an eligible root prime by accidental
+reuse.  This leaves open deliberately correlated samplers and
+batching of different descent cofactors.
+Likewise, generating already-factored numerator and denominator
+products does not supply a square root with the required hidden
+CRT-sign distribution.  That additional construction cannot be
+assumed free.
+
+\section{Why the first parameter is still one third}
+
+Changing fixed constants $g$ and $\tau$ cannot change the first
+$L$-parameter.  There is also a useful restricted balance
+calculation.  Suppose one retains this explicit factor-base and
+polynomial-value architecture, writes the degree as
+$L^{a+o(1)}$ and $\log B=L^{b+o(1)}$, and charges reciprocal
+smoothness density by the same method.  Three charged exponents
+remain:
+\begin{enumerate}[leftmargin=*]
+\item the explicit factor base contributes $b$;
+\item bottom-level polynomial norms have a smoothness parameter
+of order the degree, contributing $a$;
+\item the modular coefficient construction requires
+$d\log G\gtrsim L$ and $\log M\ge\log G$.
+Smoothing this coefficient height over $B$ contributes
+$1-a-b$ when that quantity is positive.
+\end{enumerate}
+Their maximum obeys
+\[
+ \max\{a,b,1-a-b\}\ge\frac13.
+\]
+This is a limitation of that charging argument, not a complexity
+lower bound for factoring.  It does not rule out a new relation
+constructor, an implicit factor base with genuinely cheaper
+access, a different coefficient-height mechanism, or a different
+smoothness argument.  None of those missing constructions is
+supplied by the enlarged-cap schedule.
+
+\section{Reproducibility and unresolved obligations}
+\label{rf:reproducibility}
+
+The repository contains the exact rational verifier
+\texttt{verify\_recursion\_budget.py}, the pinned-source metadata,
+and the audit notes from which the present manuscript was
+assembled.  Run the verifier with the repository's documented
+Python command.  It uses only integer and rational arithmetic;
+there is no floating-point decision in a decisive comparison.
+It checks:
+\begin{enumerate}[leftmargin=*]
+\item the path difference identities and exact maxima in
+\eqref{rf:fdiff}--\eqref{rf:fmax};
+\item the algebraic conductor margin $17/2048$;
+\item the failed $g=3$ root margin $-75/256$ and repaired margin
+$1/256$;
+\item the rational-root admissibility, density $17/96$, mean
+margin $7/2400$, and boundary margin beyond $0.01$;
+\item the fibre-width margin $9/112$, global sampler margin
+$13/8$, and derivative-shift width $21/8$;
+\item the rough-prefix and recurrence certificates, including
+\eqref{rf:cert1}--\eqref{rf:cert2}.
+\end{enumerate}
+Finite checks of the path identities are accompanied by their
+symbolic difference proof above, which establishes the maxima
+for every depth.  The script does not prove an AP asymptotic,
+an infinite probability assertion, or a complete factorer's
+expected running time.  A verified factor output would likewise
+not establish the expected-time analysis.
+
+The main remaining obligations are precisely the enlarged
+analytic and coupling statements in
+Section~\ref{rf:analyticcontract}, their conditional propagation
+through the entire adaptive descent, and an independent audit
+of the imported algebraic certification.  An implementation must
+also replace all hard-coded proof envelopes identified above;
+editing only $\tau$ in a source program would be insufficient.
+No full end-to-end implementation or formal proof-assistant
+certificate is claimed by this manuscript.
+
+The independent results supplied here are the sparse kernel
+theorem, the hidden-root theorem, the rough-input square-class
+counting lemma, the explicit finite parameter
+comparisons, and the conditional recurrence and storage
+deductions.  Their role is to turn a promising modification
+into a precise, testable mathematical proposal while keeping
+the unresolved proof contract visible.

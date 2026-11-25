@@ -1,0 +1,408 @@
+\begin{abstract}
+An order-splitting algorithm is given an integer $N$ and an even integer
+$M$ known to be divisible by $p-1$ for every prime $p\mid N$; it must
+turn that information into a proper factor.  We give a deterministic
+algorithm with bit complexity
+\[
+ \exp\!\bigl(O(\sqrt{\log N\log\log(N+16)})\bigr)
+ \operatorname{bitlen}(M)\operatorname{poly}(\log N).
+\]
+No factorization of $M$ is required.  The method replaces a full
+multiquadratic character average by a sparse positive-semidefinite Gram
+average.  A local decomposition retains ramified small primes, permitting
+a family consisting only of the origin and coordinate vectors.  We
+give the full compatible-root construction, ideal-character assembly,
+fixed-degree enumeration algorithm, uniform prime-or-semiprime Burgess
+estimate, explicit guards, and deterministic scale search.  The theorem
+concerns splitting with a supplied exponent; constructing that exponent
+for a general input is a separate computational task.
+\end{abstract}
+
+\tableofcontents
+
+\section{What is being computed?}
+
+For a prime $p$, every nonzero residue satisfies $a^{p-1}=1\pmod p$.
+Thus a multiple of all the numbers $p-1$ for $p\mid N$ synchronizes the
+endpoint of modular powering.  It does not force the intermediate
+square roots of one to agree in the different prime components.
+An order splitter finds such a disagreement and extracts it with a gcd.
+For example, with $N=77$ and $M=30$, write $M=2\cdot15$.
+Then $2^{15}=43\pmod{77}$ and
+$\gcd(43-1,77)=7$.  The challenge addressed here is to find a successful
+test deterministically for every permitted input, with a subexponential
+number of bit operations.
+
+All logarithms without a subscript are natural.  Write
+$\operatorname{bitlen}(a)=\lfloor\log_2a\rfloor+1$ for positive integers.
+The notation
+\[
+ L_N[\alpha,c]=
+ \exp\bigl((c+o(1))(\log N)^\alpha(\log\log N)^{1-\alpha}\bigr)
+\]
+is used only to compare asymptotic scales.  The result below is
+$L_N[1/2,O(1)]$ overhead, with no optimized leading constant.
+
+\begin{theorem}[Deterministic splitting from a supplied exponent]
+\label{thm:os-main}
+Let $N\geq3$ be odd with at least two distinct prime factors.  Supply an
+even positive integer $M$ in binary satisfying
+\[
+ p-1\mid M\qquad\text{for every prime }p\mid N.
+\]
+There is a deterministic algorithm returning a verified integer
+$1<g<N$ with $g\mid N$ in
+\begin{equation}
+ \exp\!\bigl(O(\sqrt{\log N\log\log(N+16)})\bigr)
+ \operatorname{bitlen}(M)\operatorname{poly}(\log N)
+ \label{eq:os-cost}
+\end{equation}
+bit operations.  All implied constants are effective and absolute.
+The input need not be squarefree and $M$ need not be factored.
+\end{theorem}
+
+The promise is divisibility by $p-1$, not necessarily by the exponent of
+$(\mathbb Z/N\mathbb Z)^*$.  Repeated prime factors are expressly
+allowed.  Even integers and perfect powers have immediate separate
+reductions; primality testing is not part of this promised splitting
+problem.  No assertion is made here that an admissible $M$ is cheaply
+constructible from $N$.
+
+\subsection{Sources and the new part of the construction}
+
+The compatible-root and active-character mechanism, and the uniform
+quadratic-field sixteenth-moment estimate, originate in the pinned
+deterministic Cogentic manuscript \cite{CogDet2026}.  Its supplied-order
+bound has overhead
+$\exp(O(\sqrt{\log N}\log\log N))$.
+The change here is a sparse triangle-compatible Gram average and a
+ramification-tolerant local decomposition.  These remove the need to
+enumerate every nonzero squareclass of a large vector space, and give
+the standard $L[1/2,O(1)]$ overhead in \eqref{eq:os-cost}.
+
+The proof also supplies a simpler independent fixed-degree enumeration
+algorithm: quadratic relative norms and at most eight parity targets
+reduce a biquadratic generator search to certified weighted
+four-dimensional LLL.  It does not assume a free class-group algorithm
+or an oracle for a large algebraic integer.
+The appendix includes the full shared quadratic package rather than
+requiring a reader to reconstruct it from research notes.
+
+\section{The elementary order test}
+
+Write $M=2^tu$ with $u$ odd.  For a test residue $z$, reduce it modulo
+$N$.  If it is zero, declare the test trivial.  Otherwise compute
+$\gcd(z,N)$ and return it if proper.  For a unit put
+$b_0=z^u\pmod N$ and successively inspect
+\[
+ g_j=\gcd(b_j-1,N),\qquad b_{j+1}=b_j^2\pmod N,
+ \qquad 0\leq j\leq t.
+\]
+Return a proper gcd when it appears; otherwise stop at the first
+$b_r=1\pmod N$ and record $(r,b_0)$.
+Call this procedure \textsc{SplitTest}.
+
+\begin{lemma}[A failed test synchronizes all local two-parts]
+\label{lem:os-test}
+Under the promise of Theorem~\ref{thm:os-main}, a nontrivial unit test
+either returns a proper divisor or records $(r,b_0)$ such that $b_0$
+has exact order $2^r$ modulo every prime divisor and every maximal
+prime-power divisor of $N$.  For $r>0$, $b_{r-1}=-1\pmod N$.
+The bit cost is $O(\operatorname{bitlen}(M)(\log N)^2)$ using elementary
+integer arithmetic.
+\end{lemma}
+
+\begin{proof}
+Fermat's theorem gives $b_t=1\pmod p$ for every $p\mid N$.
+Thus $\gcd(b_t-1,N)>1$ even if $M$ does not annihilate modulo $p^a$.
+If this gcd is not proper it is $N$, so $b_t=1\pmod N$ and the recorded
+stage exists.  If $r>0$, the preceding gcd is one.  For each $p^a\Vert N$,
+\[
+ p^a\mid(b_{r-1}-1)(b_{r-1}+1),\qquad p\nmid b_{r-1}-1.
+\]
+Since $p$ is odd, $p^a\mid b_{r-1}+1$.  The preceding value is therefore
+$-1$ everywhere, and the order of $b_0$ is exactly $2^r$ in every
+component.  For $r=0$ it is one everywhere.
+Binary powering and at most $t+1$ gcd/squaring steps give the cost.
+\end{proof}
+
+\begin{lemma}[An active character exists]
+\label{lem:os-active}
+There is a modulus $q$, either a prime divisor of $N$ or the product of
+two distinct prime divisors, and its Legendre or Jacobi character $\chi$,
+such that every tested integer with $\chi(z)=-1$ makes
+\textsc{SplitTest} return a proper factor.  Moreover
+$P^-(N)\leq q\leq N$.
+\end{lemma}
+
+\begin{proof}
+Write $p_i-1=2^{e_i}m_i$ with $m_i$ odd.
+If the $e_i$ are not all equal, choose $p_*$ with maximal $e_i$ and set
+$q=p_*$, $\chi=(\cdot/p_*)$.  A negative Legendre symbol makes the
+two-part of the order of $z^u$ at $p_*$ equal to $2^{e_*}$, because
+$u$ is an odd multiple of $m_*$.  A prime with smaller $e_i$ cannot
+have that two-part.  This contradicts Lemma~\ref{lem:os-test}.
+If all $e_i$ agree, use any two distinct primes and
+$\chi=(\cdot/p_1)(\cdot/p_2)$.  A negative product means opposite local
+Legendre signs: the nonsquare component has full two-part $2^{e_1}$,
+whereas the square component has smaller two-part.  Again a failed test
+is impossible.  If $z$ is not a unit modulo $N$, its initial gcd is
+already proper, since $\chi(z)=-1$ ensures it is coprime to $q$.
+\end{proof}
+
+The algorithm does not know or compute this active modulus.  It is a
+device in the proof: failure of every candidate test implies that all
+candidate characters at this one unknown modulus equal one.
+
+\section{Compatible square roots from a small prime basis}
+\label{sec:os-roots}
+
+Let $q_0=-1$ and let $q_1,\ldots,q_K$ be the first $K$ positive primes.
+Assume $P^-(N)>q_K$.  Test all $q_j$ and, if no factor is found, obtain
+$z_j=q_j^u$ of synchronized order $2^{r_j}$.
+Choose a pivot $j_*$ of maximal $r_j$, put
+$r_*=r_{j_*}$ and $\zeta=z_{j_*}$.
+Since $q_0=-1$, $r_*\geq1$; also $2^{r_*}<N$.
+
+We express each $z_j$ as $\zeta^{m_j}$ without enumerating that cyclic
+group.  Initially set $m=0$.  At step $\nu=0,\ldots,r_*-1$ maintain
+\[
+ (z_j\zeta^{-m})^{2^{r_*-\nu}}=1\pmod N.
+\]
+Its half-power is a square root of one.  A proper gcd of that half-power
+minus one splits $N$.  Otherwise the half-power is either $1$ in every
+prime-power component or $-1$ in every component.  In the first case
+keep $m$; in the second add $2^\nu$, which flips that half-power because
+$\zeta^{2^{r_*-1}}=-1$.  After $r_*$ steps, $z_j=\zeta^{m_j}$.
+There are $O(K(\log N)^2)$ modular operations, or
+$O(K(\log N)^4)$ elementary bit operations.
+
+List the nonpivot indices as $i_1,\ldots,i_K$ and set
+\begin{equation}
+ \delta_r=m_{i_r}\bmod2,\quad
+ d^{(r)}=q_{j_*}^{\delta_r}q_{i_r},\quad
+ s^{(r)}=(d^{(r)})^{(u+1)/2}
+                    \zeta^{-(m_{i_r}+\delta_r)/2}\pmod N.
+ \label{eq:os-base-roots}
+\end{equation}
+Squaring gives $(s^{(r)})^2=d^{(r)}\pmod N$.
+For a binary vector $\ell$ write
+$\sum_r\ell_r\delta_r=2k(\ell)+\epsilon(\ell)$ and define
+\begin{equation}
+ d_\ell=q_{j_*}^{\epsilon(\ell)}\prod_{\ell_r=1}q_{i_r},
+ \qquad
+ s_\ell=q_{j_*}^{-k(\ell)}\prod_{\ell_r=1}s^{(r)}\pmod N.
+ \label{eq:os-sparse-roots}
+\end{equation}
+For nonzero $\ell$, $d_\ell$ is squarefree and not one.  Different
+vectors give different signed squarefree integers: their nonpivot prime
+factors and possible sign recover the subset.  We have $s_\ell^2=d_\ell$.
+
+For distinct nonzero $\ell_1,\ell_2$, put $\ell_3=\ell_1+\ell_2$.
+Canceling their common subset factors in \eqref{eq:os-sparse-roots} gives
+\begin{equation}
+ s_{\ell_1}s_{\ell_2}=\eta_{12}s_{\ell_3}\pmod N,
+ \qquad
+ d_{\ell_3}=d_{\ell_1}d_{\ell_2}/\gcd(|d_{\ell_1}|,|d_{\ell_2}|)^2,
+ \label{eq:os-compatible}
+\end{equation}
+where the sign of $\eta_{12}$ is negative exactly when both radicands
+are negative.  Thus all required quadratic and triangle-biquadratic
+modular embeddings are compatible.
+
+Only requested vectors are materialized.  In the algorithm below they
+have at most two coordinates.  In particular, if $q_K\leq R$ then
+$|d_\ell|\leq R^3$.  The full $2^K$ family is never constructed.
+The product identity for arbitrary vectors has square factor
+$|q_{j_*}|^{k(\ell)}$; it need not divide the squarefree basis primorial.
+No such stronger divisibility is used here.
+
+\section{The sparse candidate list and its effective guard}
+\label{sec:os-scale}
+
+Fix an integer scale $m\geq1$ and use only integer operations to define
+\begin{equation}
+ L=2^m,\quad a_m=\lceil\sqrt{256Lm}\rceil,\quad
+ R=2^{a_m},\quad K=\pi(R),\quad
+ S=\{0,e_1,\ldots,e_K\},\quad H=K+1.
+ \label{eq:os-scale}
+\end{equation}
+Generate the primes up to $R$ by an ordinary sieve.
+The edge fields have quadratic discriminants at most $4R^3$.
+For any triangle, the basis
+$1,\sqrt{d_1},\sqrt{d_2},\sqrt{d_1d_2}$ gives an order of
+discriminant $256d_1^2d_2^2$, so the field discriminant is at most
+\begin{equation}
+ D_*=256R^{12}.
+ \label{eq:os-Dstar}
+\end{equation}
+All ramification is at rational primes at most $R$, including 2.
+There are at most $H^2$ edge-field occurrences and $H^3$ triangles.
+Duplicates need not be removed.
+
+For a field $F$ or $E$ use the actual discriminant to set
+$M_F=\lceil\sqrt{|\Delta_F|}\rceil$ and similarly $M_E$.
+The norm cutoffs are
+\begin{equation}
+ Z_F=\max(M_F^3,M_FR),\qquad
+ Z_E=\max\bigl(M_E^3,M_E\max_{F\subset E}M_F^2\bigr).
+ \label{eq:os-cutoffs}
+\end{equation}
+The integer
+\begin{equation}
+ B_m=64D_*^4(R+1)
+ \label{eq:os-guard}
+\end{equation}
+dominates $R$, every cutoff, and $64$ times every field discriminant.
+Thus $P^-(N)>B_m$ guarantees all the enumeration and coprimality
+hypotheses in the shared quadratic package.
+
+The candidate list at this scale consists of the integers $1,\ldots,R$,
+the base tests of Section~\ref{sec:os-roots}, and the modular images
+returned by Theorem~\ref{thm:qp-enumeration} for every edge field and
+every triangle field with cutoffs \eqref{eq:os-cutoffs}.
+Run \textsc{SplitTest} on every image.  Any factor found within an
+enumeration routine is also returned after checking divisibility.
+
+\section{Why one candidate must split}
+\label{sec:os-contradiction}
+
+Suppose an active modulus from Lemma~\ref{lem:os-active} satisfies
+\[
+ L\leq\log q<2L,\qquad P^-(q)>B_m,
+\]
+and suppose every candidate at the scale fails to split.
+All rational, unit, and principal-generator characters are then one.
+Lemma~\ref{lem:qp-assembly} supplies the compatible ideal characters.
+The ramified primes are at most $R$, so
+Theorem~\ref{thm:qp-gram} applies with $Y=R$ and excludes only primes
+dividing $q$.
+
+Put $X=q^{1/3}$ and $V=\log R$.  For the proof, not the algorithm,
+set
+\[
+ u_0=\lceil(\log X)/V\rceil,
+ \qquad Y_1=\lfloor X^{1/u_0}\rfloor\leq R.
+\]
+As $L\longrightarrow\infty$, $\log Y_1=V-O(\log L)$.
+Lemma~\ref{lem:qp-explicit-scale} verifies every following numerical
+inequality for the explicit conservative range $m\geq4096$.
+The elementary prime-product estimate gives
+\begin{equation}
+ \Psi_q(X,R)\geq\Psi_q(X,Y_1)
+       \geq X(25\log X)^{-u_0}\geq Xe^{-V/8}.
+ \label{eq:os-smooth-lower}
+\end{equation}
+For the last inequality, observe that
+\[
+ u_0\leq\frac{2L}{3V}+1,
+ \qquad V^2\geq256(\log2)L\log L.
+\]
+Thus $u_0\log(25\log X)/V$ has limit superior at most
+$2/(768\log2)<1/8$.  Explicit prime estimates and these inequalities
+make the threshold effective.
+
+Also $H-1=\pi(R)\geq cR/\log R$, and therefore
+\begin{equation}
+ \frac{X(1+\log X)}{H-1}\leq Xe^{-3V/4}
+ \label{eq:os-diagonal}
+\end{equation}
+on that range.  The Gram inequality forces an
+edge field with coprime ideal sum at least $\frac12Xe^{-V/8}$.
+
+Every edge discriminant is at most $4R^3$, so
+$\log D=O(V)=o(\log q)$.  In particular $D\leq q^{1/200}$ eventually,
+and $P^-(q)>D$.  Corollary~\ref{cor:qp-ideal-sum} bounds every such
+sum by
+\[
+ 2C_BD^3Xq^{-1/4000}+Xq^{-1/50}(1+\log X)
+ \leq Xe^{-(\log q)/8000}
+\]
+on the same range.  Since $V=o(\log q)$, and explicitly by
+Lemma~\ref{lem:qp-explicit-scale}, this
+contradicts the lower bound.  A candidate must therefore split.
+No unproved equidistribution or smoothness hypothesis occurs in this
+argument.
+
+\section{The complete deterministic algorithm}
+
+\begin{algorithm}[Supplied-exponent splitter]
+\label{alg:os-full}
+Input $N,M$ with the promise of Theorem~\ref{thm:os-main}.
+\begin{enumerate}
+\item Put $n=\operatorname{bitlen}(N)$ and form the numerical parameters
+      $L,R,D_*,B_m$ in \eqref{eq:os-scale}--\eqref{eq:os-guard} for
+      $1\leq m\leq\lfloor\log_2n\rfloor$.
+      Let $B_{\max}$ be the largest guard, or 2 if the list is empty.
+      Prime generation and the value $K$ are deferred until a scale is
+      actually executed.
+\item Trial-divide $N$ by the integers from 2 through
+      $\min(B_{\max},N-1)$, returning a proper divisor if found.
+\item For each scale, construct the compatible base roots or return
+      the factor found during their construction.  Enumerate its edge
+      and triangle fields, run the finite enumeration routines at
+      \eqref{eq:os-cutoffs}, and apply \textsc{SplitTest} to every
+      listed image and every integer $1\leq a\leq R$.
+\item If no factor has been returned, finish by ordinary trial division
+      through $\lfloor\sqrt N\rfloor$.
+\end{enumerate}
+Every reported factor is checked by exact division.
+\end{algorithm}
+
+Step 4 makes the program total on its promised inputs without requiring
+the huge effective analytic threshold to be computed at run time.
+It is used only for finitely many input integers.  To prove this,
+suppose the first trial division finds no factor.  Then
+$P^-(N)>B_{\max}$.  Its active modulus $q$ obeys
+$q\geq P^-(N)$, so $\log q$ tends to infinity with $N$ in this branch.
+The scale
+$m_* =\lfloor\log_2\log q\rfloor$ is eventually positive and belongs
+to the loop, since $\log q\leq\log N<n$.
+It has $B_{m_*}\leq B_{\max}<P^-(q)$ and lies in the contradiction
+range of Section~\ref{sec:os-contradiction}.  That iteration succeeds.
+The threshold is explicit: $m_*\geq4096$ suffices.
+For instance, after a failed initial trial division,
+$\log q>\log B_{\max}>\sqrt n$; thus
+$n\geq2^{8192}$ is more than enough.  This enormous bound only
+certifies that the fallback range is finite and effective.
+
+At each scale $\log B_m=O(V)$ and $H\leq R+1$.
+Trial division, prime generation, the $H^3$ triangle calls, and each
+polynomial-in-discriminant/cutoff enumeration cost
+$\exp(O(V))\operatorname{poly}(\log N)$, apart from the supplied
+exponent factor in the order tests.  The root-construction cost has the
+same bound by Section~\ref{sec:os-roots}.  Finally
+\[
+ V=O(\sqrt{Lm})
+   =O(\sqrt{\log N\log\log(N+16)})
+\]
+over all included scales, and their number is $O(\log\log N)$.
+This proves Theorem~\ref{thm:os-main}.  Reading or powering with a long
+supplied exponent is genuinely charged by
+$\operatorname{bitlen}(M)$; a succinct informal description of $M$
+does not replace that input in this theorem.
+
+\section{Scope, verification, and the next mathematical obstacle}
+
+The proof is an ordinary mathematical proof, not a claimed formal
+verification.  The accompanying exact programs check the local
+ramification matrix decompositions, selected finite-field identities,
+the exponent arithmetic in the Burgess calculation, and small
+coefficient-chain examples.  They do not constitute a benchmarked
+implementation of the complete number-field enumeration or the full
+splitting algorithm.  The algorithms above specify those components and
+their bit costs independently of such finite checks.
+
+The sparse average balances the number of fields against the fraction of
+smooth integers.  This balance still has a square-root logarithmic
+scale.  Within the same diagonal-loss argument, nonuniform weights have
+effective cardinality
+$(\sum_a w_a)^2/\sum_a w_a^2\leq H$; they cannot create more independent
+averaging mass than the number of vertices.  Reducing the first
+$L$-parameter requires additional positive mass, a different diagonal
+control, a family used without explicit enumeration, or a substantially
+different relation constructor.  No general factoring bound below
+$L[1/3]$ follows from the supplied-exponent theorem.
+
+\appendix
+\input{manuscripts/shared/quadratic_package.tex}

@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "Please cite the relevant manuscript and the exact repository commit."
+type: software
+title: "Factoring after Google: manuscripts and reproducible verification"
+authors:
+  - family-names: Brox
+    given-names: Jose
+version: 0.1.0
+date-released: 2026-11-25
+url: "https://github.com/JoseBrox/Factoring_after_Google"
+repository-code: "https://github.com/JoseBrox/Factoring_after_Google"
+license: CC-BY-4.0
+abstract: >-
+  Research manuscripts and exact finite verification for deterministic integer
+  factoring, supplied-order splitting, quadratic nonresidue construction,
+  conditional randomized factoring improvements, and a quadratic relation chain.
+keywords:
+  - integer factorization
+  - computational number theory
+  - deterministic algorithms
+  - reproducible research
