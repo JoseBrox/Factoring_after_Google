@@ -122,7 +122,7 @@ theorem indexMultiple_pos (K : ℕ) : 0 < indexMultiple K := by
   rw [he, zero_dvd_iff] at hd
   exact (Nat.factorial_ne_zero K) hd
 
-theorem indexMultiple_log_bound (K : ℕ) (hK : 0<K) :
+theorem indexMultiple_log_bound (K : ℕ) :
     Real.log (indexMultiple K : ℝ) ≤ (K:ℝ)*Real.log K := by
   have h : indexMultiple K ≤ K^K :=
     (Nat.le_of_dvd (Nat.factorial_pos K) (indexMultiple_dvd_factorial K)).trans

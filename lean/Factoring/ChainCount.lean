@@ -78,7 +78,7 @@ theorem good_count {F : Type*} [Field F] [Fintype F] (b r : F)
     by_cases hz : a^2-b=0
     · have hh : quadraticChar F (a^2-b)=0 := by rw [hz,quadraticChar_zero]
       rw [hh] at hc'
-      simp [bad,zeroNorm,hz] <;> omega
+      simp [bad,zeroNorm,hz]
     · by_cases hs : IsSquare (a^2-b)
       · rw [(quadraticChar_one_iff_isSquare hz).mpr hs] at hc'
         simp [bad,zeroNorm,hz,hs] <;> omega
