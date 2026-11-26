@@ -31,13 +31,15 @@ jobs:
         run: |
           mkdir -p ../build/lean-next
           set -o pipefail
+          failed=0
           for file in ../lean-next/*.lean; do
             name="$(basename "$file" .lean)"
             cp "$file" "$name.lean"
-            lake env lean -DwarningAsError=true "$name.lean" | tee "../build/lean-next/$name.log"
+            lake env lean -DwarningAsError=true "$name.lean" | tee "../build/lean-next/$name.log" || failed=1
             rm "$name.lean"
           done
-          python3 ../lean-next/audit.py ../build/lean-next
+          python3 ../lean-next/audit.py ../build/lean-next || failed=1
+          exit "$failed"
       - name: Preserve evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
