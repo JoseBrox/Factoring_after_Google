@@ -20,7 +20,7 @@ jobs:
           git remote add origin https://github.com/openai/math.git
           git fetch --depth=1 --filter=blob:none origin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb
           git sparse-checkout init --cone
-          git sparse-checkout set lean/OAI
+          git sparse-checkout set lean/OAI lean/patches
           git checkout --detach FETCH_HEAD
           test "$(git rev-parse HEAD)" = fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb
           git init "$RUNNER_TEMP/digamma"
@@ -55,9 +55,19 @@ jobs:
           assert p['LeanArchitect'] == '468e8f58fb4ad6e6ad672a08da6d0d0531e95a97', p
           assert p['rellich-kondrachov'] == '70f85d4c1bf99c6e7d61e8be4daa6f3664d08d23', p
           PY
+          # Reproduce the pinned upstream post_update compatibility patch.
+          patch="$RUNNER_TEMP/upstream/lean/patches/rellich-kondrachov-lean4341.patch"
+          dep="$RUNNER_TEMP/qrh/.lake/packages/rellich-kondrachov"
+          test "$(git hash-object "$patch")" = 43600843a74f7736b17db51af4783dc7ba69f6a2
+          test "$(git -C "$dep" rev-parse HEAD)" = 70f85d4c1bf99c6e7d61e8be4daa6f3664d08d23
+          git -C "$dep" apply --check "$patch"
+          git -C "$dep" apply "$patch"
+          git -C "$dep" apply --reverse --check "$patch"
+          git -C "$dep" diff --stat | tee "$GITHUB_WORKSPACE/build/qrh/compatibility-patch.txt"
           mapfile -t imports < cache-roots.txt
           lake exe cache get "${imports[@]}"
-          lake build OAI.NumberTheory.DirichletL.Nonvanishing
+          set -o pipefail
+          lake build OAI.NumberTheory.DirichletL.Nonvanishing 2>&1 | tee "$GITHUB_WORKSPACE/build/qrh/upstream-build.log"
           set -o pipefail
           lake env lean -DwarningAsError=true FactoringQRH.lean | tee "$GITHUB_WORKSPACE/build/qrh/axioms.txt"
           python3 "$GITHUB_WORKSPACE/lean-qrh/audit.py" "$GITHUB_WORKSPACE/build/qrh/axioms.txt"
