@@ -31,3 +31,5 @@ import Factoring.ModularPower
 import Factoring.BinaryGCD
 import Factoring.SaddleCalculus
 import Factoring.ReadinessTransfer
+import Factoring.RationalRecovery
+import Factoring.SaddleDecay
