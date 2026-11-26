@@ -113,6 +113,7 @@ theorem indexMultiple_dvd_factorial (K : ℕ) : indexMultiple K ∣ K.factorial 
   apply Finset.lcm_dvd
   intro i hi
   simp at hi
+  change i ∣ K.factorial
   exact Nat.dvd_factorial (by omega) (by omega)
 
 theorem indexMultiple_pos (K : ℕ) : 0 < indexMultiple K := by
@@ -127,7 +128,7 @@ theorem indexMultiple_log_bound (K : ℕ) :
   have h : indexMultiple K ≤ K^K :=
     (Nat.le_of_dvd (Nat.factorial_pos K) (indexMultiple_dvd_factorial K)).trans
       (Nat.factorial_le_pow K)
-  have hh := Real.log_le_log (show (0:ℝ)<indexMultiple K by exact_mod_cast indexMultiple_pos K)
+  have hh := Real.log_le_log (show (0:ℝ) < indexMultiple K by exact_mod_cast indexMultiple_pos K)
       (show (indexMultiple K:ℝ) ≤ (K:ℝ)^K by exact_mod_cast h)
   rwa [Real.log_pow] at hh
 
