@@ -1,0 +1,57 @@
+name: Experimental density reuse
+on:
+  push:
+    branches: [lean-density-reuse]
+    paths: ['lean-density/**', '.github/workflows/lean-density.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  density:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Discover exact import closure
+        run: |
+          mkdir -p "$RUNNER_TEMP/upstream" "$RUNNER_TEMP/density" build/density
+          cd "$RUNNER_TEMP/upstream"
+          git init
+          git remote add origin https://github.com/openai/math.git
+          git fetch --depth=1 --filter=blob:none origin 3344da59991ed94f9ba711217b29c1d760badfa6
+          git sparse-checkout init --cone
+          git sparse-checkout set lean/OAI
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = 3344da59991ed94f9ba711217b29c1d760badfa6
+          set +e
+          python3 "$GITHUB_WORKSPACE/lean-density/closure.py" lean "$RUNNER_TEMP/density" "$GITHUB_WORKSPACE/lean-density/FactoringDensity.lean"
+          code=$?
+          cp "$RUNNER_TEMP/density/closure.json" "$GITHUB_WORKSPACE/build/density/"
+          exit "$code"
+      - name: Install pinned Lean 4.34.1
+        run: |
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 --max-time 300 https://github.com/leanprover/lean4/releases/download/v4.34.1/lean-4.34.1-linux.tar.zst -o lean.tar.zst
+          echo '47bf4bbd78f70c2e9670598ab7124d92b6efb7330ff33e5fbb4030f6fd72e4e4  lean.tar.zst' | sha256sum --check
+          tar --use-compress-program=unzstd -xf lean.tar.zst
+          rm lean.tar.zst
+          echo "$RUNNER_TEMP/lean-4.34.1-linux/bin" >> "$GITHUB_PATH"
+      - name: Build just the density proof and adapter
+        run: |
+          cd "$RUNNER_TEMP/density"
+          cp "$GITHUB_WORKSPACE/lean-density/lakefile.toml" .
+          cp "$GITHUB_WORKSPACE/lean-density/FactoringDensity.lean" .
+          echo 'leanprover/lean4:v4.34.1' > lean-toolchain
+          lake update
+          mapfile -t imports < cache-roots.txt
+          lake exe cache get "${imports[@]}"
+          lake build OAI.NumberTheory.Ostmann.ZeroDensity.ComplexDensityProof
+          set -o pipefail
+          lake env lean -DwarningAsError=true FactoringDensity.lean | tee "$GITHUB_WORKSPACE/build/density/axioms.txt"
+          python3 "$GITHUB_WORKSPACE/lean-density/audit.py" "$GITHUB_WORKSPACE/build/density/axioms.txt"
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: density-reuse-evidence
+          path: build/density/
