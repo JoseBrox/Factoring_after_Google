@@ -85,7 +85,7 @@ def remainderStep (modulus r : List Bool) (b : Bool) : List Bool :=
   (if d.2 then shifted else d.1).take modulus.length
 
 theorem remainderStep_spec (modulus r : List Bool) (b : Bool)
-    (hm : 0<value modulus) (hr : value r<value modulus)
+    (hr : value r<value modulus)
     (hlen : r.length=modulus.length) :
     (remainderStep modulus r b).length=modulus.length ∧
     value (remainderStep modulus r b)=(bit b+2*value r)%value modulus := by
@@ -133,7 +133,7 @@ theorem remainderBits_spec (modulus xs : List Bool) (hm : 0<value modulus) :
     have hr : value (remainderBits modulus xs)<value modulus := by
       rw [ih.2]
       exact Nat.mod_lt _ hm
-    have h := remainderStep_spec modulus (remainderBits modulus xs) b hm hr ih.1
+    have h := remainderStep_spec modulus (remainderBits modulus xs) b hr ih.1
     constructor
     · exact h.1
     · change value (remainderStep modulus (remainderBits modulus xs) b) =
