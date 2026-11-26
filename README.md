@@ -243,3 +243,5 @@ The [external int-fac audit](docs/int_fac_comparison.md) records a stronger dete
 The latest [half-scale necessary rank and unit-height bounds](docs/half_scale_unit_rank_obstruction.md) rule out ordinary short-unit completion on most balanced inputs. The [full-degree factor-refinement search](docs/full_degree_factor_refinement.md) eliminates norm-factorization and bad-prime restrictions in the exact relation decision. Uniform target coverage, not the decision's cost, is still open.
 
 The [scalar-free coverage audit](docs/scalar_free_target_coverage.md) removes diagonal rational rank, proves a private-prime obstruction to rank-only arguments, and identifies the exact target coset order in the common-order unit quotient. Uniform coverage of the half-scale family remains unproved.
+
+The [one-field rank-one continuation](docs/one_field_rank_one_coverage.md) explicitly constructs a full unit-log basis with prescribed modular images and all but one independent congruence-unit direction. Its exact finite extraction succeeds with certified logarithm intervals. Uniform existence of the final transverse relation remains open.

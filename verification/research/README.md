@@ -24,3 +24,7 @@ Run `python verification/research/factor_refinement.py` with SymPy installed. Th
 ## Scalar-free target and common-order checks
 
 Run `python verification/research/normalized_target.py` with SymPy and the earlier `factor_refinement.py` in the same directory. The exact checked source and output are recorded in [the scalar-free coverage note](../../docs/scalar_free_target_coverage.md). The script verifies diagonal scalar elimination, an exact positive certificate, all quotient-ideal congruences through the first positive gluing exponent 2310 in the N=77 example, and a private-prime negative example with normalized rank 6. These are finite checks, not a uniform coverage result.
+
+## Forced coupled norms and rank-one extraction
+
+Run `python verification/research/coupled_norm_marks.py` with SymPy and `python verification/research/one_field_certificate.py` with the standard library alone. The first checks exact forced norms, coupled valuation rank, the negative target interpolation example, and explicit full-rank units in two fields of degrees six and eight. The second performs a complete one-field finite relation search on N=77, verifies actual ideal valuations at simple roots, and uses 96-bit directed rational intervals and the unit-lattice separation bound to certify the recovered rational coordinate. It then checks the modular exponent and proper gcd. See [the one-field research note](../../docs/one_field_rank_one_coverage.md) for the proved construction, exact extraction criterion, and unresolved asymptotic existence theorem.
