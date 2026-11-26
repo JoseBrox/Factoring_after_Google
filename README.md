@@ -42,7 +42,95 @@ L_N[1/3,(64/9)^{1/3}]\qquad ((64/9)^{1/3}\approx 1.923).
 
 See [NFS]. Our conditional randomized constant improves the explicit constants of Cogentic's rigorous-bound framework, not the heuristic GNFS constant.
 
-The large-modulus obstruction toward deterministic power $`1/2`$ remains open. **No general classical algorithm below first L-parameter 1/3 is claimed here.**
+The new [monic polynomial-mark construction](docs/monic_polynomial_mark_factorer.md) removes the original common-leading-coefficient barrier and reduces a deterministic # Factoring after Google
+
+**Integer factoring, supplied-order splitting, and quadratic nonresidues — research using ChatGPT Astra 6 and 6.2.**
+
+This repository develops and audits improvements to the November 2026 Cogentic factoring manuscripts released by Google Research. It contains readable research manuscripts, explicit algorithm specifications, Lean formalizations of core components, exact finite verification programs, and pinned source material. The aim is to make every claim easy to locate, reconstruct, and challenge.
+
+**Start here:** [results and proof status](docs/proof_status.md) · [manuscripts](manuscripts/README.md) · [Lean proofs](lean/README.md) · [reproduce the checks](docs/reproducibility.md) · [sources and comparisons](docs/comparison_sources.md).
+
+## Results at a glance
+
+All logarithms in the asymptotic expressions are natural. The standard subexponential notation is
+
+```math
+L_N[\alpha,c]=\exp\!\bigl((c+o(1))(\log N)^\alpha(\log\log N)^{1-\alpha}\bigr).
+```
+
+The table compares like-for-like inputs and computational models. **“Previous” means the bound in the pinned source being improved** (25 November 2026); historical benchmarks appear below. These are research manuscripts, not independently certified world records.
+
+| Problem / manuscript (PDF) | New complexity | Previous bound and source | Proof status |
+|:---|:---|:---|:---|
+| **[Deterministic factoring](papers/deterministic_factoring.pdf)** | $`\exp(O_\varepsilon((\log N)^{2/3+\varepsilon}))`$ | $`O(\exp(3(\log N)^{3/4}))`$ [D, Thm. 1.1][D] | Written proof; any fixed $`\varepsilon>0`$. [LaTeX](manuscripts/deterministic_factoring/) |
+| **[Deterministic supplied-order splitting](papers/order_splitting.pdf)** | $`(\log M)(\log N)^{O(1)}\exp(O(\sqrt{\log N\,\log\log N}))`$ | $`(\log M)(\log N)^2\exp(O(\sqrt{\log N}\,\log\log N))`$ [D, Thm. 1.2][D] | Written proof; supplied exponent. [LaTeX](manuscripts/order_splitting/) |
+| **[Deterministic quadratic nonresidues](papers/quadratic_nonresidues.pdf)** | $`\exp(O(\sqrt{\log p\,\log\log p}))`$ | $`\exp(O(\sqrt{\log p}\,\log\log p))`$ [D, Thm. 1.2][D] | Written proof; prime input. [LaTeX](manuscripts/quadratic_nonresidues/) |
+| **[Randomized factoring](papers/randomized_factoring.pdf)** — expected time | $`L_N[1/3,91.4]`$ | $`L_N[1/3,105]`$ [R, Thm. 1.1][R] | **Conditional.** [LaTeX](manuscripts/randomized_factoring/) |
+| Randomized factoring — workspace | $`L_N[1/3,19]`$ | $`L_N[1/3,40]`$ [R, Thm. 1.1][R] | **Conditional** for the full factorer. |
+| **[Quadratic relation chain](papers/quadratic_relations.pdf)** | $`O(\log M)`$ ring multiplications per trial | Auxiliary routine; retained construction [N1101][H] | Single-trial correctness and probability certified in Lean under mixed-sign promise; [code](src/factoring_after_google/quadratic_relations.py). |
+
+### Reading the bounds
+
+- **Deterministic factoring:** the power of the logarithm in the running-time exponent drops from $`3/4`$ to $`2/3+\varepsilon`$ for every fixed $`\varepsilon>0`$. This is a family approaching $`2/3`$, not an endpoint bound of the form $`L_N[2/3,c]`$.
+- **Supplied-order splitting and quadratic nonresidues:** the main exponential factor changes from $`\exp(O(\sqrt{\log N}\,\log\log N))`$ to $`\exp(O(\sqrt{\log N\,\log\log N}))`$ (with $`p`$ in place of $`N`$ in the prime-input problem). This saves a factor of $`\sqrt{\log\log N}`$ in the scale of the exponent. The nonresidue bound is $`L_p[1/2,O(1)]`$. The splitting input includes an even positive integer $`M`$ divisible by $`p-1`$ for every prime $`p\mid N`$, with composite $`N`$ not a perfect power. Its bit length is charged; producing it is a separate task.
+- **Randomized factoring:** the headline time and deterministic workspace constants change from 105 and 40 to 91.4 and 19, conditional on the widened analytic and square-certification contracts. Google's concluding proof also reports the tighter intermediate constants 104 and 38. Our sparse kernel theorem and recursion budget have written proofs.
+- **Quadratic relation chain:** under its mixed-sign promise, each independent uniform trial succeeds with probability at least $`\frac{p+3}{2p}>\frac12`$. This is not a general factoring algorithm without the promised inputs.
+
+### Historical benchmarks
+
+Lenstra–Pomerance gives a rigorous randomized $`L_N[1/2,1]`$ bound [LP]. The general number field sieve has heuristic complexity
+
+```math
+L_N[1/3,(64/9)^{1/3}]\qquad ((64/9)^{1/3}\approx 1.923).
+```
+
+See [NFS]. Our conditional randomized constant improves the explicit constants of Cogentic's rigorous-bound framework, not the heuristic GNFS constant.
+
+1/2+\varepsilon`$ exponent to an explicit **open** one-mark covariance estimate for two smooth resultants. The [paired-unit construction](docs/paired_unit_construction.md) provides nearly # Factoring after Google
+
+**Integer factoring, supplied-order splitting, and quadratic nonresidues — research using ChatGPT Astra 6 and 6.2.**
+
+This repository develops and audits improvements to the November 2026 Cogentic factoring manuscripts released by Google Research. It contains readable research manuscripts, explicit algorithm specifications, Lean formalizations of core components, exact finite verification programs, and pinned source material. The aim is to make every claim easy to locate, reconstruct, and challenge.
+
+**Start here:** [results and proof status](docs/proof_status.md) · [manuscripts](manuscripts/README.md) · [Lean proofs](lean/README.md) · [reproduce the checks](docs/reproducibility.md) · [sources and comparisons](docs/comparison_sources.md).
+
+## Results at a glance
+
+All logarithms in the asymptotic expressions are natural. The standard subexponential notation is
+
+```math
+L_N[\alpha,c]=\exp\!\bigl((c+o(1))(\log N)^\alpha(\log\log N)^{1-\alpha}\bigr).
+```
+
+The table compares like-for-like inputs and computational models. **“Previous” means the bound in the pinned source being improved** (25 November 2026); historical benchmarks appear below. These are research manuscripts, not independently certified world records.
+
+| Problem / manuscript (PDF) | New complexity | Previous bound and source | Proof status |
+|:---|:---|:---|:---|
+| **[Deterministic factoring](papers/deterministic_factoring.pdf)** | $`\exp(O_\varepsilon((\log N)^{2/3+\varepsilon}))`$ | $`O(\exp(3(\log N)^{3/4}))`$ [D, Thm. 1.1][D] | Written proof; any fixed $`\varepsilon>0`$. [LaTeX](manuscripts/deterministic_factoring/) |
+| **[Deterministic supplied-order splitting](papers/order_splitting.pdf)** | $`(\log M)(\log N)^{O(1)}\exp(O(\sqrt{\log N\,\log\log N}))`$ | $`(\log M)(\log N)^2\exp(O(\sqrt{\log N}\,\log\log N))`$ [D, Thm. 1.2][D] | Written proof; supplied exponent. [LaTeX](manuscripts/order_splitting/) |
+| **[Deterministic quadratic nonresidues](papers/quadratic_nonresidues.pdf)** | $`\exp(O(\sqrt{\log p\,\log\log p}))`$ | $`\exp(O(\sqrt{\log p}\,\log\log p))`$ [D, Thm. 1.2][D] | Written proof; prime input. [LaTeX](manuscripts/quadratic_nonresidues/) |
+| **[Randomized factoring](papers/randomized_factoring.pdf)** — expected time | $`L_N[1/3,91.4]`$ | $`L_N[1/3,105]`$ [R, Thm. 1.1][R] | **Conditional.** [LaTeX](manuscripts/randomized_factoring/) |
+| Randomized factoring — workspace | $`L_N[1/3,19]`$ | $`L_N[1/3,40]`$ [R, Thm. 1.1][R] | **Conditional** for the full factorer. |
+| **[Quadratic relation chain](papers/quadratic_relations.pdf)** | $`O(\log M)`$ ring multiplications per trial | Auxiliary routine; retained construction [N1101][H] | Single-trial correctness and probability certified in Lean under mixed-sign promise; [code](src/factoring_after_google/quadratic_relations.py). |
+
+### Reading the bounds
+
+- **Deterministic factoring:** the power of the logarithm in the running-time exponent drops from $`3/4`$ to $`2/3+\varepsilon`$ for every fixed $`\varepsilon>0`$. This is a family approaching $`2/3`$, not an endpoint bound of the form $`L_N[2/3,c]`$.
+- **Supplied-order splitting and quadratic nonresidues:** the main exponential factor changes from $`\exp(O(\sqrt{\log N}\,\log\log N))`$ to $`\exp(O(\sqrt{\log N\,\log\log N}))`$ (with $`p`$ in place of $`N`$ in the prime-input problem). This saves a factor of $`\sqrt{\log\log N}`$ in the scale of the exponent. The nonresidue bound is $`L_p[1/2,O(1)]`$. The splitting input includes an even positive integer $`M`$ divisible by $`p-1`$ for every prime $`p\mid N`$, with composite $`N`$ not a perfect power. Its bit length is charged; producing it is a separate task.
+- **Randomized factoring:** the headline time and deterministic workspace constants change from 105 and 40 to 91.4 and 19, conditional on the widened analytic and square-certification contracts. Google's concluding proof also reports the tighter intermediate constants 104 and 38. Our sparse kernel theorem and recursion budget have written proofs.
+- **Quadratic relation chain:** under its mixed-sign promise, each independent uniform trial succeeds with probability at least $`\frac{p+3}{2p}>\frac12`$. This is not a general factoring algorithm without the promised inputs.
+
+### Historical benchmarks
+
+Lenstra–Pomerance gives a rigorous randomized $`L_N[1/2,1]`$ bound [LP]. The general number field sieve has heuristic complexity
+
+```math
+L_N[1/3,(64/9)^{1/3}]\qquad ((64/9)^{1/3}\approx 1.923).
+```
+
+See [NFS]. Our conditional randomized constant improves the explicit constants of Cogentic's rigorous-bound framework, not the heuristic GNFS constant.
+
+d`$ independent shared unit relations without smoothness assumptions. Neither is an unconditional improvement to the worst-case factoring bound. **No general classical algorithm below first L-parameter 1/3 is claimed here.**
 
 ## How to read the repository
 
@@ -76,7 +164,7 @@ python3 scripts/verify_repository.py
 
 For byte-level verification of the initial published snapshot, check out [commit `af09583`](https://github.com/JoseBrox/Factoring_after_Google/tree/af09583053f45e910e865bb6594b2ba0f8706bc2) and run `python3 scripts/verify_release.py`. The release manifest records that snapshot, not subsequent editorial changes.
 
-The mathematical checks use **Python's standard library and Node.js**, with no third-party Python packages. They are deterministic and offline. The runner compares each result with the committed expected output and fails on a discrepancy. See [reproducibility](docs/reproducibility.md) for versions, individual checks, manuscript builds, and source hashes.
+The main verification runner uses **Python's standard library and Node.js**, with no third-party Python packages. The separate [polynomial-mark research experiment](verification/research/polynomial_marks.py) requires SymPy and mpmath. They are deterministic and offline. The runner compares each result with the committed expected output and fails on a discrepancy. See [reproducibility](docs/reproducibility.md) for versions, individual checks, manuscript builds, and source hashes.
 
 To rebuild the PDFs with a normal TeX Live installation containing `latexmk`, the AMS packages, `lmodern`, `microtype`, `xurl`, and `cleveref`:
 
@@ -98,7 +186,7 @@ The [Lean guide](lean/README.md) gives the theorem names, assumptions, and repro
 | 4 | Quadratic relation chain | Executable supplied-M splitter, proper-divisor soundness, exact mixed-prime success probability ≥ (p+3)/(2p) > 1/2 (including repeated prime powers), and arithmetic-operation budgets. |
 | 5 | Square-root extraction | A nontrivial square congruence yields a proper gcd factor, including even moduli and noninvertible roots. |
 
-The core contains **277 explicitly named source theorems in 39 modules**; 266 passed aggregate compilation and complete axiom audit, and the two newly promoted modules passed strict individual verification ([build evidence](verification/lean/progression-readiness.md)). The quadratic chain's main finite single-trial correctness and probability theorem is now certified. The remaining results are compiled component theorems. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
+The core contains **277 explicitly named source theorems in 39 modules**; all passed aggregate compilation and complete axiom audit in run 45851754483 ([build evidence](verification/lean/progression-readiness.md)). The quadratic chain's main finite single-trial correctness and probability theorem is now certified. The remaining results are compiled component theorems. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
 
 The library-reuse checkpoint additionally certifies the unit-lattice torsion argument, localized polynomial evaluation and two-field modular cancellation, exact character orthogonality for injective prefixes, the coprime smooth-product count, the affine quadratic-character sum identity, and executable scalar supplied-order splitting from a certified Euler-sign discrepancy. See [library reuse and remaining dependencies](docs/lean_library_reuse.md).
 

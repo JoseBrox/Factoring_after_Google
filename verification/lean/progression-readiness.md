@@ -24,3 +24,7 @@ No additional whole milestone is counted yet. See the [fixed completion register
 ## Confirmed subsequent checks
 
 Both patched QRH builds (45836288815 and 45837815223) passed and all seven roots were audited. Candidate run 45844337004 also passed, including IdealCancellation and PrimitiveFibre. Their exact sources were promoted at 25b4191; the current named source theorem count is 277 in 39 modules, with the new aggregate receipt pending. The fixed milestone count is now 17/36; see the [comparison](../../docs/int_fac_comparison.md).
+
+### Subsequent full build
+
+Run [45851754483](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45851754483) passed pinned dependencies, warning-free compilation and compiled axiom audit after the two additional modules were promoted. The log records 728 declarations, including 566 theorems. All 277 explicitly named source theorems in 39 modules are thus covered by the aggregate build. The new polynomial-mark construction is separate written research and is not counted as a Lean milestone.
