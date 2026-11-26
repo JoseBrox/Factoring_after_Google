@@ -171,8 +171,71 @@ therefore at most
 as required. No unproved equidistribution statement was used in
 this bad-child estimate.
 
-This leaves nearby tuned-scale comparability, polynomial fibre
-coupling, conditional moments and global readiness, square
-certification and their Lean formalizations. The main weighted
-AP asymptotic remains conditional on the actual QRH result and
-its analytic consequences.
+## 5. Nearby tuned-scale comparability
+
+The missing comparison in source Lemma 3.5(3) is for the same
+bucket \(Y_k\) and \(|\log X'-\log X|\le U\), with both tuned
+pairs admissible. The tuning formula in the manuscript gives
+\(u=\lceil\widehat{\log X}/(4(\widehat{\log Y_k}-1/2))\rceil\),
+and the same for \(u'\) (here \(u'\) means the second tuned
+integer, not the prefix length). The difference before applying
+ceilings is \(O(U/\Lambda)=O(1/\ell)<1\), including the stated
+dyadic approximation errors. Thus \(|u-u'|\le1\).
+
+From the tuning equations,
+\[
+ \log y=\frac{\log X}{4u}+a+O(1/u),\qquad
+ \log y'=\frac{\log X'}{4u'}+a+O(1/u').
+\]
+Since \(u,u'\asymp U\), \(\log y,\log y'\gg\Lambda\),
+this gives \(\log y'/\log y=1+O(1/u)\).
+By strong PNT, \(M(y')/M(y)=1+O(1/u)\), so raising this
+ratio to either \(4u-1\) or \(4u'-1\) costs a bounded factor.
+Use the uniform asymptotic in (1) for both densities. If the
+tuned integer decreases by one, the factorial ratio is at most
+\((4u)^4\), and the four missing factors of \(M\) cost
+\(O((\log y)^4)\). If it increases by one, the extra factors
+and factorial ratio cost at most a bounded factor instead.
+Therefore in either order
+\[
+ \frac{\nu(X';y',u')}{\nu(X;y,u)}\ll
+          1+(u\log y)^4=O(L^4)\le L^5
+\]
+eventually, uniformly in the enlarged cap. This proves the
+required polynomial comparability, including the possible jump
+in the tuned integer.
+
+## 6. The actual source exceptional sets
+
+The pinned source's Lemma 3.5(2) defines \(X_{\rm heavy}(y)\)
+using primitive characters of conductors \(2\le r\le y^{3/5}\)
+and the threshold \(L^{-20}|\mathcal P(y)|\) for the twisted
+prime sum with \(|t|\le T_{\rm Mel}=e^\Lambda\).
+It defines \(F_{\rm bad}(y,u)\) using conductors
+\(y^{3/5}<r\le Q_{\rm AP}\) and threshold
+\(\theta_{\rm ls}|\mathcal P(y)|^u\) for the u-th power of that
+prime sum, where \(\theta_{\rm ls}=e^{-.6\Lambda}\).
+
+The uniform twisted-prime estimate (3) of the main weighted
+progression proof applies to every such primitive character.
+Every primitive character with conductor at least 2 is
+nonprincipal. Since \(y^{-1/100}<L^{-20}\) eventually,
+\(X_{\rm heavy}\) is empty. Also
+\(y^{-u/100}<e^{-.6\Lambda}\) eventually, uniformly because
+\(u\to\infty\) and \(\log y\gg\Lambda\). Thus \(F_{\rm bad}\)
+is empty as defined in the **actual source**, not just an
+alternative exceptional set for our new proof. Its grid union
+is empty; \(\mathcal Q_{\rm exc}\) reduces to the primes dividing N
+in \((B,Q_0]\). This is conditional on QRH and the quantitative
+log-derivative/prime-sum argument, not on nonvanishing alone.
+It removes the bad-conductor exclusions in source Lemma 3.6(4);
+its other lattice and gcd geometry still needs proof.
+
+Together these notes cover the analytic density, continuity,
+comparability, exceptional-set, two-sided AP, rough upper bound
+and bad-child assertions of source Lemmas 3.5 and 3.6(3) in the
+enlarged admissible range, in writing under QRH where used.
+They do not certify the exact weight-evaluation bit-cost
+algorithm or the Lean formalizations. Polynomial fibre coupling,
+conditional moments, all-history global readiness, remaining
+lattice geometry and square certification remain open.
