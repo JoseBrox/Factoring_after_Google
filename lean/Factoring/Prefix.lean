@@ -1,6 +1,6 @@
 import Mathlib.NumberTheory.DirichletCharacter.Orthogonality
 import Mathlib.NumberTheory.MulChar.Lemmas
-import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Algebra.Star.BigOperators
 import Mathlib.Tactic.Ring
 
@@ -77,7 +77,7 @@ theorem prefix_parseval {q : ℕ} [NeZero q] {I : Type*}
     intro i hi
     rw [star_mul,star_eval χ _ (hu i hi),mul_comm]
   simp_rw [hc] at h
-  have hz : ∀ z:ℂ, star z*z=(‖z‖^2:ℝ) := fun z => Complex.conj_mul' z
+  have hz : ∀ z:ℂ, star z*z=(‖z‖^2:ℝ) := fun z => by simpa only [Complex.ofReal_pow] using Complex.conj_mul' z
   simp_rw [hz] at h
   exact_mod_cast h
 

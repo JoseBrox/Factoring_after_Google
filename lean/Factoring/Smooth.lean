@@ -55,7 +55,7 @@ theorem multiset_lower {X Y q k : ℕ} (S : Finset ℕ)
         | empty => simp
         | cons a t ih =>
           rw [Multiset.prod_cons]
-          exact (ht a (by simp)).mul_left (ih fun n hn=>ht n (by simp [hn]))
+          exact Nat.coprime_mul_iff_left.mpr ⟨ht a (by simp), ih fun n hn=>ht n (by simp [hn])⟩
       exact haux _ (by
         intro a ha
         obtain ⟨n,_,rfl⟩ := Multiset.mem_map.mp ha

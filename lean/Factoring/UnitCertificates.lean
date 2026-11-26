@@ -20,7 +20,7 @@ logarithmic embedding is a square root of one. -/
 theorem log_zero_square {K : Type*} [Field K] [NumberField K]
     (σ : K →+* ℝ) (u : (𝓞 K)ˣ)
     (hu : logEmbedding K (Additive.ofMul u) = 0) : u^2=1 := by
-  have ht := (logEmbedding_eq_zero_iff K).mp hu
+  have ht := logEmbedding_eq_zero_iff.mp hu
   let φ : K →+* ℂ := Complex.ofRealHom.comp σ
   have h := (NumberField.Units.mem_torsion K).mp ht (InfinitePlace.mk φ)
   change ‖φ (u : K)‖ = 1 at h
@@ -48,11 +48,11 @@ variable {R S T : Type*} [CommRing R] [CommRing S] [CommRing T]
 
 /-- A polynomial root modulo N gives an evaluation map on the polynomial
 order, not on the entire number field. No order-index coprimality is required. -/
-def orderEvaluation (f : R[X]) (i : R →+* T) (m : T)
+def orderEvaluation (f : Polynomial R) (i : R →+* T) (m : T)
     (hm : f.eval₂ i m=0) : AdjoinRoot f →+* T :=
   AdjoinRoot.lift i m hm
 
-theorem orderEvaluation_linear (f : R[X]) (i : R →+* T) (m : T)
+theorem orderEvaluation_linear (f : Polynomial R) (i : R →+* T) (m : T)
     (hm : f.eval₂ i m=0) (a : R) :
     orderEvaluation f i m hm (AdjoinRoot.of f a-AdjoinRoot.root f)=i a-m := by
   simp [orderEvaluation,AdjoinRoot.lift_root]
@@ -70,7 +70,7 @@ theorem localizedEvaluation_apply (D : Submonoid R) [Algebra R S]
 
 /-- In the actual localized polynomial order, a linear relation factor
 maps to the common modular value a-m. -/
-theorem localized_order_linear (f : R[X]) (D : Submonoid (AdjoinRoot f))
+theorem localized_order_linear (f : Polynomial R) (D : Submonoid (AdjoinRoot f))
     [Algebra (AdjoinRoot f) S] [IsLocalization D S]
     (i : R→+*T) (m:T) (hm:f.eval₂ i m=0)
     (hD : ∀ d:D, IsUnit (orderEvaluation f i m hm d)) (a:R) :
@@ -89,6 +89,7 @@ theorem order_from_two_products {G : Type*} [CommGroup G]
     (hprod₁ : p^E*γ₁=v) (hprod₂ : γ₂=v) :
     p^(2*E)=1 := by
   have h := congrArg (fun x:G => x^2) (hprod₁.trans hprod₂.symm)
+  change (p^E*γ₁)^2=γ₂^2 at h
   rw [mul_pow,h₁,h₂,mul_one,←pow_mul, Nat.mul_comm E 2] at h
   exact h
 
