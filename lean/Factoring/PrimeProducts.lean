@@ -26,7 +26,7 @@ theorem block_products_injective {k m : ℕ} (P : Fin k → Fin m → ℕ)
     · intro j _ hj
       have h : P j (f j) ≠ q := by
         intro he
-        have ht := hinj (show P j (f j)=P i (f i) from he)
+        have ht : (j,f j)=(i,f i) := hinj he
         exact hj (congrArg Prod.fst ht)
       simp [h,Ne.symm h]
     · simp
@@ -37,11 +37,12 @@ theorem block_products_injective {k m : ℕ} (P : Fin k → Fin m → ℕ)
     intro j _
     have h : P j (g j) ≠ q := by
       intro he
-      have ht := hinj (show P j (g j)=P i (f i) from he)
+      have ht : (j,g j)=(i,f i) := hinj he
       have hji := congrArg Prod.fst ht
       subst j
       exact hne (congrArg Prod.snd ht).symm
     simp [h,Ne.symm h]
+  dsimp only at hfg
   rw [hfg,hright] at hleft
   contradiction
 
@@ -71,8 +72,9 @@ theorem block_saturation {p E K B k m : ℕ} [Fact p.Prime] (hm : 0<m)
       _ = B^k := by simp
   · intro n hn
     obtain ⟨x,_,rfl⟩ := Finset.mem_image.mp hn
-    simp only [f,Nat.cast_prod,Finset.prod_pow]
-    simp [hE]
+    change ((↑(∏ i : Fin k, P i (x i))) : ZMod p)^E=1
+    rw [Nat.cast_prod, ← Finset.prod_pow]
+    exact Finset.prod_eq_one fun i _ => hE i (x i)
   · rwa [hcard]
 
 /-- The blocks can be chosen from any finite successful-prime set with

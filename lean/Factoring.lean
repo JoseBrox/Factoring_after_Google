@@ -10,3 +10,5 @@ import Factoring.Asymptotic
 import Factoring.Uniform
 import Factoring.ChainCount
 import Factoring.PrimeProducts
+import Factoring.ChainTrial
+import Factoring.LocalGram

@@ -30,7 +30,7 @@ def hyperbolaEquiv {F : Type*} [Field F] (b : F) (hb : b ≠ 0) (h2 : (2:F) ≠ 
       apply hb
       simpa [h] using hprod.symm
     have hd : b/(z.1.1-z.1.2)=z.1.1+z.1.2 :=
-      (div_eq_iff ht).mpr (by rw [mul_comm]; exact hprod.symm)
+      (div_eq_iff ht).mpr (by rw [_root_.mul_comm]; exact hprod.symm)
     apply Subtype.ext
     apply Prod.ext
     · change (z.1.1-z.1.2+b/(z.1.1-z.1.2))/2=z.1.1
@@ -93,7 +93,7 @@ theorem good_count {F : Type*} [Field F] [Fintype F] (b r : F)
         rw [Finset.sum_add_distrib, ← Finset.sum_filter, ← Finset.sum_filter]
         rw [Fintype.card_subtype, Fintype.card_subtype]
         simp [Nat.mul_comm]
-  have hrneg : r ≠ -r := mt (Ring.eq_self_iff_eq_zero_of_char_ne_two hchar).mp hr0
+  have hrneg : r ≠ -r := fun hh => hr0 ((Ring.eq_self_iff_eq_zero_of_char_ne_two hchar).mp hh.symm)
   have hzset : Finset.univ.filter zeroNorm = ({r,-r}:Finset F) := by
     ext a
     simp only [zeroNorm,Finset.mem_filter,Finset.mem_univ,true_and,sub_eq_zero,← hr,
@@ -134,7 +134,11 @@ theorem mixed_success_count {N b u steps p q : ℕ} [NeZero N] [Fact p.Prime] [F
         _ = p*(i.val+1) := by ring
         _ ≤ p*k := Nat.mul_le_mul_left _ (Nat.succ_le_of_lt i.isLt)⟩, by
       have hgood : a*a-(b : ZMod p)=0 ∨ ¬IsSquare (a*a-(b : ZMod p)) := by
-        simpa [Good,pow_two,not_and_or] using ai.1.2
+        by_cases hz : a*a-(b : ZMod p)=0
+        · exact Or.inl hz
+        · right
+          intro hs
+          exact ai.1.2 ⟨by simpa [pow_two] using hz,by simpa [pow_two] using hs⟩
       obtain ⟨d,hd,_⟩ := mixed_success (a := a.val+p*i.val) hp hq hpodd hp2 hq2
         r hr hr0 hnonsquare hu hdiv (by rw [hcast]; exact hgood)
       change split N b (a.val+p*i.val) u steps ≠ none
@@ -146,7 +150,8 @@ theorem mixed_success_count {N b u steps p q : ℕ} [NeZero N] [Fact p.Prime] [F
       congrArg (fun z:T => z.1.val) he
     have ha : x.1.1=y.1.1 := by
       have hh := congrArg (fun n : ℕ => (n : ZMod p)) hval
-      rwa [hcast,hcast] at hh
+      dsimp only at hh
+      simpa only [hcast] using hh
     have hi : x.2.val=y.2.val := by
       rw [ha] at hval
       exact mul_left_cancel₀ (Fact.out : p.Prime).ne_zero (Nat.add_left_cancel hval)
