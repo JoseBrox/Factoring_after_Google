@@ -1,0 +1,52 @@
+name: Analytic library integration
+on:
+  push:
+    paths:
+      - 'lean-analytic/**'
+      - '.github/workflows/lean-analytic.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pnt-reuse:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install pinned modern Lean
+        run: |
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 --max-time 300 https://github.com/leanprover/lean4/releases/download/v4.36.0/lean-4.36.0-linux.tar.zst -o lean.tar.zst
+          echo '2b7ab1ed8b92d2e6abfaf41344823b510064dbc9c0260cac73eb496ab2dea6eb  lean.tar.zst' | sha256sum --check
+          tar --use-compress-program=unzstd -xf lean.tar.zst
+          rm lean.tar.zst
+          echo "$RUNNER_TEMP/lean-4.36.0-linux/bin" >> "$GITHUB_PATH"
+      - name: Fetch exact PNT+ source
+        run: |
+          mkdir -p "$RUNNER_TEMP/pnt"
+          git -C "$RUNNER_TEMP/pnt" init
+          git -C "$RUNNER_TEMP/pnt" remote add origin https://github.com/AlexKontorovich/PrimeNumberTheoremAnd.git
+          git -C "$RUNNER_TEMP/pnt" fetch --depth=1 origin e9906138410f8f76ca66b9bc252d0993f3ee348c
+          git -C "$RUNNER_TEMP/pnt" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/pnt" rev-parse HEAD)" = e9906138410f8f76ca66b9bc252d0993f3ee348c
+      - name: Build only the required upstream modules
+        run: |
+          cd "$RUNNER_TEMP/pnt"
+          mapfile -t imports < <(python3 "$GITHUB_WORKSPACE/lean-analytic/cache_roots.py" PrimeNumberTheoremAnd/StrongPNT.lean "$GITHUB_WORKSPACE/lean-analytic/FactoringAnalytic.lean")
+          lake exe cache get "${imports[@]}"
+          lake build PrimeNumberTheoremAnd.StrongPNT
+      - name: Compile adapter and verify axioms
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/build/analytic"
+          cd "$RUNNER_TEMP/pnt"
+          cp "$GITHUB_WORKSPACE/lean-analytic/FactoringAnalytic.lean" FactoringAnalytic.lean
+          set -o pipefail
+          lake env lean -DwarningAsError=true FactoringAnalytic.lean | tee "$GITHUB_WORKSPACE/build/analytic/axioms.txt"
+          python3 "$GITHUB_WORKSPACE/lean-analytic/audit.py" "$GITHUB_WORKSPACE/build/analytic/axioms.txt"
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: analytic-axiom-evidence
+          path: build/analytic/
+          if-no-files-found: ignore
