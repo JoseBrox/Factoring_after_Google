@@ -1,6 +1,6 @@
 # Lean build evidence
 
-**26 November update:** [continuation receipt](continuation.md) records the clean build of sixteen modules. The following records are retained for the original five-module checkpoint.
+**26 November update:** [continuation receipt](continuation.md) records the clean builds of sixteen and then eighteen modules. The following records are retained for the original five-module checkpoint.
 
 These records accompany the first Lean component formalization. The five proof
 modules contain 94 explicitly named theorems, including five executable examples.

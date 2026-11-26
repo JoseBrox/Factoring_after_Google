@@ -14,3 +14,14 @@ This record describes the verified core checkpoint, not an end-to-end proof of t
 The documentation update following the source commit does not change Lean source or dependency pins. The five-module receipt and axiom inventory remain unchanged as historical records.
 
 See [the Lean guide](../../lean/README.md) for exact statements and [the proof-status register](../../docs/proof_status.md) for outstanding obligations. Reproduce with `python3 scripts/verify_lean.py` after installing the pinned toolchain and fetching its required mathlib cache.
+
+## Adaptive peeling and Krylov bridge extension
+
+- Exact proof-source commit: [7ccfd93](https://github.com/JoseBrox/Factoring_after_Google/commit/7ccfd93c9df796836d5fc607c034c83d964fb5a6). It adds the two bridge modules to byte-identical core proof sources.
+- Clean Lean workflow: [45803463560](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45803463560), job [139852429484](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45803463560/job/139852429484), conclusion **success**.
+- Exact verification workflow: [45803463004](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45803463004), conclusion **success**.
+- Eighteen proof modules; 169 explicitly named theorem/lemma declarations; audit: 429 persistent logical declarations, including 346 theorems with generated proofs.
+- Log: `PASS: 429 declarations, including 346 theorems;` and `PASS: pinned dependencies, warning-free compilation, and compiled axiom audit.`
+- Build evidence artifact [15108881482](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45803463560/artifacts/15108881482), SHA-256 digest reported by GitHub: `71a8ab759f24782432ea0c7e1c67a8a3ccc25bfdbafd82c90a90721540c6fcc0`. GitHub reports expiration 24 February 2027.
+
+This extension certifies the finite stopping-time deletion argument under the row-loss estimates and the sparse correction/lift argument under a supplied verified recurrence. It does not establish those analytic row-loss estimates or the randomized preconditioner and recurrence-discovery bounds.

@@ -92,13 +92,13 @@ The [Lean guide](lean/README.md) gives the theorem names, assumptions, and repro
 
 | Priority | Formalized component | Coverage |
 |---|---|---|
-| 1 | Deterministic parameter schedule | All parameter inequalities; rational schedules; exact exponent-saturation construction from the successful-prime density and verified modular powers; conditional exponential cost transfer. |
+| 1 | Deterministic parameter schedule | All parameter inequalities; rational schedules; exact exponent-saturation construction from the successful-prime density and verified modular powers; finite adaptive peeling invariant; conditional exponential cost transfer. |
 | 2 | Sparse Gram argument | Explicit ramification-sensitive local coefficient matrices, PSD domination, triangle-sign rank-one representation, Schur products, and finite sparse averaging. |
-| 3 | Randomized recursion | Path maxima for all depths; exact margins; finite-threshold recurrence bounds with time/workspace coefficients 91.4 and 19; exact subexponential scale contraction and uniform fibres of a kernel projection. |
+| 3 | Randomized recursion | Path maxima for all depths; exact margins; finite-threshold recurrence bounds with time/workspace coefficients 91.4 and 19; exact subexponential scale contraction and uniform fibres of a kernel projection and verified Krylov correction. |
 | 4 | Quadratic relation chain | Executable supplied-M splitter, proper-divisor soundness, exact mixed-prime success probability ≥ (p+3)/(2p) > 1/2 (including repeated prime powers), and arithmetic-operation budgets. |
 | 5 | Square-root extraction | A nontrivial square congruence yields a proper gcd factor, including even moduli and noninvertible roots. |
 
-The verified core contains **159 explicitly named theorems in 16 modules** ([build evidence](verification/lean/continuation.md)). The quadratic chain's main finite single-trial correctness and probability theorem is now certified. The remaining results are compiled component theorems. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
+The verified core contains **169 explicitly named theorems in 18 modules** ([build evidence](verification/lean/continuation.md)). The quadratic chain's main finite single-trial correctness and probability theorem is now certified. The remaining results are compiled component theorems. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
 
 The project pins Lean 4.19.0 and every mathlib dependency revision. Builds treat warnings as errors. The audit inspects compiled logical declarations, including private and generated proofs, and permits only Lean's standard axioms `propext`, `Classical.choice`, and `Quot.sound`. Project proofs contain no `sorry` or `native_decide`.
 

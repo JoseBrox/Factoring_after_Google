@@ -14,3 +14,5 @@ import Factoring.ChainTrial
 import Factoring.LocalGram
 import Factoring.MultisetSaturation
 import Factoring.DensitySaturation
+import Factoring.Peeling
+import Factoring.SparseKernel
