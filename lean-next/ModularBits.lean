@@ -101,11 +101,11 @@ theorem remainderStep_spec (modulus r : List Bool) (b : Bool)
   have hsmall : value s<2*value modulus := by omega
   have hmod : value modulus<2^n := value_lt _
   have hdiff : value d.1<2^(n+1) := by simpa only [hDlen] using value_lt d.1
-  change (if d.2 then s else d.1).take n |>.length = n ∧
+  change ((if d.2 then s else d.1).take n).length = n ∧
     value ((if d.2 then s else d.1).take n) = (bit b+2*value r)%value modulus
   cases hborrow : d.2 with
   | false =>
-    simp only [hborrow, Bool.false_eq_true, ↓reduceIte, List.length_take, hDlen]
+    rw [if_neg (by simp [hborrow]), List.length_take, hDlen]
     have hde : value s=value modulus+value d.1 := by simpa [hborrow,bit] using hD
     have hdl : value d.1<value modulus := by omega
     constructor
@@ -113,7 +113,7 @@ theorem remainderStep_spec (modulus r : List Bool) (b : Bool)
     · rw [value_take_of_lt n _ (hdl.trans hmod), ← hs, hde, Nat.add_mod]
       simp [Nat.mod_eq_of_lt hdl]
   | true =>
-    simp only [hborrow, ↓reduceIte, List.length_take, hSlen]
+    rw [if_pos (by simp [hborrow]), List.length_take, hSlen]
     have hde : value s+2^(n+1)=value modulus+value d.1 := by simpa [hborrow,bit] using hD
     have hsl : value s<value modulus := by omega
     constructor
