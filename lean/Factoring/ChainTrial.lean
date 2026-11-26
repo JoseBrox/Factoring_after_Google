@@ -99,6 +99,7 @@ theorem splitM_probability {N b M p q : ℕ} [Fact p.Prime] [Fact q.Prime]
   have hp0 : (0:ℚ)<p := by exact_mod_cast (Fact.out : p.Prime).pos
   constructor
   · apply (div_le_div_iff₀ (by positivity) hN0).mpr
+    rw [_root_.mul_comm (Nat.card {a : Fin N // splitM N b a.val M ≠ none} : ℚ) (2*(p:ℚ))]
     exact_mod_cast h
   · apply (lt_div_iff₀ (by positivity)).mpr
     linarith
