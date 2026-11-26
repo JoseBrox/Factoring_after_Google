@@ -318,3 +318,7 @@ conditional at the published level reviewed here.
 Neither this audit nor the proved conditional reduction
 changes the established uniform worst-case factoring
 bound. No new Lean milestone is counted.
+
+## Subsequent simplification
+
+The [common-anchor continuation](common_anchor_derandomization.md) removes adaptive sign subsets from the relation driver. The Fourier support-complement bound and a new signed-translation matrix lemma give complete rank from one dense residue search and reduce the nonuniform advice to polynomial size. The exact read-many checker has O(b) workspace, but its random-access anchor tape has not been implemented in the admissible fresh-randomness, constant-visit, or auxiliary-stack models. Uniform deterministic selection remains open.

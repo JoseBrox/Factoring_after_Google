@@ -36,3 +36,7 @@ Run `python verification/research/padic_certificate.py` (standard library only) 
 ## Positive smooth-relation rank driver
 
 Run `python verification/research/positive_smooth_relations.py` with the standard library. It independently compares the exact arithmetic-progression scanner on 285 present and 50 absent residues, builds full-rank positive modular relation systems for N=47053 and N=23707, verifies their determinants with Bareiss, and obtains factors by exact modular gcd scans. The finite rank fixtures use small exhaustive product tables in place of the asymptotic AP search. See [the new proof](../../docs/positive_smooth_relation_coverage.md) for uniform randomized coverage and the remaining deterministic selection problem.
+
+## Common-translation rank driver
+
+Run `python verification/research/common_translation.py` (standard library). It independently checks the AP scanner on 24 unit residues, all 1296 small translation matrices at T=L+1, a singular example at T=L, and exact determinants, modular relations and gcd splits on N=899, 47053 and 23707. The three rank fixtures use exhaustive small product tables, not a uniform half-scale hitting-set implementation. Exact test output and source hashes are in [the common-anchor note](../../docs/common_anchor_derandomization.md).
