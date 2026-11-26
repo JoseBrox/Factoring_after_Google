@@ -1,0 +1,47 @@
+name: Candidate Lean arithmetic and analytic bridges
+on:
+  push:
+    branches: [main]
+    paths: ['lean-next/**', 'lean/**', '.github/workflows/lean-next.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install pinned Lean 4.19
+        run: |
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 --max-time 300 https://github.com/leanprover/lean4/releases/download/v4.19.0/lean-4.19.0-linux.tar.zst -o lean.tar.zst
+          echo '6fe3ce97a58f44e2b3567d455b994eacec5bfe9ae7774f2a573444480ba813fe  lean.tar.zst' | sha256sum --check
+          tar --use-compress-program=unzstd -xf lean.tar.zst
+          rm lean.tar.zst
+          echo "$RUNNER_TEMP/lean-4.19.0-linux/bin" >> "$GITHUB_PATH"
+      - name: Fetch dependencies and compile certified imports
+        working-directory: lean
+        run: |
+          mapfile -t roots < <({ python3 ../scripts/verify_lean.py --imports; awk '/^import Mathlib/{print $2}' ../lean-next/*.lean; } | sort -u)
+          lake exe cache get "${roots[@]}"
+          lake build Factoring.ChainCost Factoring.Prefix
+      - name: Compile and audit candidate modules
+        working-directory: lean
+        run: |
+          mkdir -p ../build/lean-next
+          set -o pipefail
+          for file in ../lean-next/*.lean; do
+            name="$(basename "$file" .lean)"
+            cp "$file" "$name.lean"
+            lake env lean -DwarningAsError=true "$name.lean" | tee "../build/lean-next/$name.log"
+            rm "$name.lean"
+          done
+          python3 ../lean-next/audit.py ../build/lean-next
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: candidate-lean-evidence
+          path: build/lean-next/
+          if-no-files-found: ignore
