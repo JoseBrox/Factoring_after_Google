@@ -10,7 +10,7 @@ open scoped BigOperators
 open Matrix
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-variable {V : Type*} [AddCommGroup V] [Module ℤ V]
+variable {V : Type*} [AddCommGroup V]
 
 noncomputable def coordMatrix (B : Basis ι ℤ V) (v : ι → V) :
     Matrix ι ι ℤ :=
@@ -22,7 +22,7 @@ theorem det_multiple (B : Basis ι ℤ V) (v : ι → V) (b : V) :
   apply B.equivFun.injective
   funext i
   have h := congrFun (Matrix.mulVec_cramer (coordMatrix B v) (B.equivFun b)) i
-  simp only [map_sum, map_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  simp only [map_sum, map_zsmul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   simpa only [Matrix.mulVec, dotProduct, coordMatrix, Pi.smul_apply, smul_eq_mul, mul_comm] using h
 
 theorem positive_multiple (B : Basis ι ℤ V) (v : ι → V) (b : V)
@@ -33,7 +33,7 @@ theorem positive_multiple (B : Basis ι ℤ V) (v : ι → V) (b : V)
   have he : ∑ j, c j • v j = A.det • b := det_multiple B v b
   rcases lt_or_gt_of_ne h with hn | hp
   · refine ⟨-A.det, neg_pos.mpr hn, fun j => -c j, ?_⟩
-    simpa only [neg_smul, Finset.sum_neg_distrib] using congrArg (fun x : V => -x) he
+    simpa only [neg_zsmul, Finset.sum_neg_distrib] using congrArg (fun x : V => -x) he
   · exact ⟨A.det, hp, c, he⟩
 
 open NumberField NumberField.Units
