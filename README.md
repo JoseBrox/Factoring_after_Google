@@ -98,7 +98,7 @@ The [Lean guide](lean/README.md) gives the theorem names, assumptions, and repro
 | 4 | Quadratic relation chain | Executable supplied-M splitter, proper-divisor soundness, exact mixed-prime success probability ≥ (p+3)/(2p) > 1/2 (including repeated prime powers), and arithmetic-operation budgets. |
 | 5 | Square-root extraction | A nontrivial square congruence yields a proper gcd factor, including even moduli and noninvertible roots. |
 
-The verified core contains **195 explicitly named theorems in 23 modules** ([build evidence](verification/lean/library-reuse.md)). The quadratic chain's main finite single-trial correctness and probability theorem is now certified. The remaining results are compiled component theorems. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
+The core contains **225 explicitly named source theorems in 28 modules**; 211 in 26 modules passed the latest confirmed aggregate audit, and the remaining 14 passed strict individual compilation and axiom reports before promotion ([build evidence](verification/lean/qrh-continuation.md)). The quadratic chain's main finite single-trial correctness and probability theorem is now certified. The remaining results are compiled component theorems. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
 
 The library-reuse checkpoint additionally certifies the unit-lattice torsion argument, localized polynomial evaluation and two-field modular cancellation, exact character orthogonality for injective prefixes, the coprime smooth-product count, the affine quadratic-character sum identity, and executable scalar supplied-order splitting from a certified Euler-sign discrepancy. See [library reuse and remaining dependencies](docs/lean_library_reuse.md).
 
@@ -143,3 +143,5 @@ Original material in this repository is licensed under **Creative Commons Attrib
 [LP]: https://doi.org/10.1090/S0894-0347-1992-1137100-0
 [NFS]: https://doi.org/10.1007/BFb0091539
 [H]: https://github.com/JoseBrox/factoring-algorithms/tree/94d84cf90cc958aebde8853a1ecfcda304f60500/research/2026-11-25-cogentic
+
+The [full Lean completion register](docs/lean_completion.md) tracks checked proof packages. The [QRH-based weighted progression proof](docs/qrh_weighted_progressions.md) and [rough/bad-child continuation](docs/weighted_rough_bad_child.md) are new written mathematical results, not checked analytic Lean endpoints.

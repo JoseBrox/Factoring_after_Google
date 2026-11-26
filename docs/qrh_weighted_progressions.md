@@ -5,8 +5,7 @@ Dirichlet seven-eighths zero-free theorem in [the QRH audit](quasi_rh_audit.md),
 and on classical strong PNT (already separately Lean-certified). Not a
 Lean proof of this analytic result. This proves the main two-sided
 weighted progression assertion in the enlarged randomized contract
-by a different argument, not the rough upper bound/bad-child statement
-or the polynomial-slice and readiness contracts.
+by a different argument. The [continuation](weighted_rough_bad_child.md) separately proves the rough upper bound, bad-child estimate, tuned-scale comparability and emptiness of the actual source exceptional sets under QRH. The polynomial-slice and readiness contracts remain open.
 
 Use the manuscript's \(L=\log N,\ \ell=\log L,\ U=(L/\ell)^{1/3},\
 \Lambda=U\ell,\ \Xi=U\Lambda\). All estimates below are uniform as
@@ -320,12 +319,7 @@ The argument gives the density lower bound and short-scale
 continuity, plus the main two-sided weighted progression asymptotic
 for all moduli in the required enlarged range with the stated gcd
 restriction. It permits setting the exceptional set for this
-particular assertion to empty, conditional on QRH. Nearby tuned
-scale comparability beyond the short-scale range, the source's
-rough upper bound and bad-child estimate in their broader ranges,
-the polynomial coupling and all-history conditional moments,
-global readiness and algebraic square certification still require
-separate proofs. They are not consequences of (1).
+particular assertion to empty, conditional on QRH. The [continuation](weighted_rough_bad_child.md) supplies separate proofs of nearby tuned-scale comparability, rough upper bound, bad-child rarity and the actual source exceptional-set assertion. The polynomial coupling, all-history conditional moments, global readiness and algebraic square certification still require separate proofs. They are not consequences of (1).
 
 Lean priorities: certify the moment inequality (6) for actual
 Dirichlet characters and ordered prime tuples; the finite

@@ -11,7 +11,7 @@ See [the source and comparator audit](../docs/quasi_rh_audit.md) and
 The [CI workflow](../.github/workflows/lean-qrh.yml) retrieves the source,
 builds the selected dependency closure, compiles the adapters and checks
 the transitive axioms at the named roots. Unsupported imports or missing
-audit reports fail the build. A fresh successful run has not been observed
+audit reports fail the build. The [corrected source build](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45832742669) passed closure discovery and installation after pinning Architect and RellichKondrachov. A fresh successful run has not been observed
 in the current session; the external comparator evidence is distinct from
 this project's own integration evidence.
 

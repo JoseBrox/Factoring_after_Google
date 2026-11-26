@@ -1,14 +1,7 @@
-# Candidate next modules (not part of the verified core yet)
+# Staged proofs and independent checks
 
-These are proof candidates committed for fresh strict CI, without changing the already verified aggregate module or theorem count. The current editing runtime has no Lean installation or outbound git access. No compilation result is claimed until the workflow and dependency audit pass.
+BitArithmetic, EulerDecay, LatticeClearing, ModularBits and CharacterMoments have been strictly compiled and individually audited and promoted into the core. The copies here retain their explicit audit roots for CI. See [the receipt](../verification/lean/qrh-continuation.md). DeterminantHeight and ModularPower remain staged until fresh warning-free compilation and audit succeed.
 
-- BitArithmetic: executable little-endian binary addition and schoolbook multiplication, decoding correctness, representation size and counted cell operations. A bit-machine model still needs to charge input length scans, counters, division, modular reduction, gcd, sampling and exponentiation. The cost here counts a full-adder cell or final carry, and one shift per multiplication recursion, rather than wall time or the Lean compiler's Nat operations.
-- EulerDecay: local and finite product squared-norm decay for factors 1+z, with radius at most one. It avoids taking complex logarithms of possibly zero factors. To obtain clean smooth progression estimates, still prove the actual uniform prime sums, the Mellin inversion and saddle approximation, and prefix summation with the relevant ranges.
+The separate [QRH target](../lean-qrh/) imports the exact modern endpoints. The mathematical [weighted AP proof](../docs/qrh_weighted_progressions.md) and [rough/bad-child continuation](../docs/weighted_rough_bad_child.md) require formalization of their analytic arguments. The [completion register](../docs/lean_completion.md) gives a fixed metric.
 
-- LatticeClearing: determinant clearing via integral Cramer coordinates, specialized to mathlib's actual number-field unit lattice. The determinant nonzero hypothesis, effective lattice/certificate height estimates, and executable reconstruction are still to be connected.
-
-The randomized weight now has an [exact finite progression-count reduction](../docs/weighted_progression_reduction.md) in writing. Its aggregate uniform error bound and enlarged conditional laws remain genuinely unproved.
-
-The separate [QRH target](../lean-qrh/) contains the exact modern imported endpoints. The [written QRH witness argument](../docs/quasi_rh_witnesses.md) provides a new route toward polynomial-time promised-input splitting and nonresidue construction, pending formalization.
-
-The CI workflow compiles against the pinned Lean 4.19 core, rejects warnings and nonstandard axioms at the explicit roots, and preserves logs. Successful compilation is required before moving candidates into the core and running its full declaration audit.
+The CI workflow independently checks every file against the pinned Lean 4.19 core and records the actual compiler exit code and transitive axiom roots. It rejects any failure, warning, missing report or nonstandard axiom.
