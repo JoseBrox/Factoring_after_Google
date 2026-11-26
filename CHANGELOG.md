@@ -1,5 +1,9 @@
 # Changelog
 
+## Lean finite theorem continuation — 26 November 2026
+
+Extended the checked project to sixteen modules and 159 explicitly named theorems. The main finite mixed-prime quadratic-chain theorem now has an executable supplied-M routine, certified soundness, exact success probability, and abstract arithmetic budgets. The deterministic exponent-saturation lemma is certified under its finite density and modular-certificate guards, and its cost transfer is formalized under explicit cost hypotheses. Added ramification-sensitive local Gram matrices and uniform group/linear projection fibres. All proof modules pass a clean warning-free build and compiled axiom audit. The complete asymptotic factorers and their analytic obligations are not yet formalized.
+
 ## Lean component formalization — 25 November 2026
 
 Added five Lean proof modules in priority order: deterministic parameter schedules, sparse Gram linear algebra, repaired randomized recurrences, executable quadratic coefficient arithmetic, and square-root factor extraction. Universal proofs strengthen the earlier finite checks of the schedule and path maxima. Added a pinned Lean/mathlib project, warning-failing builds, a compiled-declaration axiom audit, reproducible source hashes, and CI. This is a component formalization; analytic complexity, arithmetic construction, and probability bridges remain explicit open formalization tasks.

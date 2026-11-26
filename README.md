@@ -23,7 +23,7 @@ The table compares like-for-like inputs and computational models. **“Previous�
 | **[Deterministic quadratic nonresidues](papers/quadratic_nonresidues.pdf)** | $`\exp(O(\sqrt{\log p\,\log\log p}))`$ | $`\exp(O(\sqrt{\log p}\,\log\log p))`$ [D, Thm. 1.2][D] | Written proof; prime input. [LaTeX](manuscripts/quadratic_nonresidues/) |
 | **[Randomized factoring](papers/randomized_factoring.pdf)** — expected time | $`L_N[1/3,91.4]`$ | $`L_N[1/3,105]`$ [R, Thm. 1.1][R] | **Conditional.** [LaTeX](manuscripts/randomized_factoring/) |
 | Randomized factoring — workspace | $`L_N[1/3,19]`$ | $`L_N[1/3,40]`$ [R, Thm. 1.1][R] | **Conditional** for the full factorer. |
-| **[Quadratic relation chain](papers/quadratic_relations.pdf)** | $`O(\log M)`$ ring multiplications per trial | Auxiliary routine; retained construction [N1101][H] | Proved under mixed-sign promise; [code](src/factoring_after_google/quadratic_relations.py). |
+| **[Quadratic relation chain](papers/quadratic_relations.pdf)** | $`O(\log M)`$ ring multiplications per trial | Auxiliary routine; retained construction [N1101][H] | Single-trial correctness and probability certified in Lean under mixed-sign promise; [code](src/factoring_after_google/quadratic_relations.py). |
 
 ### Reading the bounds
 
@@ -92,13 +92,13 @@ The [Lean guide](lean/README.md) gives the theorem names, assumptions, and repro
 
 | Priority | Formalized component | Coverage |
 |---|---|---|
-| 1 | Deterministic parameter schedule | All 19 inequalities for every admissible parameter; an admissible rational choice for every positive ε; the affine height-budget constraints. |
-| 2 | Sparse Gram argument | Local positive-semidefinite decompositions, Schur products, and the finite sparse averaging inequality. |
-| 3 | Randomized recursion | Path maxima for all depths; exact margins; finite-threshold recurrence bounds with time/workspace coefficients 91.4 and 19. |
-| 4 | Quadratic relation chain | Ring identities, certified binary powering, reduction compatibility, and proper-divisor soundness of an executable coefficient splitter. |
+| 1 | Deterministic parameter schedule | All parameter inequalities; rational schedules; exact exponent-saturation construction from the successful-prime density and verified modular powers; conditional exponential cost transfer. |
+| 2 | Sparse Gram argument | Explicit ramification-sensitive local coefficient matrices, PSD domination, triangle-sign rank-one representation, Schur products, and finite sparse averaging. |
+| 3 | Randomized recursion | Path maxima for all depths; exact margins; finite-threshold recurrence bounds with time/workspace coefficients 91.4 and 19; exact subexponential scale contraction and uniform fibres of a kernel projection. |
+| 4 | Quadratic relation chain | Executable supplied-M splitter, proper-divisor soundness, exact mixed-prime success probability ≥ (p+3)/(2p) > 1/2 (including repeated prime powers), and arithmetic-operation budgets. |
 | 5 | Square-root extraction | A nontrivial square congruence yields a proper gcd factor, including even moduli and noninvertible roots. |
 
-These are **compiled component theorems**. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
+The verified core contains **159 explicitly named theorems in 16 modules** ([build evidence](verification/lean/continuation.md)). The quadratic chain's main finite single-trial correctness and probability theorem is now certified. The remaining results are compiled component theorems. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
 
 The project pins Lean 4.19.0 and every mathlib dependency revision. Builds treat warnings as errors. The audit inspects compiled logical declarations, including private and generated proofs, and permits only Lean's standard axioms `propext`, `Classical.choice`, and `Quot.sound`. Project proofs contain no `sorry` or `native_decide`.
 

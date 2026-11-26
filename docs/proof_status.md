@@ -1,6 +1,6 @@
 # Claim and proof-status register
 
-Updated 25 November 2026. A status describes the evidence in this repository. The complete algorithmic claims and the Lean-verified components have separate statuses below.
+Updated 26 November 2026. A status describes the evidence in this repository. The complete algorithmic claims and the Lean-verified components have separate statuses below.
 
 ## Main claims
 
@@ -11,7 +11,7 @@ Updated 25 November 2026. A status describes the evidence in this repository. Th
 | Q | Prime quadratic nonresidue construction in $L_p[1/2,O(1)]$ | Separate prime-input manuscript with the shared technical appendix included | Input primality is part of the problem; full implementation is not included |
 | R | Randomized factoring in time $L_N[1/3,91.4]$ and workspace $L_N[1/3,19]$ | Conditional theorem, explicit contracts, sparse-kernel proof, exact recursion inequalities | **Conditional:** widened distribution, readiness, and square-certification obligations remain unproved |
 | K | Sparse verified kernel construction over characteristic two | Algebraic proof, preconditioning and reconstruction argument, deterministic finite-field checks | This is a subroutine theorem; it does not alone establish R |
-| C | Mixed-sign quadratic relation-chain success probability $>(1/2)$ | Local counting proof, executable routine, exhaustive small examples including repeated prime factors | Promise includes distinct hidden primes with opposite quadratic behavior and a suitable even $M$ |
+| C | Mixed-sign quadratic relation-chain success probability $>(1/2)$ | Written proof, Lean-certified finite-uniform success bound and arithmetic budget, executable routine, exhaustive small examples including repeated prime factors | Promise includes distinct hidden primes with opposite quadratic behavior and a suitable even $M$ |
 
 The five manuscripts are [indexed here](../manuscripts/README.md). The sparse-kernel result K is part of the randomized manuscript, rather than a sixth nominal factoring algorithm.
 
@@ -45,13 +45,13 @@ This repository now has its own [Lean component formalization](../lean/README.md
 
 | Manuscript component | Lean evidence | Still outside the formalization |
 |---|---|---|
-| D: deterministic schedule | All 19 inequalities for every admissible real parameter; auxiliary gates; rational parameter existence for every positive real ε; exact affine minimax bounds | Smoothness and progression estimates, arithmetic construction, source contracts, the algorithm, and the conversion to the stated asymptotic running time |
-| S/Q: sparse Gram argument | Local outer-product identities and positivity, Schur products, stronger positivity for products of local factors, and the finite sparse averaging inequality | Identifying entries with quadratic ideal-character coefficients; compatible character and number-field constructions; enumeration complexity and analytic bounds |
-| R: repaired recursion | Universal path maxima, rational margins, cubic contraction certificates, and finite-threshold time/workspace recurrences with coefficients 91.4 and 19 | Proving the algorithm satisfies the recurrence and initial bounds; analytic and probability contracts; asymptotic transfer |
-| C: quadratic relation chain | Ring identities, certified binary powering, reduction compatibility, two local separation lemmas, and proper-divisor soundness of the executable coefficient splitter | Construction of the supplied exponent parameters, odd-part decomposition, global success probability, and operation count |
+| D: deterministic schedule and saturation | All 19 inequalities; rational parameter choice; exact density-to-index guard and common order-multiple construction from verified modular powers; conditional exponential-cost transfer | Smoothness and progression estimates; number-field certificate construction; source contracts; full algorithm, bit-cost model, and actual cost hypotheses |
+| S/Q: sparse Gram argument | Explicit split/inert/ramified local coefficient matrices and PSD domination; triangle-sign rank-one representation; Schur products and finite averaging | Realization as quadratic ideal-character coefficients; compatible character and number-field constructions; enumeration complexity, analytic bounds, and algorithmic termination |
+| R: repaired recursion | Universal path maxima, rational margins, exact subexponential scale contraction, and finite-threshold time/workspace recurrences with coefficients 91.4 and 19; uniform group and kernel-projection fibres | Establishing the algorithm's recurrence and initial bounds; preconditioner and kernel reconstruction; widened analytic and probability contracts |
+| C: quadratic relation chain | Executable odd-part decomposition and supplied-M splitter; proper-divisor soundness; exact finite-uniform success bound (p+3)/(2p)>1/2; abstract ring-multiplication and gcd operation budgets | Bit-operation implementation model, actual sampling/repeated-trial analysis, and additional manuscript corollaries (one-shot and selected-section claims); construction of a suitable supplied M and b is not assumed solved |
 | Square-root extraction | A supplied nontrivial square congruence yields a proper gcd factor, with no oddness or invertibility assumption | Producing the congruence and proving its probability or cost |
 
-The compiled axiom audit covers persistent logical declarations and permits only `propext`, `Classical.choice`, and `Quot.sound`. The project proofs use neither `sorry` nor `native_decide`. All mathematical examples are named theorems so that their proof dependencies remain auditable. These component proofs do not certify the complete complexity bounds in the main table. The sparse-kernel result K remains a written proof with finite computational checks.
+The compiled axiom audit covers persistent logical declarations and permits only `propext`, `Classical.choice`, and `Quot.sound`. The project proofs use neither `sorry` nor `native_decide`. All mathematical examples are named theorems so that their proof dependencies remain auditable. These component proofs do not certify the complete complexity bounds in the main table. For K, equal-size fibres of the kernel projection are now formalized; the rank/preconditioning and fast reconstruction arguments remain written proofs with finite computational checks. See the [second build receipt](../verification/lean/continuation.md).
 
 Source pinning prevents a version mismatch. Hash verification proves identity of bytes, not correctness of a theorem. Ordinary mathematical dependencies are stated in the manuscripts so an auditor can assess them directly.
 

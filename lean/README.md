@@ -1,12 +1,12 @@
 # Lean formalizations
 
-These files prove selected mathematical components of the factoring manuscripts. They include universal parameter inequalities, finite matrix arguments, recursion bounds, and an executable quadratic coefficient routine with a soundness proof. **They do not constitute an end-to-end formal proof of any claimed factoring complexity bound.**
+These files prove selected mathematical components of the factoring manuscripts. They include universal parameter inequalities, finite matrix arguments, recursion bounds, and an executable supplied-exponent quadratic coefficient routine with correctness and exact finite success-probability proofs. **They do not constitute an end-to-end formal proof of any claimed factoring complexity bound.**
 
 The sources favor short proofs with explicit hypotheses. Theorems stated for every parameter or path depth are proved universally; the small executable examples are identified separately.
 
 ## What to read first
 
-Names below belong to the namespace `Factoring.<module>`. For example, the first theorem is `Factoring.Deterministic.schedule_valid`.
+The theorem namespaces correspond to the mathematical components (some extend a namespace in a separate file). For example, the first theorem is `Factoring.Deterministic.schedule_valid`.
 
 | Priority and source | Main theorems | What Lean proves |
 |---|---|---|
@@ -16,15 +16,33 @@ Names below belong to the namespace `Factoring.<module>`. For example, the first
 | 4. [Quadratic](Factoring/Quadratic.lean) | `power_eq_spec`, `eval_power`, `norm_power`, `reduce_power`, `split_sound` | Quadratic ring arithmetic, correctness of binary powering, compatibility with reduction, and that every returned candidate is a proper divisor. |
 | 5. [SquareRoot](Factoring/SquareRoot.lean) | `proper_factor_of_product`, `proper_factor_of_square_congruence` | A supplied square congruence with both trivial signs excluded yields a proper gcd factor. Even moduli, repeated prime factors, and noninvertible roots are permitted. |
 
+## Continuation: verified algorithmic bridges
+
+The 26 November 2026 checkpoint adds eleven modules (159 explicitly named theorems across sixteen modules in total). See [passing build evidence](../verification/lean/continuation.md).
+
+| Source | Certified content |
+|---|---|
+| [Saturation](Factoring/Saturation.lean) | Finite cyclic group exponent saturation from an index cap; injection of actual integer products into the annihilator. |
+| [PrimeProducts](Factoring/PrimeProducts.lean) | Distinct products from disjoint blocks of primes, via unique factorization. |
+| [MultisetSaturation](Factoring/MultisetSaturation.lean) | Exact stars-and-bars count of distinct multiset products; binomial lower bound; common LCM certificates and positivity; factorial bound on the index multiplier. |
+| [DensitySaturation](Factoring/DensitySaturation.lean) | `density_order_multiple`: the manuscript's successful-prime density, cutoff, and verified powers imply a positive common order-multiple construction (positivity requires positive individual certificates). |
+| [Asymptotic](Factoring/Asymptotic.lean) | `deterministic_cost_transfer`: exact conditional transfer to the exponent 2/3 + ε; `scale_contract`: exact shrinking of the randomized subexponential scale. |
+| [LocalGram](Factoring/LocalGram.lean) | Explicit split/inert/ramified local matrices dominate the all-ones matrix in PSD order; triangle signs admit a rank-one representation. |
+| [Uniform](Factoring/Uniform.lean) | Equal-size fibres of group homomorphisms and of the surjective kernel projection when a linear lift is supplied. |
+| [ChainSuccess](Factoring/ChainSuccess.lean) | Every zero/nonsquare norm residue at the split prime gives a proper factor in the actual chain, using the odd-part decomposition of M; valid for repeated prime factors. |
+| [ChainCount](Factoring/ChainCount.lean) | Exact hyperbola witness count over a finite field; lifting witnesses from a prime divisor to all residues modulo N. |
+| [ChainCost](Factoring/ChainCost.lean) | Explicit natural-number recurrence bounds on quadratic multiplications and gcds. |
+| [ChainTrial](Factoring/ChainTrial.lean) | `splitM_sound`, `splitM_probability`, `splitM_arithmetic_budget` in namespace `Factoring.Quadratic`: the executable supplied-M routine's main finite theorem, with no assumed prime factorization supplied to the program. |
+
 ## Understanding the contracts
 
-**Deterministic parameters.** `exists_rational_epsilon_schedule` proves an existence statement over exact real and rational numbers. It does not connect the height parameter to a program's running time. The minimax statements concern their displayed constraints, rather than a lower bound for all factoring algorithms.
+**Deterministic parameters.** `exists_rational_epsilon_schedule` proves an existence statement over exact real and rational numbers. The exact cost-transfer theorem combines specified cost bounds; proving those bounds for the actual full algorithm remains necessary. The density-saturation theorem proves the exponent construction under finite, explicit guards, not the analytic assertion that the guards are eventually met. The LCM estimate uses a weaker factorial bound, K log K for its logarithm, sufficient at the same asymptotic scale. The minimax statements concern their displayed constraints, rather than a lower bound for all factoring algorithms.
 
-**Gram argument.** Positive semidefiniteness means that every real quadratic form associated with the matrix is nonnegative. Entrywise products preserve it. The stronger all-ones lower bound means that `A - J` is positive semidefinite, where every entry of `J` equals one. `sparse_average` combines these hypotheses over a finite collection, subtracts an explicitly bounded diagonal, and produces a large off-diagonal entry. Identifying these abstract matrix entries with quadratic ideal-character coefficients is still outside the formalization, as are the required analytic estimates.
+**Gram argument.** Positive semidefiniteness means that every real quadratic form associated with the matrix is nonnegative. Entrywise products preserve it. The stronger all-ones lower bound means that `A - J` is positive semidefinite, where every entry of `J` equals one. `sparse_average` combines these hypotheses over a finite collection, subtracts an explicitly bounded diagonal, and produces a large off-diagonal entry. The local coefficient matrices are now defined and their positivity is proved, including ramified cases. Identifying those entries with quadratic ideal-character coefficients is still outside the formalization, as are the required analytic estimates.
 
-**Recursion.** The path maxima use exact difference identities and induction. The time theorem bounds a sum of three exponential costs, reserving 0.01 of the coefficient to absorb their addition. Both time and workspace theorems allow an arbitrary threshold: the recursive inequalities hold above it, and the desired initial bounds are explicit hypotheses below it. Proving that the actual algorithm satisfies these hypotheses, including its enlarged analytic and probabilistic contract, remains necessary. No automatic asymptotic transfer or absorption of arbitrary initial costs is asserted.
+**Recursion.** The path maxima use exact difference identities and induction. The time theorem bounds a sum of three exponential costs, reserving 0.01 of the coefficient to absorb their addition. Both time and workspace theorems allow an arbitrary threshold: the recursive inequalities hold above it, and the desired initial bounds are explicit hypotheses below it. Proving that the actual algorithm satisfies these hypotheses, including its enlarged analytic and probabilistic contract, remains necessary. The exact shrinking-scale inequality is formalized separately. No absorption of arbitrary initial costs is asserted.
 
-**Quadratic arithmetic and extraction.** Evaluation lemmas assume a supplied root satisfying its quadratic equation. The executable splitter works directly with coefficient pairs and supplied exponent parameters. Its soundness theorem guarantees correctness of a returned factor, not that a factor will be returned. Likewise, square-root extraction assumes the congruence and excludes both trivial signs; producing suitable roots and proving success probabilities are separate tasks. Smoothness, equidistribution, number-field constructions, and overall operation counts are not certified by these files.
+**Quadratic arithmetic and extraction.** Evaluation lemmas assume a supplied root satisfying its quadratic equation. The executable splitter works directly with coefficient pairs and supplied exponent parameters. The supplied-M routine's soundness, finite-uniform probability lower bound, and arithmetic operation budgets are now proved. It uses at most 2(floor(log₂ M)+1) quadratic multiplications and at most 3(floor(log₂ M)+1)+2 gcds in the abstract operation accounting. The odd N, unit b, split and nonsplit prime divisors, and divisibility of M by p−1 remain genuine input hypotheses. Bit-level complexity, executable uniform sampling, and repeated-trial probability/expectation are not yet certified. Square-root extraction for the general factorer still assumes the congruence and excludes both trivial signs. Smoothness, equidistribution, and number-field constructions remain outside these proofs.
 
 ## Reproduce the checks
 
