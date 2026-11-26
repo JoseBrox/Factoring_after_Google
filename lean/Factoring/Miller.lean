@@ -108,7 +108,7 @@ theorem opposite_sign_success {N a u steps p q : ℕ} [NeZero N]
 /-- Once an Euler stage for a prime has been passed, every later
 stage is a multiple of p-1. -/
 theorem later_multiple {p u j k i : ℕ} (hp : 1<p) (hodd : p%2=1)
-    (he : u*2^j=(p/2)*(2*k+1)) (hji : j<i) :
+    (he : u*2^j=(p/2)*(2*k+1)) (hji : j < i) :
     p-1∣u*2^i := by
   have hh : 2*(p/2)=p-1 := by omega
   have hj : u*2^(j+1) = (p-1)*(2*k+1) := by
@@ -116,7 +116,9 @@ theorem later_multiple {p u j k i : ℕ} (hp : 1<p) (hodd : p%2=1)
     ring
   refine ⟨(2*k+1)*2^(i-(j+1)),?_⟩
   calc
-    u*2^i = u*2^((j+1)+(i-(j+1))) := by congr 2; omega
+    u*2^i = u*2^((j+1)+(i-(j+1))) := by
+      have hi : i = (j+1)+(i-(j+1)) := by omega
+      exact congrArg (fun n : ℕ => u*2^n) hi
     _ = (u*2^(j+1))*2^(i-(j+1)) := by rw [pow_add]; ring
     _ = _ := by rw [hj]; ring
 
@@ -132,7 +134,7 @@ theorem unequal_valuation_success {N a u steps p q : ℕ} [NeZero N]
     scan N a u steps ≠ none := by
   obtain ⟨i,k,hi,hip,hik⟩ := indexed_euler_stage (Fact.out : p.Prime).one_lt hpodd hu hMp
   obtain ⟨j,l,hj,hjq,hjl⟩ := indexed_euler_stage (Fact.out : q.Prime).one_lt hqodd hu hMq
-  have hij : i<j := by omega
+  have hij : i < j := by omega
   apply discrepancy hp hq (show j≤steps by omega)
   · obtain ⟨m,hm⟩ := later_multiple (Fact.out : p.Prime).one_lt hpodd hik hij
     rw [hm,pow_mul,ZMod.pow_card_sub_one_eq_one ha,one_pow]
