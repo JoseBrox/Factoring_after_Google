@@ -1,6 +1,7 @@
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Topology.Order.IntermediateValue
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Positivity
@@ -22,7 +23,7 @@ theorem mass_deriv (J : Finset ℕ) (α : ℝ) :
   unfold mass variance
   rw [← Finset.sum_neg_distrib]
   apply HasDerivAt.sum
-  intro p hp
+  intro p _
   have he : HasDerivAt (fun x : ℝ => Real.exp (x*Real.log p))
       (Real.exp (α*Real.log p)*Real.log p) α := by
     simpa using ((hasDerivAt_id α).mul_const (Real.log p)).exp
@@ -45,10 +46,9 @@ theorem variance_pos (J : Finset ℕ) (hJ : J.Nonempty)
 theorem mass_strictAnti (J : Finset ℕ) (hJ : J.Nonempty)
     (hp : ∀ p∈J,1<p) : StrictAnti (mass J) := by
   apply strictAnti_of_deriv_neg
-  · exact fun α => (mass_deriv J α).continuousAt
-  · intro α
-    rw [(mass_deriv J α).deriv]
-    exact neg_neg_of_pos (variance_pos J hJ hp α)
+  intro α
+  rw [(mass_deriv J α).deriv]
+  exact neg_neg_of_pos (variance_pos J hJ hp α)
 
 theorem saddle_exists_unique (J : Finset ℕ) (hJ : J.Nonempty)
     (hp : ∀ p∈J,1<p) {a b x : ℝ} (hab : a≤b)
