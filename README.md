@@ -257,3 +257,5 @@ The [common-anchor continuation](docs/common_anchor_derandomization.md) replaces
 The [narrow-band streaming construction](docs/narrow_band_streaming_atoms.md) replaces the smoothness verifier by exact one-pass modular atoms and provides a half-scale conditional-count oracle for bounded-degree combinations. Uniformly hitting their full Boolean composition remains open.
 
 The [shared AP/lattice counting continuation](docs/ap_lattice_conditional_counting.md) gives exact arbitrary-degree conjunction counts using CRT and Euclidean floor sums, and a deterministic construction of partial multiplicative relations with prescribed prime factors. Aggregating over unspecified prime choices or guaranteeing smooth residual cofactors remains open.
+
+[Primitive-ratio lattice aggregation](docs/primitive_ratio_lattice_aggregation.md) now gives exact compressed enumeration of smooth suffix pairs in determinant-scale boxes and a factor-free graph method for cancelling large residual cofactors. Dense short-ratio coverage is proved, but uniform deterministic selection at the required target powers remains open.

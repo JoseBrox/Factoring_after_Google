@@ -48,3 +48,7 @@ Run `python verification/research/narrow_band_streaming.py` with the standard li
 ## Shared AP and lattice counting
 
 Run `python verification/research/ap_lattice_count.py` with the standard library. The exact checks cover 130,680 brute-force floor sums, 1,000 large-integer identities, 1,852 CRT anchor counts plus a 44-atom fixture, 656 partial witness counts, and 974 forced signed congruences. The tested source hashes and exact proof scope are recorded in [the AP/lattice note](../../docs/ap_lattice_conditional_counting.md). These checks do not establish smooth-cofactor coverage.
+
+## Primitive-ratio lattice and large-prime cancellation
+
+Run `python verification/research/primitive_ratio_lattice.py` with the standard library. It independently checks 1,581 exact rectangle enumerations (including 741 collinear cases), 363 additional verified factor exits, 1,583 graph-versus-rational-kernel comparisons, all unit targets in a small disjoint-product fixture (34 count comparisons and 806 factor exits), and 100 prescribed-prefix smooth-completion counts. A further fixture modulo 77 cancels two nonsmooth ratios without factoring the residuals. The exact checked source and proof scope are in [the primitive-ratio note](../../docs/primitive_ratio_lattice_aggregation.md).
