@@ -20,3 +20,4 @@ import Factoring.UnitCertificates
 import Factoring.Prefix
 import Factoring.Smooth
 import Factoring.Curve
+import Factoring.Miller

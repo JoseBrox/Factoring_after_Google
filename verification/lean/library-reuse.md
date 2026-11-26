@@ -21,3 +21,13 @@ The four added modules and aggregate import are copied byte-for-byte from the va
 - Log: `PASS: exact PNT+ revision and all analytic adapter theorem dependencies checked.`
 
 Five new local theorems, in a separately compiled project. These are not counted among the 185 theorems of the 4.19 core. The mathematical PNT constants and eventual threshold are existential, not a certified numerical cutoff. No full factoring complexity statement is proved by this adapter.
+
+## Scalar supplied-order splitting
+
+- Validated source: [c0a6a97](https://github.com/JoseBrox/Factoring_after_Google/commit/c0a6a97e35d5219025f13eeb0f296d7645c05b80).
+- Clean build: [45825819390](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45825819390), conclusion **success**.
+- Exact verification: [45825819392](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45825819392), conclusion **success**.
+- Aggregate core: 23 modules, 195 named theorems; compiled audit 473 declarations including 385 theorems, standard three logical axioms only.
+- Log: `PASS: 473 declarations, including 385 theorems;` and `PASS: pinned dependencies, warning-free compilation, and compiled axiom audit.`
+
+Miller.lean and its aggregate import are copied byte-for-byte from the verified source. The executable scan takes only N, a and M; its proof uses supplied divisibility of M by the two local p-1 and q-1 values and the requisite Euler-sign discrepancy. In the unequal-valuation case, a nonsquare at the larger valuation suffices when a is a unit at the smaller prime. In the equal-valuation case, opposite signs suffice. The actual deterministic search for such a witness and its cost remain to be certified.

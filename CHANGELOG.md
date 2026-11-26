@@ -1,5 +1,9 @@
 # Changelog
 
+## Verified scalar supplied-order splitter — 26 November 2026
+
+Added ten checked theorems for the executable scalar scan, exact Euler stage and proper-gcd extraction, including equal-valuation opposite signs and unequal-valuation nonsquare success. Core total: 195 named theorems in 23 modules, 473 audited declarations. The witness-search complexity is not established by these results.
+
 ## Verified PNT+ integration — 26 November 2026
 
 Built the exact pinned upstream strong prime number theorem and verified five local bridge theorems, including the strong theta estimate and unconditional eventual dyadic prime density. All six audited declarations have only the three standard logical axioms. Separate Lean 4.36.0 target and reproducible CI workflow; no completed factoring complexity proof or effective threshold claimed.
