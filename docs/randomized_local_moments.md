@@ -257,11 +257,12 @@ multiply. Equation (1) and tuned comparability within
  \qquad
  \mathbb E Z_{\rm clean}=(1+O(e^{-27\ell^2}))\mu .
 \]
-Here the strict mean margin uses the constant \(6/(32\pi^2)\)
-in the box count and the density lower bound with actual
-coefficient \(.96+o(1)\), rather than replacing every
-occurrence by its weaker \(.97\) bound: the stronger density
-bound follows from \(\log(5u\log y)\le\ell+O(1)\).
+Here the strict mean margin uses the manuscript's sharper actual-node
+bound \(4u/U\le17/18+o(1)\) (in its admissibility calculation),
+not the abstract admissibility ceiling \(.96\). Together with
+\(\log(5u\log y)\le\ell+O(1)\) this gives the density lower bound
+\(e^{-(17/18+o(1))\Lambda}\) per field. The primitive-box
+constant is absorbed by the strict margin \(4-17/9>2.04\).
 For the variance, well-separated pairs contribute at most
 \(1+O(e^{-27\ell^2})\) times the product of their means.
 The diagonal and the at-most-one exceptional point
