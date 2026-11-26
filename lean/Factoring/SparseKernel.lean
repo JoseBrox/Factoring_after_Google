@@ -21,7 +21,8 @@ theorem krylov_solution (B : W→ₗ[K] W) (y : W) (c : ℕ→K) (n : ℕ)
       ∑ i ∈ Finset.range n, c (i+1) • ((B^(i+1)) y) := by
     apply Finset.sum_congr rfl
     intro i hi
-    rw [pow_succ',LinearMap.mul_apply]
+    rw [pow_succ']
+    rfl
   rw [he,eq_neg_of_add_eq_zero_right h,smul_neg,neg_smul,neg_neg,smul_smul,
     inv_mul_cancel₀ hc,one_smul]
 

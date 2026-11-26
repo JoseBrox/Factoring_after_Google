@@ -88,28 +88,28 @@ theorem cumulative_bound (w b e : I→ℝ) (D D₀ : Finset I) (m ζ : ℝ)
     exact Finset.sum_sdiff h₀
   linarith
 
-/-- All stages satisfy the mass cap and preserve every protected label.
+/-- All stages satisfy the mass cap and preserve every kept label.
 The row hypothesis is the weighted mean/error estimate for a new deletion;
 the global moment bounds occur only once in the cumulative charge.
 This is the finite stopping-time invariant, not a proof of those analytic
 row estimates. -/
 theorem invariant (loss : Finset I→I→ℝ) (w b e : I→ℝ)
-    (D₀ protected : Finset I) (m ζ : ℝ)
+    (D₀ kept : Finset I) (m ζ : ℝ)
     (hw : ∀ i, 0≤w i) (hb : ∀ i, 0≤b i) (he : ∀ i, 0≤e i)
     (hm : 0≤m) (hz : 0<ζ) (hmean : 2*m≤ζ/4)
     (hm₀ : mass w D₀≤m/2)
-    (hp₀ : ∀ i ∈ protected, i∉D₀)
+    (hp₀ : ∀ i ∈ kept, i∉D₀)
     (hbudget : (∑ i, w i*b i)+(m/ζ)*(∑ i, e i)≤ζ*m/4)
-    (hprotected : ∀ D, mass w D≤m → ∀ i ∈ protected, loss D i≤ζ)
+    (hprotected : ∀ D, mass w D≤m → ∀ i ∈ kept, loss D i≤ζ)
     (hrow : ∀ D, mass w D≤m → ∀ i, i∉D → ζ<loss D i →
       ζ*w i≤w i*b i+2*m*w i+Real.sqrt (w i)*Real.sqrt (m*e i)) :
     ∀ n, mass w (stages loss ζ D₀ n)≤m ∧
-      (∀ i ∈ protected, i∉stages loss ζ D₀ n) ∧
+      (∀ i ∈ kept, i∉stages loss ζ D₀ n) ∧
       (∀ i ∈ stages loss ζ D₀ n \ D₀, ζ/2*w i≤w i*b i+(m/ζ)*e i) := by
   intro n
   induction n with
   | zero =>
-    change mass w D₀≤m ∧ (∀ i ∈ protected, i∉D₀) ∧
+    change mass w D₀≤m ∧ (∀ i ∈ kept, i∉D₀) ∧
       (∀ i ∈ D₀\D₀, ζ/2*w i≤w i*b i+(m/ζ)*e i)
     exact ⟨by linarith,hp₀,by simp⟩
   | succ n ih =>
