@@ -84,9 +84,13 @@ theorem gcdBitsAux_spec (k : ℕ) (a b : List Bool)
           exact two_remainders_lt hb (hr.2 ▸ hp) h
         have hi := ih r s hsmall hs.1.symm
         constructor
-        · rw [hi.1,show value s=value b%value r from hs.2,
-            ← Nat.gcd_rec, Nat.gcd_comm (value r), show value r=value a%value b from hr.2,
-            ← Nat.gcd_rec, Nat.gcd_comm]
+        · calc
+            _ = Nat.gcd (value r) (value s) := hi.1
+            _ = Nat.gcd (value b % value r) (value r) := by rw [show value s=value b%value r from hs.2, Nat.gcd_comm]
+            _ = Nat.gcd (value r) (value b) := (Nat.gcd_rec (value r) (value b)).symm
+            _ = Nat.gcd (value a % value b) (value b) := by rw [show value r=value a%value b from hr.2]
+            _ = Nat.gcd (value b) (value a) := (Nat.gcd_rec (value b) (value a)).symm
+            _ = _ := Nat.gcd_comm _ _
         · exact hi.2.trans (hr.1.trans hlen.symm)
 
 /-- Zero-extend both operands to a common width. -/
