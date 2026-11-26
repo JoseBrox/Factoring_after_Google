@@ -47,6 +47,8 @@ The 26 November 2026 checkpoint adds thirteen modules (169 explicitly named theo
 
 All four files compile with warnings as errors, and the aggregate audit passes. See [receipt](../verification/lean/library-reuse.md) and [dependency study](../docs/lean_library_reuse.md). These proofs do not establish the analytic prefix tail, the construction and size of the unit certificates, or the projective curve hypotheses.
 
+The [separate analytic target](../lean-analytic/README.md) also compiles and audits the strong PNT and dyadic prime-density bridges, using a pinned newer toolchain. It is not yet linked into this Lean 4.19.0 project.
+
 ## Understanding the contracts
 
 **Deterministic parameters.** `exists_rational_epsilon_schedule` proves an existence statement over exact real and rational numbers. The peeling theorem is dimension-independent and does not union-bound over deletion stages. Its weighted row-loss and protected-label estimates are input hypotheses supplied by the analytic argument. The exact cost-transfer theorem combines specified cost bounds; proving those bounds for the actual full algorithm remains necessary. The density-saturation theorem proves the exponent construction under finite, explicit guards, not the analytic assertion that the guards are eventually met. The LCM estimate uses a weaker factorial bound, K log K for its logarithm, sufficient at the same asymptotic scale. The minimax statements concern their displayed constraints, rather than a lower bound for all factoring algorithms.

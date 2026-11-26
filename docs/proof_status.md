@@ -41,7 +41,7 @@ The committed expected outputs make the performed checks explicit. They do not c
 
 The Google papers are fixed at commit `4a7bc8ab0bc770e71a259b7966c500496b99010a`; their exact PDF Git blob hashes are in [the lock file](../references/sources.lock.json). Their READMEs say that Lean formalizations have been completed and will be released in a companion submission. This repository has not obtained or checked those upstream formal artifacts.
 
-This repository now has its own [Lean component formalization](../lean/README.md), compiled with Lean 4.19.0 and a pinned mathlib revision. Its scope is:
+This repository now has its own [Lean component formalization](../lean/README.md), compiled with Lean 4.19.0 and a pinned mathlib revision. A separate [analytic target](../lean-analytic/README.md) now certifies the classical strong PNT for Chebyshev theta and the eventual dyadic prime count, using pinned PNT+ and Lean 4.36.0. Growing-modulus equidistribution and effective finite thresholds are not thereby established. The arithmetic project's scope is:
 
 | Manuscript component | Lean evidence | Still outside the formalization |
 |---|---|---|

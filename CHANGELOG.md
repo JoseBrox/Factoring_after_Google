@@ -1,5 +1,9 @@
 # Changelog
 
+## Verified PNT+ integration — 26 November 2026
+
+Built the exact pinned upstream strong prime number theorem and verified five local bridge theorems, including the strong theta estimate and unconditional eventual dyadic prime density. All six audited declarations have only the three standard logical axioms. Separate Lean 4.36.0 target and reproducible CI workflow; no completed factoring complexity proof or effective threshold claimed.
+
 ## Mathlib reuse — 26 November 2026
 
 Four additional checked modules (185 named theorems in 22 modules overall). Reuse Dirichlet's unit theorem, localization, Dirichlet-character orthogonality, smooth numbers and finite-field quadratic-character counting. The affine-to-projective numerical transfer retains the actual point-count hypothesis. No end-to-end factoring bound is claimed.

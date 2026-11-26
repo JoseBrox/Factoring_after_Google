@@ -102,7 +102,9 @@ The verified core contains **185 explicitly named theorems in 22 modules** ([bui
 
 The library-reuse checkpoint additionally certifies the unit-lattice torsion argument, localized polynomial evaluation and two-field modular cancellation, exact character orthogonality for injective prefixes, the coprime smooth-product count, and the affine quadratic-character sum identity. See [library reuse and remaining dependencies](docs/lean_library_reuse.md).
 
-The project pins Lean 4.19.0 and every mathlib dependency revision. Builds treat warnings as errors. The audit inspects compiled logical declarations, including private and generated proofs, and permits only Lean's standard axioms `propext`, `Classical.choice`, and `Quot.sound`. Project proofs contain no `sorry` or `native_decide`.
+The separate [analytic target](lean-analytic/README.md) rebuilds PNT+ on Lean 4.36.0 and verifies five bridge theorems, including the strong Chebyshev theta estimate and the eventual dyadic prime density. It remains separate from the Lean 4.19.0 core.
+
+The arithmetic project pins Lean 4.19.0 and every mathlib dependency revision. Builds treat warnings as errors. The audit inspects compiled logical declarations, including private and generated proofs, and permits only Lean's standard axioms `propext`, `Classical.choice`, and `Quot.sound`. Project proofs contain no `sorry` or `native_decide`.
 
 ## What is reused, and what changes
 
