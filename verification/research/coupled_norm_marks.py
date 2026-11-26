@@ -63,7 +63,6 @@ def make(N, primes, target=None):
         assert all(v[0]==0 for v in ker)
         print('target interpolation:', 'degree',d,'target',target,'norm',target**(d-1),'; all exact solutions force E=0')
 
-
 if __name__=='__main__':
     make(77,[3,5,13,17])
     make(77,[3,5,13,17],target=5)
@@ -105,7 +104,6 @@ def rank_one_field(N, ell, d):
     print('rank-one field:', 'N',N,'target',ell,'degree',d,'C bits',C.bit_length(),
           'independent units',d-1,'known congruence-unit rank',d-2,
           'remaining log dimension',1)
-
 
 if __name__=='__main__':
     rank_one_field(77,5,6)

@@ -161,5 +161,4 @@ def main():
                 z*=2
     raise AssertionError('no verified nontrivial unit relation')
 
-
 if __name__=='__main__':main()
