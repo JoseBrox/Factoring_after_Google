@@ -94,7 +94,7 @@ theorem common_exponent_pos {S : Finset ℕ} {e : ℕ→ℕ} (K : ℕ)
   apply Nat.mul_pos _ (indexMultiple_pos K)
   by_contra h
   have hz : S.lcm e=0 := by omega
-  obtain ⟨a,ha,hea⟩ := Set.mem_image.mp (Finset.lcm_eq_zero_iff.mp hz)
+  obtain ⟨a,ha,hea⟩ := (Set.mem_image e (S : Set ℕ) 0).mp (Finset.lcm_eq_zero_iff.mp hz)
   exact (ne_of_gt (he a ha)) hea
 
 end Factoring.Saturation
