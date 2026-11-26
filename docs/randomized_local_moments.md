@@ -341,3 +341,7 @@ executable tree, algebraic square certification and full
 kernel checking remain necessary. No claim is made that these
 unproved algorithmic hypotheses are discharged simply by the
 QRH theorem.
+
+## Continuation
+
+The subsequent [setup and global readiness assembly](randomized_setup_readiness.md) combines the [rational-root smoothing argument](randomized_rational_root_smoothing.md), the local moment and fibre results, and the sampler analysis under their stated QRH and classical inputs. It is a written conditional C1 argument, not a completed Lean certificate or proof of C2–C5.

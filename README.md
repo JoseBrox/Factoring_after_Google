@@ -98,7 +98,7 @@ The [Lean guide](lean/README.md) gives the theorem names, assumptions, and repro
 | 4 | Quadratic relation chain | Executable supplied-M splitter, proper-divisor soundness, exact mixed-prime success probability ≥ (p+3)/(2p) > 1/2 (including repeated prime powers), and arithmetic-operation budgets. |
 | 5 | Square-root extraction | A nontrivial square congruence yields a proper gcd factor, including even moduli and noninvertible roots. |
 
-The core contains **246 explicitly named source theorems in 33 modules**; 243 passed the aggregate strict Lean build and complete axiom audit, and the three newly promoted readiness theorems passed strict individual compilation and axiom reports ([build evidence](verification/lean/reconstruction-readiness.md)). The quadratic chain's main finite single-trial correctness and probability theorem is now certified. The remaining results are compiled component theorems. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
+The core contains **266 explicitly named source theorems in 37 modules**, all covered by the strict aggregate Lean build and complete axiom audit ([build evidence](verification/lean/progression-readiness.md)). The quadratic chain's main finite single-trial correctness and probability theorem is now certified. The remaining results are compiled component theorems. The full analytic complexity bounds in the results table are not yet end-to-end Lean proofs. The remaining analytic, arithmetic, probability, and implementation bridges are listed in the [proof-status register](docs/proof_status.md).
 
 The library-reuse checkpoint additionally certifies the unit-lattice torsion argument, localized polynomial evaluation and two-field modular cancellation, exact character orthogonality for injective prefixes, the coprime smooth-product count, the affine quadratic-character sum identity, and executable scalar supplied-order splitting from a certified Euler-sign discrepancy. See [library reuse and remaining dependencies](docs/lean_library_reuse.md).
 
@@ -114,7 +114,7 @@ The retained construction N1101 contributes the quadratic relation chain. Other 
 
 ## Open work
 
-- Prove the widened arithmetic-progression, fibre, local-moment, and square-certification estimates required by the randomized 91.4/19 theorem.
+- Formalize and independently audit the written conditional widened arithmetic-progression, fibre, local-moment and C1 readiness arguments; establish C2–C5, including square certification, for the randomized 91.4/19 theorem.
 - Overcome the large-modulus equidistribution obstruction in the deterministic construction; reducing exponents on a spreadsheet alone does not remove it.
 - Implement and benchmark the complete theoretical factorers, including the exact algebraic subroutines and explicit finite thresholds.
 - Obtain independent mathematical review and extend the compiled Lean component proofs to the complete algorithms and analytic complexity bounds. The source's announced Lean artifacts are not treated here as checked evidence.
@@ -145,3 +145,5 @@ Original material in this repository is licensed under **Creative Commons Attrib
 [H]: https://github.com/JoseBrox/factoring-algorithms/tree/94d84cf90cc958aebde8853a1ecfcda304f60500/research/2026-11-25-cogentic
 
 The [full Lean completion register](docs/lean_completion.md) tracks checked proof packages. The [QRH-based weighted progression proof](docs/qrh_weighted_progressions.md) and [rough/bad-child continuation](docs/weighted_rough_bad_child.md) are written mathematical results, not checked analytic Lean endpoints. The [squarefree saddle expansion](docs/deterministic_saddle_proof.md), [effective reconstruction](docs/effective_number_field_recovery.md), [enlarged fibre coupling](docs/randomized_fibre_coupling.md), and [conditional local moment transfer](docs/randomized_local_moments.md) develop further parts of the remaining mathematical contracts.
+
+The [QRH-based deterministic squarefree progression proof](docs/qrh_deterministic_progressions.md), [rational-root smoothing](docs/randomized_rational_root_smoothing.md) and [setup/readiness assembly](docs/randomized_setup_readiness.md) extend the written conditional arguments. Their complete analytic and algorithmic Lean verification remains open.

@@ -31,9 +31,9 @@ are not equally costly; the latter dominate the remaining research.
 | 17 | Fresh project QRH source build and exact axiom audit | Patched source rebuild in progress |
 | 18 | Uniform log-derivative and twisted prime-sum estimates; QRH least witness bound | Written, not checked |
 | 19 | Deterministic base-polynomial construction, root separation and uniform height bounds | Open |
-| 20 | Number-field local valuation/norm construction, effective certificate bounds and reconstruction | Reconstruction written under valuation/lattice hypotheses; determinant bounds checked |
-| 21 | Deterministic squarefree saddle/Edgeworth expansion | Written; finite saddle calculus checked |
-| 22 | Uniform deterministic squarefree smooth progression and Mellin/two-prefix argument | Open |
+| 20 | Number-field local valuation/norm construction, effective certificate bounds and reconstruction | Reconstruction written under valuation/lattice hypotheses; determinant, field norm and scaled integral root checked |
+| 21 | Deterministic squarefree saddle/Edgeworth expansion | Written; finite saddle calculus and finite Gaussian decay checked |
+| 22 | Uniform deterministic squarefree smooth progression and Mellin/two-prefix argument | Written conditional on QRH; finite two-prefix and Euler-product bounds checked |
 | 23 | Conditional Gaussian smooth laws and covariance transfer | Open |
 | 24 | Uniform positive Gram construction and analytic row-loss bounds | Open |
 | 25 | Full deterministic algorithm correctness and bit-complexity endpoint | Open |
@@ -42,8 +42,8 @@ are not equally costly; the latter dominate the remaining research.
 | 28 | Randomized weighted local-limit density, continuity and tuned comparability | Written, not checked |
 | 29 | Randomized uniform two-sided weighted AP estimate and actual exceptional sets | Written conditional on QRH, not checked |
 | 30 | Rough weighted progression and bad-child bound | Written, not checked |
-| 31 | Enlarged polynomial-slice coupling, lattice geometry and conditional moments | Written transfer under QRH and stated classical inputs; not checked |
-| 32 | Global all-history readiness and adaptive descent | Finite weighted backward propagation checked; rational-root and sampler hypotheses open |
+| 31 | Enlarged polynomial-slice coupling, lattice geometry and conditional moments | Written transfer including enlarged rational-root smoothing under QRH and classical inputs; full formal transfer open |
+| 32 | Global all-history readiness and adaptive descent | Written conditional C1 setup/readiness assembly; finite backward propagation checked; actual sampler/tree certification open |
 | 33 | Randomized ideal parity bookkeeping, obstruction dimension and exact square extraction | Open |
 | 34 | Sparse preconditioner rank probability and efficient recurrence discovery | Open |
 | 35 | Full modular exponentiation/gcd/sampling and general bit-machine certification; randomized algorithm endpoint | Digit-list modular powering and gcd with cell-cost bounds checked; machine/sampler/endpoint open |
@@ -58,5 +58,6 @@ Evidence for milestones 1–12: the earlier verified core and analytic
 receipts in [library-reuse](../verification/lean/library-reuse.md) and
 [the analytic target](../lean-analytic/README.md).
 For the new components, see [the continuation receipt](../verification/lean/qrh-continuation.md) and [reconstruction/readiness receipt](../verification/lean/reconstruction-readiness.md).
+See also the [progression/readiness receipt](../verification/lean/progression-readiness.md).
 The metric should be updated on future sessions using this same
 denominator unless an explicit scope change is documented.

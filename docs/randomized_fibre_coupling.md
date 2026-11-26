@@ -308,3 +308,7 @@ pair correlation bounds, all valid-history geometry, and
 bad-child propagation for the actual sampler. The main weighted
 AP and rough/bad-child estimates were established separately in
 the two QRH/weighted notes. No full C1 theorem is claimed yet.
+
+## Continuation
+
+The subsequent [setup and global readiness assembly](randomized_setup_readiness.md) combines the [rational-root smoothing argument](randomized_rational_root_smoothing.md), the local moment and fibre results, and the sampler analysis under their stated QRH and classical inputs. It is a written conditional C1 argument, not a completed Lean certificate or proof of C2–C5.

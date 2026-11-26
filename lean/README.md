@@ -63,6 +63,10 @@ The [continuation receipt](../verification/lean/qrh-continuation.md) records suc
 
 **Quadratic arithmetic and extraction.** Evaluation lemmas assume a supplied root satisfying its quadratic equation. The executable splitter works directly with coefficient pairs and supplied exponent parameters. The supplied-M routine's soundness, finite-uniform probability lower bound, and arithmetic operation budgets are now proved. It uses at most 2(floor(log₂ M)+1) quadratic multiplications and at most 3(floor(log₂ M)+1)+2 gcds in the abstract operation accounting. The odd N, unit b, split and nonsplit prime divisors, and divisibility of M by p−1 remain genuine input hypotheses. Bit-level complexity, executable uniform sampling, and repeated-trial probability/expectation are not yet certified. Square-root extraction for the general factorer still assumes the congruence and excludes both trivial signs. The new smooth-product count and number-field structural bridges are certified. Uniform smoothness and equidistribution estimates, number-field certificate search and bit complexity remain outside these proofs.
 
+## Progression and norm checkpoint (26 November 2026)
+
+The [aggregate receipt](../verification/lean/progression-readiness.md) covers 266 named source theorems in 37 modules, including RationalRecovery, SaddleDecay, NumberFieldNorm and PrefixBounds. The new checked norm and two-prefix theorems use actual field and finite-character constructions. The uniform analytic estimates, simple-root ideal realization, full reconstruction and adaptive sampler still require certification.
+
 ## Reproduce the checks
 
 The project pins **Lean 4.19.0** in [lean-toolchain](lean-toolchain) and mathlib commit **`c44e0c8ee63ca166450922a373c7409c5d26b00b`** in [lakefile.toml](lakefile.toml). The committed [lake-manifest.json](lake-manifest.json) also fixes the transitive dependency revisions.
