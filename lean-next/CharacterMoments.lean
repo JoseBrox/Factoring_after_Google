@@ -89,7 +89,7 @@ theorem weighted_moment {q k : ℕ} [NeZero q] (S : Finset ℕ)
     obtain ⟨x,_,rfl⟩ := Finset.mem_image.mp hn
     change IsUnit ((↑(∏ i, (x i).val)):ZMod q)
     rw [Nat.cast_prod]
-    exact IsUnit.prod (fun i _ => hu (x i))
+    exact IsUnit.prod_univ_iff.mpr (fun i => hu (x i))
   have hinj := nat_prefix_injective (q:=q) T (by
     intro n hn
     obtain ⟨x,_,rfl⟩ := Finset.mem_image.mp hn
