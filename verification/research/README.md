@@ -40,3 +40,7 @@ Run `python verification/research/positive_smooth_relations.py` with the standar
 ## Common-translation rank driver
 
 Run `python verification/research/common_translation.py` (standard library). It independently checks the AP scanner on 24 unit residues, all 1296 small translation matrices at T=L+1, a singular example at T=L, and exact determinants, modular relations and gcd splits on N=899, 47053 and 23707. The three rank fixtures use exhaustive small product tables, not a uniform half-scale hitting-set implementation. Exact test output and source hashes are in [the common-anchor note](../../docs/common_anchor_derandomization.md).
+
+## Narrow-band streaming atoms
+
+Run `python verification/research/narrow_band_streaming.py` with the standard library. The test verifies 61,440 exact streaming atom decisions, 5,120 full lift decisions against finite tables, 24 exact conditional-count DP cases, and an independent-anchor rank certificate giving a factor of 21. The exact checked source hash and proof boundary are in [the narrow-band note](../../docs/narrow_band_streaming_atoms.md). No asymptotic product-table search is asserted.

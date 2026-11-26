@@ -253,3 +253,5 @@ The [positive smooth-relation coverage theorem](docs/positive_smooth_relation_co
 The [recent derandomization audit](docs/prime_word_derandomization_audit.md) gives a precise low-space verifier target using the L=RL=BPL probability-approximation theorem, identifies the streaming residue obstruction and the one-third entropy barrier, and records deterministic Miller primality testing from the verified Dirichlet inputs. Uniform half-scale search remains open.
 
 The [common-anchor continuation](docs/common_anchor_derandomization.md) replaces the adaptive positive-relation search by a single dense residue search, proves nonsingularity of the signed translation matrix and polynomial-size nonuniform advice, and isolates the read-once versus reusable-randomness barrier in its exact low-workspace verifier. Uniform deterministic half-scale factoring remains open.
+
+The [narrow-band streaming construction](docs/narrow_band_streaming_atoms.md) replaces the smoothness verifier by exact one-pass modular atoms and provides a half-scale conditional-count oracle for bounded-degree combinations. Uniformly hitting their full Boolean composition remains open.
