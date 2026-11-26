@@ -65,7 +65,7 @@ theorem renormalize {a b z ε : ℝ} (hε : 0≤ε) (hε1 : ε<1)
   have hnum : |b-a*z|≤2*ε*a+4*ε := by
     rw [show b-a*z=(b-a)+a*(1-z) by ring]
     linarith
-  rw [show b/z-a=(b-a*z)/z by field_simp,abs_div,abs_of_pos hz0]
+  rw [show b/z-a=(b-a*z)/z by field_simp <;> ring,abs_div,abs_of_pos hz0]
   exact (div_le_div_of_nonneg_right hnum hz0.le).trans
     (div_le_div_of_nonneg_left (by positivity) (by linarith) hz1)
 
