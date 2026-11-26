@@ -21,3 +21,6 @@ import Factoring.Prefix
 import Factoring.Smooth
 import Factoring.Curve
 import Factoring.Miller
+import Factoring.BitArithmetic
+import Factoring.EulerDecay
+import Factoring.LatticeClearing
