@@ -438,7 +438,7 @@ rereading an entire random word does not satisfy that
 read-once hypothesis. No \(O(b)\)-space read-once
 implementation or appropriate random-access PRG has
 been established. See Nisan and Zuckerman, [Randomness
-is Linear in Space](https://doi.org/10.1006/jcss.1996.0045),
+is Linear in Space](https://doi.org/10.1006/jcss.1996.0004),
 and the distinction between read-once and multiple-access
 randomness in [On read once vs. multiple access to
 randomness in logspace](https://www.sciencedirect.com/science/article/pii/030439759390258U).
@@ -460,6 +460,9 @@ support tables to speed up the tiny test cases; these
 tables are **not** the asymptotic algorithm and have no
 claimed half-scale cost. The actual AP scanner is checked
 separately, independently of the table.
+
+Exact tested source: Git blob `effb09f6dfa5dc53a9653a73eb3ea468ec32aaa6`,
+SHA-256 `c938705bf601f5435e175fac78d5f4948a126e286997881153a46819052870e3`.
 
 Observed output:
 
