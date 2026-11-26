@@ -92,5 +92,4 @@ def fixture():
     print('C bit length',C.bit_length(),'private-support certificates',cert,'of',len(basis)-1)
     print('all nonexceptional factor exponents forced to zero; remaining norm ell^2 forces trivial unit')
 
-
 if __name__=='__main__':fixture()
