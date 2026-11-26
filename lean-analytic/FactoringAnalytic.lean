@@ -112,7 +112,7 @@ theorem dyadic_density_of_theta {x : ℝ} (hx : 2 ≤ x)
     ext n
     simp only [T,S,U,Finset.mem_sdiff,Finset.mem_filter,Finset.mem_Icc,
       Finset.mem_Ioc,zero_le,true_and]
-    by_cases hp : Nat.Prime n <;> simp [hp] <;> omega
+    by_cases hp : Nat.Prime n <;> (simp [hp]; omega)
   have he : Chebyshev.theta x-Chebyshev.theta (x/2)=∑ p∈U,Real.log p := by
     rw [Chebyshev.theta_eq_sum_Icc,Chebyshev.theta_eq_sum_Icc]
     change (∑ p∈T,Real.log p)-(∑ p∈S,Real.log p)=_
