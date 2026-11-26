@@ -5,7 +5,7 @@ import shutil
 import sys
 from pathlib import Path
 
-source, target, adapter = map(Path, sys.argv[1:])
+source, target, adapter, pnt = map(Path, sys.argv[1:])
 roots, external, visited = set(), set(), set()
 def imports(path):
     # A conservative scan of import directives. All actual imports are also
@@ -20,9 +20,9 @@ def visit(name):
     visited.add(name)
     if name == "Mathlib" or name.startswith("Mathlib."):
         roots.add(name)
-    elif name.startswith("OAI."):
+    elif name.startswith("OAI.") or name.startswith("PrimeNumberTheoremAnd."):
         rel = Path(name.replace(".", "/") + ".lean")
-        src = source / rel
+        src = (source if name.startswith("OAI.") else pnt) / rel
         dst = target / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, dst)
@@ -32,7 +32,7 @@ def visit(name):
         external.add(name)
 for dep in imports(adapter):
     visit(dep)
-report = {"entrypoint": str(adapter.name), "local_modules": sorted(n for n in visited if n.startswith("OAI.")),
+report = {"entrypoint": str(adapter.name), "local_modules": sorted(n for n in visited if n.startswith(("OAI.", "PrimeNumberTheoremAnd."))),
           "mathlib_roots": sorted(roots), "other_imports": sorted(external)}
 (target / "closure.json").write_text(json.dumps(report, indent=2)+"\n")
 (target / "cache-roots.txt").write_text("\n".join(sorted(roots))+"\n")

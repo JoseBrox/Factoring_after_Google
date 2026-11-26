@@ -23,8 +23,13 @@ jobs:
           git sparse-checkout set lean/OAI
           git checkout --detach FETCH_HEAD
           test "$(git rev-parse HEAD)" = 3344da59991ed94f9ba711217b29c1d760badfa6
+          git init "$RUNNER_TEMP/digamma"
+          git -C "$RUNNER_TEMP/digamma" remote add origin https://github.com/AlexKontorovich/PrimeNumberTheoremAnd.git
+          git -C "$RUNNER_TEMP/digamma" fetch --depth=1 origin c39a751132c88b6e8080b74c74023fd95b3d8be0
+          git -C "$RUNNER_TEMP/digamma" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/digamma" rev-parse HEAD)" = c39a751132c88b6e8080b74c74023fd95b3d8be0
           set +e
-          python3 "$GITHUB_WORKSPACE/lean-density/closure.py" lean "$RUNNER_TEMP/density" "$GITHUB_WORKSPACE/lean-density/FactoringDensity.lean"
+          python3 "$GITHUB_WORKSPACE/lean-density/closure.py" lean "$RUNNER_TEMP/density" "$GITHUB_WORKSPACE/lean-density/FactoringDensity.lean" "$RUNNER_TEMP/digamma"
           code=$?
           cp "$RUNNER_TEMP/density/closure.json" "$GITHUB_WORKSPACE/build/density/"
           exit "$code"
