@@ -1,6 +1,7 @@
 import Mathlib.LinearAlgebra.Matrix.Adjugate
 import Mathlib.Data.Fintype.Perm
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Positivity
 
 /-! Explicit determinant heights. Leibniz rather than Hadamard is
@@ -16,15 +17,14 @@ theorem det_bound {ι : Type*} [Fintype ι] [DecidableEq ι]
   classical
   rw [Matrix.det_apply']
   calc
-    _ ≤ ∑ σ : Equiv.Perm ι, |(↑(Equiv.Perm.sign σ) : ℝ)*∏ i,A (σ i) i| := by
+    _ ≤ ∑ σ : Equiv.Perm ι, |((Equiv.Perm.sign σ : ℤ) : ℝ)*∏ i,A (σ i) i| := by
       exact Finset.abs_sum_le_sum_abs _ _
     _ ≤ ∑ _σ : Equiv.Perm ι, B^(Fintype.card ι) := by
       apply Finset.sum_le_sum
       intro σ _
       rw [abs_mul,Finset.abs_prod]
-      have hsign : |(↑(Equiv.Perm.sign σ) : ℝ)|=1 := by
-        have ht := Equiv.Perm.sign σ
-        rcases Int.units_eq_one_or ht with he | he <;> simp [he]
+      have hsign : |((Equiv.Perm.sign σ : ℤ) : ℝ)|=1 := by
+        rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with he | he <;> simp [he]
       rw [hsign,one_mul]
       calc
         _ ≤ ∏ _i:ι, B := Finset.prod_le_prod (fun _ _ => abs_nonneg _) (fun i _ => h _ _)
