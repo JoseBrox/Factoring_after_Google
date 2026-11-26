@@ -11,7 +11,7 @@ open scoped BigOperators
 open Matrix
 
 theorem det_bound {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (A : Matrix ι ι ℝ) (B : ℝ) (hB : 0≤B)
+    (A : Matrix ι ι ℝ) (B : ℝ)
     (h : ∀ i j, |A i j|≤B) :
     |A.det| ≤ (Fintype.card ι).factorial * B^(Fintype.card ι) := by
   classical
@@ -34,11 +34,11 @@ theorem det_bound {ι : Type*} [Fintype ι] [DecidableEq ι]
 /-- This bounds all Cramer numerators by replacing a column by a vector
 whose entries have the same height bound. -/
 theorem cramer_bound {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (A : Matrix ι ι ℝ) (v : ι→ℝ) (B : ℝ) (hB : 0≤B)
+    (A : Matrix ι ι ℝ) (v : ι→ℝ) (B : ℝ)
     (hA : ∀ i j, |A i j|≤B) (hv : ∀ i, |v i|≤B) (j : ι) :
     |Matrix.cramer A v j| ≤ (Fintype.card ι).factorial * B^(Fintype.card ι) := by
   rw [Matrix.cramer_apply]
-  apply det_bound _ B hB
+  apply det_bound _ B
   intro i k
   by_cases hk : k=j
   · subst k
