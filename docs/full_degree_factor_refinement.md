@@ -344,3 +344,7 @@ with six additional marks. It tests the exact relation matrix and
 modular certificate, not the existence of relations on arbitrary
 inputs. The proof of polynomial bit complexity uses the published
 algorithm, not measured running times of this SymPy implementation.
+
+## Subsequent scalar-free analysis
+
+The [scalar-free target note](scalar_free_target_coverage.md) replaces the original columns by norm-normalized pairs, eliminating diagonal rational rank and permitting exact peeling of isolated finite-valuation rows. It strengthens the necessary rank bound and proves that rank alone is insufficient even after normalization. In the special ramified construction, the exact coset order of the particular target unit in the common-order unit quotient is the multiplicative order of the target prime modulo the characteristic of the gluing ring (a known multiple of N). The common-order covolume also prevents a direct small-cofactor Minkowski argument. The exact finite tests pass; none of this establishes uniform coverage of the full-degree mark box.

@@ -95,3 +95,7 @@ box at the actual L_N[1/2,O(1)] search cost. Its prototype was
 checked on two finite fixtures; no uniform successful-coverage
 proof is supplied. The earlier full-rank COV and direct short-unit
 strategies must not be assumed to supply the missing relations.
+
+### Scalar-free target coverage audit
+
+[Scalar-free extraction and the common-order obstruction](scalar_free_target_coverage.md) gives a polynomial-cost normalized target decision that annihilates every diagonal rational constant. On almost all balanced inputs the normalized finite-valuation rank of any successful polynomial-bit-height subfamily is Omega(n/log n). We prove that arbitrarily large polynomial rank can be contributed by private-prime columns without implying target membership, and characterize the prescribed unit's exact coset order via the gluing ring. Direct common-lattice Minkowski bounds retain a cofactor of exponential size. The new finite fixtures check the positive and negative normalized relations and the exact gluing order. Uniform success at some separating prime is still open; no unconditional half-scale general factorer or new Lean milestone is claimed.

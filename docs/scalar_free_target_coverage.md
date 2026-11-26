@@ -428,3 +428,15 @@ the gluing characteristic, a manufactured positive certificate,
 and a private-prime negative fixture. It uses exact integer
 and rational arithmetic and the earlier Ge prototype, not a
 numerical rank test. It is not an asymptotic coverage experiment.
+
+### Exact finite verification receipt
+
+The committed script `verification/research/normalized_target.py` has Git blob `16dc0f9c2cd0d9dd721e167d91d5815be1785cf5` and SHA-256 `8a4319f40c01400d0d8c2630f2e17905e8c60ae4c4b5b7f3c9e20049ac9dbf21`. Running it with SymPy and the prior factor-refinement prototype produced:
+
+```
+positive fixture: normalization kills rational columns; target relation verified exactly
+gluing fixture: N=77 resultant=53361 characteristic=53361 target order=2310
+negative fixture: 5 private-prime marks, normalized valuation rank 6, target valuation solvable, log cancellation impossible
+```
+
+The gluing check tests the actual pair-unit congruence for every exponent from 1 through 2310, using exact quotient-ideal membership, rather than relying only on a computed modular order. The negative case has a unique normalized finite valuation solution up to scaling after removing the zero rational columns; its second-field component is a non-torsion unit, so projected log cancellation is impossible. No numerical log approximation or asymptotic inference is used in these checks.
