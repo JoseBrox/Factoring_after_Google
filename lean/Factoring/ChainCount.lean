@@ -21,7 +21,7 @@ def hyperbolaEquiv {F : Type*} [Field F] (b : F) (hb : b ≠ 0) (h2 : (2:F) ≠ 
     linear_combination he)
   invFun t := ⟨(((t:F)+b/(t:F))/2,(b/(t:F)-(t:F))/2), by
     have ht : (t:F) ≠ 0 := Units.ne_zero t
-    field_simp [ht,h2] <;> ring⟩
+    field_simp [ht,h2]; ring⟩
   left_inv z := by
     have hprod : (z.1.1-z.1.2)*(z.1.1+z.1.2)=b := by
       linear_combination -z.2
@@ -44,7 +44,7 @@ def hyperbolaEquiv {F : Type*} [Field F] (b : F) (hb : b ≠ 0) (h2 : (2:F) ≠ 
   right_inv t := by
     apply Units.ext
     change ((t:F)+b/(t:F))/2-(b/(t:F)-(t:F))/2=(t:F)
-    field_simp [h2] <;> ring
+    field_simp [h2]; ring
 
 def sigmaHyperbola {F : Type*} [Field F] (b : F) :
     (Σ a : F, {y : F // y^2=a^2-b}) ≃ {z : F×F // z.2^2=z.1^2-b} where
@@ -103,8 +103,9 @@ theorem good_count {F : Type*} [Field F] [Fintype F] (b r : F)
   have hcomp := Fintype.card_subtype_compl bad
   have hle := Fintype.card_subtype_le bad
   have hpos : 0 < Fintype.card F := Fintype.card_pos
-  rw [Nat.card_eq_fintype_card]
-  change 2*Fintype.card {a:F // ¬bad a}=Fintype.card F+3
+  have hcg : Nat.card {a:F // Good b a} = Fintype.card {a:F // ¬bad a} :=
+    Nat.card_eq_fintype_card
+  rw [hcg]
   omega
 
 /-- The actual uniform trial on Fin N, counted by injecting every good residue

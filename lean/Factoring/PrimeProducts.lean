@@ -38,7 +38,7 @@ theorem block_products_injective {k m : ℕ} (P : Fin k → Fin m → ℕ)
     have h : P j (g j) ≠ q := by
       intro he
       have ht : (j,g j)=(i,f i) := hinj he
-      have hji := congrArg Prod.fst ht
+      have hji : j = i := congrArg Prod.fst ht
       subst j
       exact hne (congrArg Prod.snd ht).symm
     simp [h,Ne.symm h]

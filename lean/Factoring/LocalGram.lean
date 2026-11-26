@@ -32,7 +32,7 @@ theorem block_sum (c : ι → κ) (s : ι → Bool) (a b : ℝ) :
   rw [Matrix.sum_apply]
   rw [Finset.sum_eq_single (c i)]
   · by_cases h : c i=c j
-    · cases hi : s i <;> cases hj : s j <;> simp [indicator,h,hi,hj,← h]
+    · cases hi : s i <;> cases hj : s j <;> simp [indicator,hi,hj,← h]
     · cases hi : s i <;> cases hj : s j <;> simp [indicator,h,Ne.symm h,hi,hj]
   · intro t _ ht
     simp [indicator,Ne.symm ht]
@@ -72,8 +72,8 @@ theorem localCoeff_above_ones (c : ι → κ) (s : ι → Bool) (e : ℕ) :
       (fun t _ => odd_block_posSemidef he' (u t) (v t))
     convert hpsd using 1
     have h := block_sum c s (e:ℝ) (-1)
-    have heq : (∑ t:κ, (((e:ℝ)-1)/2) • outer (u t+v t)+
-        (((e:ℝ)+1)/2) • outer (u t-v t)) =
+    have heq : (∑ t:κ, ((((e:ℝ)-1)/2) • outer (u t+v t)+
+        (((e:ℝ)+1)/2) • outer (u t-v t))) =
         (∑ t:κ, (fun i j =>
           (e:ℝ)*(indicator c s t false i*indicator c s t false j+
             indicator c s t true i*indicator c s t true j)+

@@ -1,5 +1,7 @@
 import Factoring.ChainCount
 import Factoring.ChainCost
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity
 
 /-! The supplied-M quadratic chain: explicit exponent decomposition, exact
 uniform-trial success fraction, and abstract arithmetic-operation bounds.
