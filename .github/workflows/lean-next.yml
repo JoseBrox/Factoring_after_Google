@@ -35,7 +35,12 @@ jobs:
           for file in ../lean-next/*.lean; do
             name="$(basename "$file" .lean)"
             cp "$file" "$name.lean"
-            lake env lean -DwarningAsError=true "$name.lean" | tee "../build/lean-next/$name.log" || failed=1
+            set +e
+            lake env lean -DwarningAsError=true "$name.lean" | tee "../build/lean-next/$name.log"
+            status=$?
+            set -e
+            echo "$status" > "../build/lean-next/$name.exit"
+            if [ "$status" -ne 0 ]; then failed=1; fi
             rm "$name.lean"
           done
           python3 ../lean-next/audit.py ../build/lean-next || failed=1
