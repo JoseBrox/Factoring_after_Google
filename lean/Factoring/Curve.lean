@@ -1,6 +1,7 @@
 import Factoring.ChainCount
 import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.Basic
 import Mathlib.Tactic.Linarith
+import Mathlib.Data.Real.Basic
 
 /-! The bridge from a quadratic character sum to the affine curve count.
 A projective model and its Weil point-count theorem are not yet supplied. -/

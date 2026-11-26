@@ -1,6 +1,7 @@
 import Mathlib.NumberTheory.DirichletCharacter.Orthogonality
 import Mathlib.NumberTheory.MulChar.Lemmas
 import Mathlib.Analysis.Complex.Polynomial.Basic
+import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 import Mathlib.Algebra.Star.BigOperators
 import Mathlib.Tactic.Ring
 

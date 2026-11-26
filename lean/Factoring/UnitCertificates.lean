@@ -28,6 +28,7 @@ theorem log_zero_square {K : Type*} [Field K] [NumberField K]
     simpa [φ, Real.norm_eq_abs] using h
   apply NumberField.Units.coe_injective K
   apply σ.injective
+  change σ ((u^2 : (𝓞 K)ˣ) : K) = σ ((1 : (𝓞 K)ˣ) : K)
   rw [NumberField.Units.coe_pow,NumberField.Units.coe_one,map_pow,map_one]
   have hh := congrArg (fun x : ℝ => x^2) habs
   simpa [sq_abs] using hh
