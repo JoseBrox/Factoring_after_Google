@@ -25,3 +25,4 @@ import Factoring.BitArithmetic
 import Factoring.EulerDecay
 import Factoring.LatticeClearing
 import Factoring.ModularBits
+import Factoring.CharacterMoments
