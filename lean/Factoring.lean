@@ -8,3 +8,5 @@ import Factoring.ChainSuccess
 import Factoring.ChainCost
 import Factoring.Asymptotic
 import Factoring.Uniform
+import Factoring.ChainCount
+import Factoring.PrimeProducts

@@ -85,7 +85,7 @@ theorem scale_contract {L L' d : ℝ} (hL' : 1 ≤ L') (hL : 1 ≤ L)
     Real.rpow_le_rpow (Real.log_nonneg hL') (Real.log_le_log (by linarith) hle) (by norm_num)
   unfold scale
   rw [← mul_assoc, ← Real.mul_rpow hd0 (by linarith : 0≤L)]
-  exact mul_le_mul hp hl (by positivity) (by positivity)
+  exact mul_le_mul hp hl (Real.rpow_nonneg (Real.log_nonneg hL') _) (Real.rpow_nonneg (mul_nonneg hd0 (by linarith)) _)
 
 theorem contraction_cube {d : ℝ} (hd : 0 ≤ d) :
     (d^(1/3 : ℝ))^3 = d := by

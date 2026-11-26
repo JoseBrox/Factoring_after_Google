@@ -231,6 +231,7 @@ theorem exists_euler_stage {p u steps : ℕ} (hp : 1 < p) (hodd : p%2=1)
     rw [hl,hpm,hlv,pow_add]
     ring
   have hf := congrArg (fun n : ℕ => n.factorization 2) heq
+  dsimp only at hf
   rw [factor_two_odd steps u hu, factor_two_odd (e+f) (m*v) (hm.mul hv)] at hf
   have hueq : u=m*v := by
     rw [← hf] at heq
@@ -280,7 +281,7 @@ theorem mixed_success {N b a u steps p q : ℕ} [NeZero N] [Fact p.Prime] [Fact 
         apply hns
         rw [h]
         exact IsSquare.zero
-      have hsign := (ZMod.pow_div_two_eq_neg_one_or_one hne).resolve_left
+      have hsign := (ZMod.pow_div_two_eq_neg_one_or_one p hne).resolve_left
         (fun h => hns ((ZMod.euler_criterion p hne).mpr h))
       obtain ⟨j,k,hj,he⟩ := exists_euler_stage (Fact.out : p.Prime).one_lt hpodd hu hdiv
       let z := power (b : ZMod N) (-(a : ZMod N),1) (u*2^j)
