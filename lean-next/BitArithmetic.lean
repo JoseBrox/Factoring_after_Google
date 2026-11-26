@@ -52,8 +52,8 @@ theorem addAux_value (n : ℕ) (xs ys : List Bool) (c : Bool)
   | zero =>
     cases xs <;> cases ys <;> simp_all [addAux, value]
   | succ n ih =>
-    have hxs : xs.tail.length ≤ n := by cases xs <;> simp_all <;> omega
-    have hys : ys.tail.length ≤ n := by cases ys <;> simp_all <;> omega
+    have hxs : xs.tail.length ≤ n := by cases xs <;> simp_all
+    have hys : ys.tail.length ≤ n := by cases ys <;> simp_all
     let s := fullAdder (headBit xs) (headBit ys) c
     change bit s.1 + 2 * value (addAux n xs.tail ys.tail s.2).1 =
       value xs + value ys + bit c
