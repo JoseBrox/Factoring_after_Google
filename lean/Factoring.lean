@@ -5,3 +5,6 @@ import Factoring.Quadratic
 import Factoring.SquareRoot
 import Factoring.Saturation
 import Factoring.ChainSuccess
+import Factoring.ChainCost
+import Factoring.Asymptotic
+import Factoring.Uniform

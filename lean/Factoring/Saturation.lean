@@ -25,7 +25,7 @@ def annihilator (E : ℕ) : Subgroup G where
 theorem closure_annihilated (s : Set G) (E : ℕ)
     (hs : ∀ x ∈ s, x ^ E = 1) :
     Subgroup.closure s ≤ annihilator E :=
-  Subgroup.closure_le.mpr hs
+  (Subgroup.closure_le _).mpr hs
 
 def indexMultiple (K : ℕ) : ℕ := (Finset.range (K + 1) |>.erase 0).lcm id
 

@@ -1,5 +1,6 @@
 import Factoring.Quadratic
 import Mathlib.NumberTheory.LegendreSymbol.Basic
+import Mathlib.Data.Nat.Factorization.Basic
 
 /-! The missing success bridge for the quadratic relation chain.
 We do not assume squarefree N. The local prime parameters are used only
@@ -100,7 +101,7 @@ theorem opposite_stage {F : Type*} [Field F] (b r : F) (hr : r*r=b)
   · intro hz
     simp [eval, hz, pow_two] at hp hprod
     apply h2
-    linear_combination hp - hprod
+    linear_combination hprod - hp
   · have hp' : eval r (mul b z z) = 1 := by rw [eval_mul b r hr, ← pow_two, hp]
     have hm' : eval (-r) (mul b z z) = 1 := by rw [eval_mul b (-r) hnegroot, ← pow_two, hm]
     let w := mul b z z
@@ -168,6 +169,7 @@ theorem norm_root_success {N b a u steps p q : ℕ} [NeZero N] [Fact p.Prime]
     intro h
     apply hc
     simp [gcdCandidate, show Nat.gcd (norm (b : ZMod N) (-(a : ZMod N), 1)).val N = 1 from h]
+  change Nat.gcd (norm (b : ZMod N) (-(a : ZMod N), 1)).val N ≠ 1 at hg
   simpa only [split, if_neg hg] using hc
 
 /-- For a stage whose exponent is an odd multiple of (p-1)/2, the negative
@@ -179,7 +181,7 @@ theorem euler_stage {p : ℕ} [Fact p.Prime] (hpodd : p % 2 = 1)
     (power b (-a,1) E).2 ≠ 0 ∧
     mul b (power b (-a,1) E) (power b (-a,1) E) = one := by
   have hnr : (-r)*(-r)=b := by rw [neg_mul_neg, hr]
-  have hn : norm b (-a,1) = a*a-b := by simp [norm]; ring
+  have hn : norm b (-a,1) = a*a-b := by simp [norm]
   have hn0 : a*a-b ≠ 0 := by
     intro he
     have hpos : 0 < p/2 := by have := (Fact.out : p.Prime).one_lt; omega
@@ -200,6 +202,109 @@ theorem euler_stage {p : ℕ} [Fact p.Prime] (hpodd : p % 2 = 1)
   · rw [eval_power b r hr]; exact hpow _ hxp
   · rw [eval_power b (-r) hnr]; exact hpow _ hxm
   · rw [eval_power b r hr, eval_power b (-r) hnr, ← mul_pow, ← split_norm b r hr,
-      hn, hE, pow_mul, hgood, pow_add, pow_mul, neg_one_sq, one_pow, one_mul, pow_one]
+      hn, hE, pow_mul, hgood, pow_add, pow_mul, neg_one_sq, one_pow]
+    simp
+
+/-- The exponent of two in a positive number with a specified odd part. -/
+theorem factor_two_odd (s u : ℕ) (hu : Odd u) :
+    (2^s*u).factorization 2 = s := by
+  have hn : u ≠ 0 := by obtain ⟨k,hk⟩ := hu; omega
+  have hd : ¬2 ∣ u := by obtain ⟨k,hk⟩ := hu; omega
+  rw [Nat.factorization_mul (pow_ne_zero _ (by decide : (2:ℕ) ≠ 0)) hn,
+    Nat.prime_two.factorization_pow]
+  simp [Nat.factorization_eq_zero_of_not_dvd hd]
+
+/-- An even supplied multiple of p-1 has a stage with an odd multiple of
+(p-1)/2 as its exponent, and the successor stage is inside the scan. -/
+theorem exists_euler_stage {p u steps : ℕ} (hp : 1 < p) (hodd : p%2=1)
+    (hu : Odd u) (hdiv : p-1 ∣ 2^steps*u) :
+    ∃ j k : ℕ, j < steps ∧ u*2^j=(p/2)*(2*k+1) := by
+  obtain ⟨e,m,hm,hpm⟩ := Nat.exists_eq_two_pow_mul_odd (show p-1 ≠ 0 by omega)
+  obtain ⟨l,hl⟩ := hdiv
+  have hu0 : u ≠ 0 := by obtain ⟨k,hk⟩ := hu; omega
+  have hl0 : l ≠ 0 := by
+    intro h
+    rw [h, mul_zero] at hl
+    exact (mul_ne_zero (pow_ne_zero _ (by decide : (2:ℕ) ≠ 0)) hu0) hl
+  obtain ⟨f,v,hv,hlv⟩ := Nat.exists_eq_two_pow_mul_odd hl0
+  have heq : 2^steps*u=2^(e+f)*(m*v) := by
+    rw [hl,hpm,hlv,pow_add]
+    ring
+  have hf := congrArg (fun n : ℕ => n.factorization 2) heq
+  rw [factor_two_odd steps u hu, factor_two_odd (e+f) (m*v) (hm.mul hv)] at hf
+  have hueq : u=m*v := by
+    rw [← hf] at heq
+    exact mul_left_cancel₀ (pow_ne_zero _ (by decide : (2:ℕ) ≠ 0)) heq
+  cases e with
+  | zero =>
+    simp at hpm
+    obtain ⟨k,hk⟩ := hm
+    omega
+  | succ j =>
+    have hh : 2*(2^j*m)=p-1 := by rw [hpm,pow_succ]; ring
+    have hhalf : p/2=2^j*m := by omega
+    obtain ⟨k,hk⟩ := hv
+    refine ⟨j,k,by omega,?_⟩
+    rw [hueq,hhalf,hk]
+    ring
+
+/-- The actual program succeeds on every residue with a zero or nonsquare norm
+at the split prime. The exponent parameters are the ordinary odd decomposition
+of a positive supplied multiple of p-1. No factorization is an input to split. -/
+theorem mixed_success {N b a u steps p q : ℕ} [NeZero N] [Fact p.Prime] [Fact q.Prime]
+    (hp : p ∣ N) (hq : q ∣ N) (hpodd : p%2=1)
+    (hp2 : (2 : ZMod p) ≠ 0) (hq2 : (2 : ZMod q) ≠ 0)
+    (r : ZMod p) (hr : r*r=(b : ZMod p)) (hr0 : r ≠ 0)
+    (hnonsquare : ∀ x : ZMod q, x*x ≠ (b : ZMod q))
+    (hu : Odd u) (hdiv : p-1 ∣ 2^steps*u)
+    (hgood : (a : ZMod p)*(a : ZMod p)-(b : ZMod p) = 0 ∨
+      ¬IsSquare ((a : ZMod p)*(a : ZMod p)-(b : ZMod p))) :
+    ∃ d, split N b a u steps = some d ∧ 1 < d ∧ d < N ∧ d ∣ N := by
+  have norm_reduce (s : ℕ) (hs : s ∣ N) :
+      ZMod.castHom hs (ZMod s) (norm (b : ZMod N) (-(a : ZMod N),1)) =
+        (a : ZMod s)*(a : ZMod s)-(b : ZMod s) := by
+    rw [map_norm]
+    simp only [map, map_natCast, map_neg, map_one, norm]
+    ring
+  have hqnorm : ¬q ∣ (norm (b : ZMod N) (-(a : ZMod N),1)).val := by
+    intro h
+    have hqz := (reduction_eq_zero_iff hq _).mpr h
+    rw [norm_reduce q hq] at hqz
+    exact hnonsquare (a : ZMod q) (sub_eq_zero.mp hqz)
+  have hsuccess : split N b a u steps ≠ none := by
+    rcases hgood with hzero | hns
+    · exact norm_root_success hp hq ((reduction_eq_zero_iff hp _).mp
+        (by rw [norm_reduce p hp]; exact hzero)) hqnorm
+    · have hne : (a : ZMod p)*(a : ZMod p)-(b : ZMod p) ≠ 0 := by
+        intro h
+        apply hns
+        rw [h]
+        exact IsSquare.zero
+      have hsign := (ZMod.pow_div_two_eq_neg_one_or_one hne).resolve_left
+        (fun h => hns ((ZMod.euler_criterion p hne).mpr h))
+      obtain ⟨j,k,hj,he⟩ := exists_euler_stage (Fact.out : p.Prime).one_lt hpodd hu hdiv
+      let z := power (b : ZMod N) (-(a : ZMod N),1) (u*2^j)
+      have hz := stage_mem (b : ZMod N) (-(a : ZMod N),1) u j steps (by omega)
+      have hw : mul (b : ZMod N) z z ∈
+          squareChain (b : ZMod N) (power (b : ZMod N) (-(a : ZMod N),1) u) steps := by
+        have h := stage_mem (b : ZMod N) (-(a : ZMod N),1) u (j+1) steps (by omega)
+        rw [pow_succ, show u*(2^j*2)=u*2^j+u*2^j by ring, power_add] at h
+        exact h
+      let P := ZMod.castHom hp (ZMod p)
+      have hzmap : map P z = power (b : ZMod p) (-(a : ZMod p),1) (u*2^j) := by
+        unfold z
+        rw [map_power]
+        simp only [map, map_natCast, map_neg, map_one]
+      have hloc := euler_stage hpodd (b : ZMod p) r (a : ZMod p) hr hr0 hp2 _ k he hsign
+      apply adjacent_success hp hq hq2 hnonsquare hqnorm z hz hw
+      · change (map P z).2 ≠ 0
+        rw [hzmap]
+        exact hloc.1
+      · change map P (mul (b : ZMod N) z z)=one
+        rw [map_mul, hzmap, map_natCast]
+        exact hloc.2
+  cases h : split N b a u steps with
+  | none => exact (hsuccess h).elim
+  | some d => exact ⟨d,rfl,split_sound h⟩
 
 end Factoring.Quadratic
