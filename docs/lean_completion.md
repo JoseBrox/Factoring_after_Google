@@ -50,7 +50,7 @@ are not equally costly; the latter dominate the remaining research.
 | 36 | Unified dependency/toolchain composition and axiom audit of all full manuscript endpoints | Open |
 
 **Current score: 17/36 = 47.2%.** This is a conservative count of the
-fixed milestones, not a claim that 44.4% of the hardest mathematics or
+fixed milestones, not a claim that 47.2% of the hardest mathematics or
 the expected effort is complete. No end-to-end factoring complexity
 endpoint is yet counted as completed.
 
@@ -63,3 +63,5 @@ The metric should be updated on future sessions using this same
 denominator unless an explicit scope change is documented.
 
 See [external formalization comparison](int_fac_comparison.md). The new external factoring endpoint is not counted as a checked project milestone.
+
+The newer half-scale certificate-search and ramified-target constructions are separate written mathematical research; their uniform coverage is open and they do not add a checked milestone to this fixed register.

@@ -571,3 +571,7 @@ valuation relation and final modular exponent are checked exactly:
 5^2105280=1 mod 77, and the odd-part scan gives gcd(34-1,77)=11.
 This verifies a finite algebraic/modular instance, not the
 numerical log-rank decision, (COV), or any asymptotic guarantee.
+
+## Later refinement: target relations rather than full covariance
+
+The [targeted half-scale search](targeted_half_scale_search.md) proves an exact rank-deficient membership test and safe large-prime pruning, allowing repeated valuations. Its finite certificate search has the actual L_N[1/2,O(1)] budget, but uniform success remains open. The [ramified-target construction](ramified_target_construction.md) further makes the initial target valuation relation unconditional, with many explicit paired units. Only one particular log-vector membership then remains; the explicitly supplied units alone provably do not suffice. These refinements do not establish the original COV hypothesis or an unconditional half-scale factoring bound.

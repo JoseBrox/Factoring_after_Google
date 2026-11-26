@@ -237,3 +237,5 @@ The [full Lean completion register](docs/lean_completion.md) tracks checked proo
 The [QRH-based deterministic squarefree progression proof](docs/qrh_deterministic_progressions.md), [rational-root smoothing](docs/randomized_rational_root_smoothing.md) and [setup/readiness assembly](docs/randomized_setup_readiness.md) extend the written conditional arguments. Their complete analytic and algorithmic Lean verification remains open.
 
 The [external int-fac audit](docs/int_fac_comparison.md) records a stronger deterministic two-thirds endpoint from the independently verified full Dirichlet GRH, its reported build evidence, and reuse/licensing considerations. Our own pinned quasi-RH integration now passes its source build and axiom audit.
+
+**Current deterministic research priority:** [exact targeted half-scale search](docs/targeted_half_scale_search.md) and [prescribed ramified targets](docs/ramified_target_construction.md). The initial ideal target is now constructed without smoothness, and the exact certificate search fits the half-scale budget. Uniform paired-unit target coverage remains open; the new results do not change the proved general worst-case bound.
