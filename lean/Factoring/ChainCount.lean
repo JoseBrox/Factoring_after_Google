@@ -81,9 +81,9 @@ theorem good_count {F : Type*} [Field F] [Fintype F] (b r : F)
       simp [bad,zeroNorm,hz]
     · by_cases hs : IsSquare (a^2-b)
       · rw [(quadraticChar_one_iff_isSquare hz).mpr hs] at hc'
-        simp [bad,zeroNorm,hz,hs] <;> omega
+        simp [bad,zeroNorm,hz,hs]; omega
       · rw [quadraticChar_neg_one_iff_not_isSquare.mpr hs] at hc'
-        simp [bad,zeroNorm,hz,hs] <;> omega
+        simp [bad,zeroNorm,hz,hs]; omega
   have hsum' : (∑ a:F, Fintype.card {y:F // y^2=a^2-b}) =
       2*Fintype.card {a:F // bad a}+Fintype.card {a:F // zeroNorm a} := by
     calc
