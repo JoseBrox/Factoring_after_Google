@@ -476,6 +476,83 @@ claim and its formalization remain separate. The new half-scale
 claim is conditional, and cannot be advertised as a proved
 general factoring improvement.
 
+
+### A finite matrix criterion for the required moment estimates
+
+A possible route to (COV) is a categorical prime-occupation model
+with two norm constraints. The following exact matrix lemma records
+the necessary error scale; it does not assert the model for resultants.
+
+Write A for the matrix with columns a_1,a_2 and let D_b be a real
+symmetric positive definite matrix. If D_b >= kappa I, then
+\[
+ S_b=D_b-D_b A(A^T D_b A)^{-1}A^T D_b
+\]
+satisfies v^T S_b v >= kappa ||v||^2 on v perpendicular to A.
+Indeed
+\[
+ v^T S_b v=\min_t (v-At)^T D_b(v-At)
+       \ge\kappa\min_t\|v-At\|^2=\kappa\|v\|^2.
+\]
+Here the two columns of A are independent by their disjoint
+nonzero supports. The matrix S_b is the covariance of the
+corresponding Gaussian after imposing two linear constraints;
+it is only a *reference* for the discrete covariance to be
+estimated, not an identity for conditioned categorical variables.
+
+For example, an unconditioned categorical model in which a given
+rational prime contributes at most one label in a field has a
+block of normalized covariance
+\[
+ D_p=\operatorname{diag}(q_r/\bar p_r)
+       -zz^T,\qquad z_r=q_r/\sqrt{\bar p_r}.
+\]
+If sum_r q_r<=1-delta_0 and q_r>=kappa_0 bar p_r, weighted
+Cauchy-Schwarz gives D_p>=delta_0 kappa_0 I. The same
+holds for a direct sum over the prime/field blocks. A saddle
+model would have to justify not only such occupation probabilities
+but also the correction from the two log-norm constraints.
+
+Let C_b be the actual covariance matrix of Z. Suppose the average
+error relative to the matrices S_b obeys the entrywise bounds
+\[
+ |J^{-1}\sum_b(C_b-S_b)_{rr}|\le \xi,\qquad
+ |J^{-1}\sum_b(C_b-S_b)_{rs}|
+            \le \xi\sqrt{\bar p_r\bar p_s}\quad(r\ne s).
+\]
+Then its operator norm is at most xi(1+sum_r bar p_r)<=xi(1+n).
+To see this, apply the triangle inequality to the quadratic form
+and use (sum sqrt(bar p_r)|v_r|)^2 <=
+(sum bar p_r)||v||^2. Thus if kappa is inverse-polynomial
+and xi<=kappa/[2(1+n)], (COV) follows. This shows why
+suitable one-mark insertion estimates with polynomial relative
+accuracy, retaining the same-prime exclusions and the norm
+correction, would be enough: an error multiplied by the entire
+factor-base cardinality is not necessary.
+
+### Why simply extending the CRT calculation cannot prove this
+
+In any of the coefficient boxes, every |g(theta_i,k)| is between
+H w/2 and 2H for sufficiently large n. In particular
+log A_i(g)=d log H+O(d log d). The box contains at most
+(4H+1)^(s+1) marks. For an accepted mark g, let T be the
+complete list of its nonzero prime-ideal labels. Uniform
+residues modulo the product of its rational primes would
+predict probability prod_(r in T) p_rational^(-1)
+=1/(A_1(g) A_2(g)) of satisfying all these root conditions
+(Vandermonde remains surjective: at most two labels per prime,
+one in each field, and distinct residues). The predicted
+number in the entire box is at most
+\[
+ (4H+1)^{s+1}\exp(-2d\log H+O(d\log d))=o(1).
+\]
+The actual count is at least one, since it includes g.
+Therefore a uniform relative CRT asymptotic for these complete
+factorization conditions is impossible, whenever any mark is
+accepted. The required argument must average over many possible
+factorizations or use another construction. This is a rigorous
+obstruction to a termwise CRT proof, not to (COV) itself.
+
 ## 7. Reproducible finite test
 
 Run verification/research/polynomial_marks.py (SymPy and mpmath).
