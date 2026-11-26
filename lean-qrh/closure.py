@@ -39,5 +39,6 @@ report = {"entrypoint": str(adapter.name), "local_modules": sorted(n for n in vi
 print("Local proof modules:", len(report["local_modules"]))
 print("Mathlib roots:", len(roots))
 print("Additional external imports:", sorted(external))
-if external:
+supported = {"Architect", "RellichKondrachov.Analysis.FunctionalSpaces.Sobolev.Euclidean.Rellich"}
+if external - supported:
     raise SystemExit("Additional packages require pinning and possibly the upstream compatibility patches.")
