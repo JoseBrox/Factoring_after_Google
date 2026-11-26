@@ -92,7 +92,7 @@ def check_scanner():
         row=scan(r,N,B,L,P)
         assert (row is not None)==(r in tab)
         if row is not None:
-            assert prod(p**e for p,e in zip(P,row))%N==r
+            assert prod(pow(p,e,N) for p,e in zip(P,row))%N==r
         count+=1
     print('AP scanner:',count,'unit residues,',len(tab),'represented')
 
