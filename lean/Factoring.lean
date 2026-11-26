@@ -35,3 +35,5 @@ import Factoring.RationalRecovery
 import Factoring.SaddleDecay
 import Factoring.NumberFieldNorm
 import Factoring.PrefixBounds
+import Factoring.IdealCancellation
+import Factoring.PrimitiveFibre
