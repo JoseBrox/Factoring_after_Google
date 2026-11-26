@@ -449,3 +449,7 @@ polynomial-bit-height, but the norm growth makes
 ordinary small-prime smoothness less attractive.
 Both choices remain candidates for the unresolved
 existence step. No new Lean milestone is counted.
+
+## Subsequent exact extraction and coverage obstruction
+
+The [2-adic quadratic extractor](padic_rank_one_extraction.md) eliminates real logarithms from the degree-two decision, proves an integer first-jet sufficient criterion, and identifies the unavoidable smoothness and exponent-size conditions for the bounded linear family. The [adverse-parameter theorem](adversarial_rank_one_parameter.md) gives valid choices of C forcing trivial valuation-kernel products for any predetermined bounded polynomial family on balanced inputs. This excludes a proof uniform over arbitrary admissible C, without refuting the canonical small-C choice or adaptive C-dependent marks. The existence of a successful transverse unit at a separating target remains open.
