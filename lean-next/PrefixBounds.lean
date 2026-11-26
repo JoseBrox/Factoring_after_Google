@@ -123,7 +123,7 @@ theorem terminal_bound {I : Type*} (s : Finset I) (z : I→ℂ) :
       mul_one,mul_zero,sub_zero]
     have h := Real.add_one_le_exp (2*x.re+Complex.normSq x)
     linarith
-  rw [map_prod,←Finset.sum_add_distrib,Finset.mul_sum,Real.exp_sum]
+  rw [map_prod,Finset.mul_sum,←Finset.sum_add_distrib,Real.exp_sum]
   exact Finset.prod_le_prod (fun i _=>Complex.normSq_nonneg _) (fun i _=>hlocal (z i))
 
 end Factoring.PrefixBounds
