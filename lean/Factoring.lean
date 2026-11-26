@@ -28,3 +28,4 @@ import Factoring.ModularBits
 import Factoring.CharacterMoments
 import Factoring.DeterminantHeight
 import Factoring.ModularPower
+import Factoring.BinaryGCD
