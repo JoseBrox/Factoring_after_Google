@@ -1,0 +1,62 @@
+name: Pinned quasi-RH integration
+on:
+  push:
+    branches: [main]
+    paths: ['lean-qrh/**', '.github/workflows/lean-qrh.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qrh:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Discover exact import closure
+        run: |
+          mkdir -p "$RUNNER_TEMP/upstream" "$RUNNER_TEMP/qrh" build/qrh
+          cd "$RUNNER_TEMP/upstream"
+          git init
+          git remote add origin https://github.com/openai/math.git
+          git fetch --depth=1 --filter=blob:none origin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb
+          git sparse-checkout init --cone
+          git sparse-checkout set lean/OAI
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb
+          git init "$RUNNER_TEMP/digamma"
+          git -C "$RUNNER_TEMP/digamma" remote add origin https://github.com/AlexKontorovich/PrimeNumberTheoremAnd.git
+          git -C "$RUNNER_TEMP/digamma" fetch --depth=1 origin c39a751132c88b6e8080b74c74023fd95b3d8be0
+          git -C "$RUNNER_TEMP/digamma" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/digamma" rev-parse HEAD)" = c39a751132c88b6e8080b74c74023fd95b3d8be0
+          set +e
+          python3 "$GITHUB_WORKSPACE/lean-qrh/closure.py" lean "$RUNNER_TEMP/qrh" "$GITHUB_WORKSPACE/lean-qrh/FactoringQRH.lean" "$RUNNER_TEMP/digamma"
+          code=$?
+          cp "$RUNNER_TEMP/qrh/closure.json" "$GITHUB_WORKSPACE/build/qrh/"
+          exit "$code"
+      - name: Install pinned Lean 4.34.1
+        run: |
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 --max-time 300 https://github.com/leanprover/lean4/releases/download/v4.34.1/lean-4.34.1-linux.tar.zst -o lean.tar.zst
+          echo '47bf4bbd78f70c2e9670598ab7124d92b6efb7330ff33e5fbb4030f6fd72e4e4  lean.tar.zst' | sha256sum --check
+          tar --use-compress-program=unzstd -xf lean.tar.zst
+          rm lean.tar.zst
+          echo "$RUNNER_TEMP/lean-4.34.1-linux/bin" >> "$GITHUB_PATH"
+      - name: Build just the qrh proof and adapter
+        run: |
+          cd "$RUNNER_TEMP/qrh"
+          cp "$GITHUB_WORKSPACE/lean-qrh/lakefile.toml" .
+          cp "$GITHUB_WORKSPACE/lean-qrh/FactoringQRH.lean" .
+          echo 'leanprover/lean4:v4.34.1' > lean-toolchain
+          lake update
+          mapfile -t imports < cache-roots.txt
+          lake exe cache get "${imports[@]}"
+          lake build OAI.NumberTheory.DirichletL.Nonvanishing
+          set -o pipefail
+          lake env lean -DwarningAsError=true FactoringQRH.lean | tee "$GITHUB_WORKSPACE/build/qrh/axioms.txt"
+          python3 "$GITHUB_WORKSPACE/lean-qrh/audit.py" "$GITHUB_WORKSPACE/build/qrh/axioms.txt"
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: qrh-reuse-evidence
+          path: build/qrh/
