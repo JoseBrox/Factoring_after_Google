@@ -14,8 +14,8 @@ variable {R K : Type*} [CommRing R] [Field K] [Algebra R K]
 
 noncomputable def principal : K →* FractionalIdeal R⁰ K where
   toFun := FractionalIdeal.spanSingleton R⁰
-  map_one' := FractionalIdeal.spanSingleton_one R⁰
-  map_mul' x y := (FractionalIdeal.spanSingleton_mul_spanSingleton R⁰ x y).symm
+  map_one' := FractionalIdeal.spanSingleton_one
+  map_mul' x y := (FractionalIdeal.spanSingleton_mul_spanSingleton x y).symm
 
 theorem principal_ne_zero (x : K) (hx : x≠0) :
     principal (R:=R) x≠0 :=
@@ -35,7 +35,8 @@ theorem principal_zpow (x : K) (n : ℤ) :
   cases n with
   | ofNat n => simp only [Int.ofNat_eq_coe,zpow_natCast,map_pow]
   | negSucc n =>
-    rw [Int.negSucc_eq,zpow_neg,zpow_neg,zpow_natCast,zpow_natCast]
+    have he : Int.negSucc n = -((n+1:ℕ):ℤ) := by omega
+    rw [he,zpow_neg,zpow_neg,zpow_natCast,zpow_natCast]
     change FractionalIdeal.spanSingleton R⁰ ((x^(n+1))⁻¹) =
       ((principal (R:=R) x)^(n+1))⁻¹
     rw [← FractionalIdeal.spanSingleton_inv]
@@ -70,6 +71,7 @@ theorem unit_of_zero (x : K) (hx : x≠0)
     rw [FractionalIdeal.spanSingleton_one]
     exact (principal_eq_one x hx h).symm
   obtain ⟨u,hu⟩ := FractionalIdeal.spanSingleton_eq_spanSingleton.mp he
+  change (u:R) • (1:K)=x at hu
   exact ⟨u,by simpa [Algebra.smul_def] using hu⟩
 
 noncomputable def adjusted (v : HeightOneSpectrum R) (θ x : K) : ℤ :=

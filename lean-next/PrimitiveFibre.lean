@@ -50,7 +50,8 @@ theorem residue_fibre_card (m : ℕ) [NeZero m] (a b : ℤ) (h : a.gcd b=1)
       (a:ZMod m)*p.2-(b:ZMod m)*p.1=z}=m := by
   classical
   have hb : (a:ZMod m)*(a.gcdA b:ZMod m)+(b:ZMod m)*(a.gcdB b:ZMod m)=1 := by
-    exact_mod_cast bezout a b h
+    simpa only [Int.cast_add,Int.cast_mul,Int.cast_one] using
+      congrArg (fun x : ℤ => (x:ZMod m)) (bezout a b h)
   have hc := Fintype.card_congr (fibreEquiv (a:ZMod m) (b:ZMod m)
     (a.gcdA b:ZMod m) (a.gcdB b:ZMod m) z hb)
   simpa using hc
