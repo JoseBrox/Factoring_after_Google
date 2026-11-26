@@ -23,7 +23,9 @@ theorem separation (p q : ℚ) (hne : p≠q) :
     rw [hz,Int.cast_zero] at he
     have hh : (p:ℝ)-(q:ℝ)=0 := (mul_eq_zero.mp ((mul_eq_zero.mp he).resolve_right hq.ne')).resolve_right hp.ne'
     exact hne (by exact_mod_cast sub_eq_zero.mp hh)
-  have h1 : (1:ℤ)≤|t| := by omega
+  have h1 : (1:ℤ)≤|t| := by
+    have hpos : (0:ℤ)<|t| := abs_pos.mpr ht
+    omega
   have hh : (1:ℝ)≤|(t:ℝ)| := by exact_mod_cast h1
   rw [←he,abs_mul,abs_mul,abs_of_pos hp,abs_of_pos hq] at hh
   exact hh
