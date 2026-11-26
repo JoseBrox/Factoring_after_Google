@@ -30,7 +30,7 @@ theorem scaled_coeff (f : ℤ[X]) (i : ℕ) :
     rw [Finset.sum_eq_single i]
     · simp [hi,hn]
     · intro j _ hj
-      simp [Ne.symm hj]
+      simp [hj]
     · simp [hi]
   · rw [Finset.sum_eq_zero]
     · simp [hi]
@@ -59,7 +59,8 @@ theorem scaleRoots_eq (f : ℤ[X]) :
   rw [coeff_scaleRoots,coeff_C_mul,scaled_coeff]
   by_cases hi : i=f.natDegree
   · subst i
-    simp [leadingCoeff]
+    change f.leadingCoeff * f.leadingCoeff^(f.natDegree-f.natDegree) = _
+    simp only [if_pos rfl,Nat.sub_self,pow_zero,mul_one]
   · rw [if_neg hi]
     by_cases hlt : i<f.natDegree
     · rw [if_pos hlt,show f.natDegree-i=(f.natDegree-1-i)+1 by omega,pow_succ]
@@ -74,7 +75,7 @@ theorem scaled_integral {K : Type*} [Field K] [CharZero K]
   have h := scaleRoots_aeval_eq_zero (r:=f.leadingCoeff) hθ
   rw [scaleRoots_eq,map_mul,aeval_C] at h
   have hne : algebraMap ℤ K f.leadingCoeff≠0 :=
-    map_ne_zero (leadingCoeff_ne_zero.mpr hf)
+    Int.cast_ne_zero.mpr (leadingCoeff_ne_zero.mpr hf)
   exact (mul_eq_zero.mp h).resolve_left hne
 
 /-- The norm of a-θ is the evaluation of the actual minimal
