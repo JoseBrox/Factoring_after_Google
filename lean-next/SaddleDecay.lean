@@ -41,9 +41,10 @@ theorem central_product {I : Type*} (s : Finset I) (r x : I→ℝ)
   obtain ⟨hr,_,hx⟩ := h i hi
   have hc := mul_le_mul_of_nonneg_left (Real.cos_le_one_sub_mul_cos_sq hx) hr
   change -(r i-r i*Real.cos (x i))/2≤-(r i*(x i)^2)/Real.pi^2
-  have hpi : Real.pi^2≠0 := by positivity
-  field_simp [hpi] at hc ⊢
-  nlinarith [Real.pi_pos]
+  have hscale : r i*Real.cos (x i) ≤ r i-2*(r i*(x i)^2/Real.pi^2) := by
+    convert hc using 1
+    ring
+  linarith
 
 /-- The actual dyadic-prime logarithmic variance weight. The hypothesis
 on t is the central angle bound, as used in the saddle integral. -/
@@ -55,11 +56,14 @@ theorem central_log_product (J : Finset ℕ) (r : ℕ→ℝ) (t : ℝ)
         Real.exp (-(t^2*(∑ p∈J,r p*(Real.log p)^2))/Real.pi^2) := by
   have h := central_product J r (fun p=>t*Real.log p)
     (fun p hp=>⟨(hr p hp).1,(hr p hp).2,ht p hp⟩)
-  convert h using 2
-  rw [Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro p _
-  ring
+  have hs : t^2*(∑ p∈J,r p*(Real.log p)^2) =
+      ∑ p∈J,r p*(t*Real.log p)^2 := by
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro p _
+    ring
+  rw [hs]
+  exact h
 
 end Factoring.SaddleDecay
 
