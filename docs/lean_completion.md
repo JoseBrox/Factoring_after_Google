@@ -43,7 +43,7 @@ are not equally costly; the latter dominate the remaining research.
 | 29 | Randomized uniform two-sided weighted AP estimate and actual exceptional sets | Written conditional on QRH, not checked |
 | 30 | Rough weighted progression and bad-child bound | Written, not checked |
 | 31 | Enlarged polynomial-slice coupling, lattice geometry and conditional moments | Written transfer under QRH and stated classical inputs; not checked |
-| 32 | Global all-history readiness and adaptive descent | Backward implication written; rational-root and sampler hypotheses open |
+| 32 | Global all-history readiness and adaptive descent | Finite weighted backward propagation checked; rational-root and sampler hypotheses open |
 | 33 | Randomized ideal parity bookkeeping, obstruction dimension and exact square extraction | Open |
 | 34 | Sparse preconditioner rank probability and efficient recurrence discovery | Open |
 | 35 | Full modular exponentiation/gcd/sampling and general bit-machine certification; randomized algorithm endpoint | Digit-list modular powering and gcd with cell-cost bounds checked; machine/sampler/endpoint open |

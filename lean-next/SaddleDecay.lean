@@ -44,7 +44,11 @@ theorem central_product {I : Type*} (s : Finset I) (r x : I→ℝ)
   have hscale : r i*Real.cos (x i) ≤ r i-2*(r i*(x i)^2/Real.pi^2) := by
     convert hc using 1
     ring
-  linarith
+  calc
+    -(r i-r i*Real.cos (x i))/2 = (r i*Real.cos (x i)-r i)/2 := by ring
+    _ ≤ ((r i-2*(r i*(x i)^2/Real.pi^2))-r i)/2 :=
+      div_le_div_of_nonneg_right (sub_le_sub_right hscale _) (by norm_num)
+    _ = -(r i*(x i)^2)/Real.pi^2 := by ring
 
 /-- The actual dyadic-prime logarithmic variance weight. The hypothesis
 on t is the central angle bound, as used in the saddle integral. -/

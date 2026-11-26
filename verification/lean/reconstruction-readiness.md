@@ -9,7 +9,7 @@
 - [Run 45836411619](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45836411619): SaddleCalculus passed strict compilation and all five named roots (another candidate failed). Promoted at 439f2b9.
 - [Run 45836806888](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45836806888), commit 439f2b9: **successful warning-free aggregate compilation, pinned dependencies and full compiled axiom audit**, 661 logical declarations including 510 kernel theorem objects. This is 243 explicitly named source theorems in 32 modules. No nonstandard axioms were accepted.
 
-The bit-cell results are not a full multitape-machine execution proof. SaddleCalculus establishes exact finite derivative, positivity, uniqueness and second-difference statements, not a full uniform saddle asymptotic. Candidates RationalRecovery, ReadinessTransfer and SaddleDecay are not counted until they pass strict compilation.
+The bit-cell results are not a full multitape-machine execution proof. SaddleCalculus establishes exact finite derivative, positivity, uniqueness and second-difference statements, not a full uniform saddle asymptotic. [Run 45837470102](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45837470102) confirmed strict compilation and all three named roots of ReadinessTransfer (other candidate errors persisted). The exact checked readiness module was promoted, bringing the core to 246 named theorems in 33 modules; its new aggregate run is pending. RationalRecovery and SaddleDecay remain staged pending strict success.
 
 ## QRH integration
 

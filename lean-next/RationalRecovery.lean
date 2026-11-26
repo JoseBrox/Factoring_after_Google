@@ -17,7 +17,7 @@ theorem separation (p q : ℚ) (hne : p≠q) :
     dsimp [t]
     push_cast
     field_simp
-    <;> ring
+    ring
   have ht : t≠0 := by
     intro hz
     rw [hz,Int.cast_zero] at he
