@@ -60,7 +60,7 @@ theorem scaleRoots_eq (f : ℤ[X]) :
   by_cases hi : i=f.natDegree
   · subst i
     change f.leadingCoeff * f.leadingCoeff^(f.natDegree-f.natDegree) = _
-    simp only [if_pos rfl,Nat.sub_self,pow_zero,mul_one]
+    simp only [if_true,if_pos rfl,Nat.sub_self,pow_zero,mul_one]
   · rw [if_neg hi]
     by_cases hlt : i<f.natDegree
     · rw [if_pos hlt,show f.natDegree-i=(f.natDegree-1-i)+1 by omega,pow_succ]
