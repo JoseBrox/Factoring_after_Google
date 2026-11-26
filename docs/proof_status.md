@@ -78,3 +78,20 @@ See the [external int-fac comparison](int_fac_comparison.md) for the stronger fu
 ### Targeted half-scale checkpoint
 
 The [exact target criterion and large-prime elimination](targeted_half_scale_search.md) replace the global covariance requirement by one lattice membership test, permit nonsquarefree norms, and establish a worst-case L_N[1/2,O(1)] **certificate search**. This is not a general factoring bound. The [ramified-target construction](ramified_target_construction.md) proves the initial ideal valuation equation for every target and supplies d-O(d/sqrt(log n)) shared unit directions (up to the stated additive rank offset). The specified marks alone provably cannot cancel the target log vector. Uniform success of the enlarged search remains open. No additional complete Lean milestone is counted; the priority is first to prove the half-scale bound, not to advertise another conditional one-third construction.
+
+### Exact relation refinement and obstruction
+
+The [large-order obstruction](half_scale_unit_rank_obstruction.md)
+proves that on a density-one subset of balanced prime pairs all
+polynomially bounded targets have exponential order; hence a
+polynomial-bit-height certificate needs joint valuation/log rank
+Omega(n/log n), and ordinary polynomial-log-height shared units
+cannot span the target for our degree regimes. The [full-degree
+factor-refinement search](full_degree_factor_refinement.md) uses
+Ge's unconditional ideal-refinement theorem to avoid factoring
+norms and all bad-prime restrictions, including at the ramified
+prime. A reduced-degree construction permits a full-degree mark
+box at the actual L_N[1/2,O(1)] search cost. Its prototype was
+checked on two finite fixtures; no uniform successful-coverage
+proof is supplied. The earlier full-rank COV and direct short-unit
+strategies must not be assumed to supply the missing relations.

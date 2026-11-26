@@ -257,6 +257,15 @@ a proposal using only O(d) or o(n/log n) original small marks
 cannot work uniformly on balanced inputs. One cannot evade
 this merely by representing their large powers compactly.
 
+Writing the combined matrix as the stack of its true finite
+valuation matrix V_f and the projected log matrix L also gives
+rank(V_f) >= k-D. Thus the finite-valuation rank itself must be
+Omega(n/log n) in either of our field-degree regimes, because
+D=O(sqrt(n))=o(n/log n). A large number of columns supported
+on a fixed small set of ideal rows cannot meet this requirement.
+This applies to every successful subfamily of polynomial-bit-height
+marks, even if a particular target valuation column is already known.
+
 The earlier full search is not contradicted: it enumerates
 subexponentially many marks, and its joint valuation rank can
 be much larger than the archimedean rank. Large determinant
@@ -289,3 +298,43 @@ No unconditional general half-scale factoring theorem is proved
 here. This is a rigorously delimited obstruction and necessary
 rank/height condition, not an unsupported assertion that every
 method of obtaining the target must fail.
+
+## 6. A related reciprocal interpolation route is circular
+
+There is a tempting one-field alternative: construct a monic
+polynomial f of even degree d>=8 with f(m) a nonzero multiple
+of N and d-1 independent units 1+a_j(theta-m) whose modular
+images are all 1. Suppose the a_j are distinct nonzero integers
+and all these units have norm ±1. Define F(t)=Norm(1+t(theta-m)),
+an integer polynomial of degree d with F(0)=1 and leading
+coefficient Norm(theta-m)=f(m) (d even). If F takes both signs
+±1 on these d integer points, any opposite-sign pair has
+distance at most 2 since their difference divides ±2. Choosing
+one point of each sign shows that every point is in the union
+of two intervals of integer radius 2 around the two points;
+more precisely the total number is at most 6: each sign set
+has at most 5 points, and if one sign occurs at two or more
+points the opposite sign set lies in the intersection of the
+two intervals. To avoid any ambiguity in the bound, for the
+present assertion it suffices to take d>=12, since the crude
+bound is at most 10. For d>=12, all signs are therefore +1.
+Then F(t)-1 has the d distinct roots 0,a_1,...,a_(d-1),
+so it equals f(m) t prod_j(t-a_j). Every nonconstant
+coefficient is divisible by N. Reversing this norm polynomial
+shows f(X) congruent to (X-m)^d modulo N.
+
+For any polynomial g, the multiplication norm in the power
+order reduces modulo N to g(m)^d: over Z/NZ the order has
+basis 1,Y,...,Y^(d-1) with Y=X-m, and g(m+Y) acts by a
+triangular matrix with constant diagonal g(m). Consequently
+any integral unit in this power order has g(m)^d=±1 mod N.
+Even if it belongs only to the localized order, its rational
+expression with denominator evaluating to a unit satisfies
+the same assertion by multiplicativity, provided its actual
+field norm is ±1. In particular a target unit with reduction
+ell would force ell^(2d)=1 mod N. By Section 1 this is
+impossible on the generic balanced inputs for polynomial
+ d and ell. Thus this simple way of prescribing all kernel
+units cannot be turned into a uniform target-unit constructor.
+This discards a specific interpolation strategy, not all
+one-field or higher-degree unit constructions.

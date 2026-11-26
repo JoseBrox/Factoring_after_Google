@@ -455,3 +455,15 @@ small field defined by an irreducible mark to construct
 resultant relations; the cost and descent on residual ideals
 must be proved, not assumed. No general successful descent
 or unconditional \(1/2\) factoring theorem is supplied here.
+
+## Subsequent exact search improvement
+
+[Ge factor refinement and full-degree marks](full_degree_factor_refinement.md)
+eliminates the need to factor norms or restrict bad primes in the
+finite relation search. It also supplies a smaller-degree ramified
+construction with all full-degree polynomial representatives of
+polynomial digit height searchable at the half scale. The
+[necessary rank and unit-height bounds](half_scale_unit_rank_obstruction.md)
+rule out completing the target by ordinary small shared units on
+most balanced semiprimes. These are advances in exact search and
+necessary conditions, not a uniform success proof.

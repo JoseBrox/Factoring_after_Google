@@ -272,3 +272,16 @@ This note is mathematical progress towards the half-scale
 goal, not an unconditional general factorer or an additional
 completed Lean milestone. The one-third program is deliberately
 not being pursued before the half-scale coverage problem is solved.
+
+## Subsequent audit
+
+The [short-unit/rank obstruction](half_scale_unit_rank_obstruction.md)
+shows that on a density-one set of balanced semiprimes no family
+of polynomial-log-height shared units can span the target vector,
+regardless of its cardinality. Any successful small-mark family
+must have finite valuation rank Omega(n/log n), so adding a few
+ordinary explicit units is not a valid uniform strategy. The
+[full-degree factor-refinement search](full_degree_factor_refinement.md)
+removes norm-factorization and bad-prime restrictions from the
+exact decision procedure and permits more marks at half scale.
+Uniform target coverage remains unproved.

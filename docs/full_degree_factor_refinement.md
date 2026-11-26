@@ -17,10 +17,8 @@ directions to produce large compact units.
 Use Guoqiang Ge, "Recognizing Units in Number Fields",
 Mathematics of Computation 63 (1994), 377–387, especially
 Propositions 6.2 and 6.3, with Algorithm 5.6 and Proposition 5.7.
-[Paper](https://cr.yp.to/bib/1994/ge.pdf) ·
-[stable bibliographic identifier](https://www.jstor.org/stable/2153569).
-(The theorem and proposition numbers are the authoritative
-references; this note uses the actual mathematical statements.)
+[Paper](https://cr.yp.to/bib/1994/ge.pdf).
+The theorem and proposition numbers refer to the printed article.
 
 Ge's result is uniform in the field degree. The input is an
 order A specified by its integral multiplication table and a list
@@ -129,8 +127,9 @@ neither factors any absolute norm nor discards a mark on
 account of its finite valuations.
 
 This is an ordinary mathematical reduction to Ge's theorem
-and our proven finite-rank reconstruction, not an implementation
-or a Lean certification of Ge's algorithm.
+and our proven finite-rank reconstruction, not a Lean certification.
+A small exact ideal-refinement implementation is verified below;
+the full combined extraction has not been implemented.
 
 ## 3. Reduce degree to permit full polynomial representatives
 
@@ -173,8 +172,8 @@ return a proper divisor first.
 
 All the exact congruences and norm identities of the previous
 construction remain valid. In particular f_1 is Eisenstein
-at ell, f_2 is Eisenstein at 2, and the two fields are
-distinct because their prescribed mark norms differ.
+at ell, f_2 is Eisenstein at 2, and the two defining polynomials are
+distinct because their prescribed mark values differ.
 The first field has a unique degree-one prime over ell,
 totally ramified, and the target valuation relation is
 available from any of the first r linear marks.
@@ -310,3 +309,38 @@ this note proves that assertion. In particular an
 unconditional general L_N[1/2,O(1)] factoring result
 cannot yet be claimed. The one-third program remains
 deferred.
+
+## 7. Exact finite implementation check
+
+The [research prototype](../verification/research/factor_refinement.py)
+implements the ideal lattice sum/product/colon operations and the
+factor-refinement/overorder loop with rational HNF arithmetic.
+It never calls an integer factorization or prime-ideal decomposition
+routine. All final principal-ideal product identities and pairwise
+comaximality assertions are checked exactly.
+
+The exact checked source is Git blob
+`1841decf37f7e7cda89fc60e2e394e5d36543a61` (SHA-256
+`528ab6aedc2ad146d3ed609420a7a7e5bac4f46a87d5efb85f40341a111d2017`).
+Run with SymPy installed:
+
+```
+python verification/research/factor_refinement.py
+```
+
+Observed output:
+
+```
+nonmaximal order: overorder index 2 refinement steps 2 enlargements 1 matrix rank 3
+field 1 : 9 elements, 8 refined ideal rows, 11 refinements, 0 enlargements
+field 2 : 9 elements, 7 refined ideal rows, 6 refinements, 0 enlargements
+joint matrix: (15, 9) rank 8 ; exact target certificate 2^4=1 mod 15, factor 3
+```
+
+The first fixture starts with Z[2 sqrt(2)] and exercises the
+noninvertible-sum/overorder enlargement. The second uses the
+manufactured N=15 target relation of the previous note, together
+with six additional marks. It tests the exact relation matrix and
+modular certificate, not the existence of relations on arbitrary
+inputs. The proof of polynomial bit complexity uses the published
+algorithm, not measured running times of this SymPy implementation.
