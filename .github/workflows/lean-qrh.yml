@@ -9,7 +9,7 @@ permissions:
 jobs:
   qrh:
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Discover exact import closure
@@ -48,6 +48,13 @@ jobs:
           cp "$GITHUB_WORKSPACE/lean-qrh/FactoringQRH.lean" .
           echo 'leanprover/lean4:v4.34.1' > lean-toolchain
           lake update
+          python3 - <<'PY'
+          import json
+          p = {x['name'].strip('«»'): x['rev'] for x in json.load(open('lake-manifest.json'))['packages']}
+          assert p['mathlib'] == 'd13f23b723b8a846827a245b89c10fc7d3f11612', p
+          assert p['LeanArchitect'] == '468e8f58fb4ad6e6ad672a08da6d0d0531e95a97', p
+          assert p['rellich-kondrachov'] == '70f85d4c1bf99c6e7d61e8be4daa6f3664d08d23', p
+          PY
           mapfile -t imports < cache-roots.txt
           lake exe cache get "${imports[@]}"
           lake build OAI.NumberTheory.DirichletL.Nonvanishing
