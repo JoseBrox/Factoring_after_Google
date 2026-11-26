@@ -255,3 +255,5 @@ The [recent derandomization audit](docs/prime_word_derandomization_audit.md) giv
 The [common-anchor continuation](docs/common_anchor_derandomization.md) replaces the adaptive positive-relation search by a single dense residue search, proves nonsingularity of the signed translation matrix and polynomial-size nonuniform advice, and isolates the read-once versus reusable-randomness barrier in its exact low-workspace verifier. Uniform deterministic half-scale factoring remains open.
 
 The [narrow-band streaming construction](docs/narrow_band_streaming_atoms.md) replaces the smoothness verifier by exact one-pass modular atoms and provides a half-scale conditional-count oracle for bounded-degree combinations. Uniformly hitting their full Boolean composition remains open.
+
+The [shared AP/lattice counting continuation](docs/ap_lattice_conditional_counting.md) gives exact arbitrary-degree conjunction counts using CRT and Euclidean floor sums, and a deterministic construction of partial multiplicative relations with prescribed prime factors. Aggregating over unspecified prime choices or guaranteeing smooth residual cofactors remains open.

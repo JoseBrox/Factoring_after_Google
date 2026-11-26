@@ -44,3 +44,7 @@ Run `python verification/research/common_translation.py` (standard library). It 
 ## Narrow-band streaming atoms
 
 Run `python verification/research/narrow_band_streaming.py` with the standard library. The test verifies 61,440 exact streaming atom decisions, 5,120 full lift decisions against finite tables, 24 exact conditional-count DP cases, and an independent-anchor rank certificate giving a factor of 21. The exact checked source hash and proof boundary are in [the narrow-band note](../../docs/narrow_band_streaming_atoms.md). No asymptotic product-table search is asserted.
+
+## Shared AP and lattice counting
+
+Run `python verification/research/ap_lattice_count.py` with the standard library. The exact checks cover 130,680 brute-force floor sums, 1,000 large-integer identities, 1,852 CRT anchor counts plus a 44-atom fixture, 656 partial witness counts, and 974 forced signed congruences. The tested source hashes and exact proof scope are recorded in [the AP/lattice note](../../docs/ap_lattice_conditional_counting.md). These checks do not establish smooth-cofactor coverage.
