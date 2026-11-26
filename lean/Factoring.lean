@@ -26,3 +26,5 @@ import Factoring.EulerDecay
 import Factoring.LatticeClearing
 import Factoring.ModularBits
 import Factoring.CharacterMoments
+import Factoring.DeterminantHeight
+import Factoring.ModularPower
