@@ -13,3 +13,4 @@ import Factoring.PrimeProducts
 import Factoring.ChainTrial
 import Factoring.LocalGram
 import Factoring.MultisetSaturation
+import Factoring.DensitySaturation
