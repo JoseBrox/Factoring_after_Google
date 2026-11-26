@@ -108,8 +108,15 @@ for \(a b^{-1}\pmod p\) is skewed. Here the primitive pair
 For a skewed prime in \((P_1/2,P_1]\), there is a nonzero integral
 vector \((v,w)\) with norm less than
 \(\sqrt{P_1}/S_{\rm skew}\), \(p\mid vb-wa\).
-The determinant cannot vanish because \((a,b)\) is primitive,
-and the short vector has norm less than \(\max(a,b)\).
+The determinant cannot vanish provided \(\max(a,b)\ge\sqrt y\):
+a nonzero integral vector collinear with the primitive pair is
+an integer multiple of it and has norm at least \(\max(a,b)\).
+The short vector has norm less than \(\sqrt y/S_{\rm skew}\).
+Thus the source's stronger hypothesis \(\max(a,b)\ge y\)
+can be weakened to \(\max(a,b)\ge\sqrt y\) throughout this proof.
+This weakening is needed at the enlarged upper nodes, since the
+child cap can exceed \(E_q\). It holds at every actual special-q
+box: \(a\ge3E_q/4\gg\sqrt q\ge\sqrt y\).
 For \(P_1\ge B\) the number of such vectors is
 \(O(P_1/S_{\rm skew}^2)\); each nonzero determinant has
 \(O(L)\) prime factors by the input size bounds. Consequently the
