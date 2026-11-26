@@ -4,7 +4,8 @@ from pathlib import Path
 
 s = Path(sys.argv[1]).read_text()
 expected = {"StrongPNT", "Factoring.Analytic.sqrt_error_scale",
-            "Factoring.Analytic.theta_strongPNT", "Factoring.Analytic.theta_relative_error"}
+            "Factoring.Analytic.theta_strongPNT", "Factoring.Analytic.theta_relative_error", "Factoring.Analytic.dyadic_density_of_theta",
+            "Factoring.Analytic.dyadic_density"}
 seen = set()
 for name, axioms in re.findall(r"'([^']+)' depends on axioms: \[([^\]]*)\]", s):
     if name in expected:
