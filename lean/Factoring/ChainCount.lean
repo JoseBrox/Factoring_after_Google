@@ -103,8 +103,9 @@ theorem good_count {F : Type*} [Field F] [Fintype F] (b r : F)
   have hcomp := Fintype.card_subtype_compl bad
   have hle := Fintype.card_subtype_le bad
   have hpos : 0 < Fintype.card F := Fintype.card_pos
-  have hcg : Nat.card {a:F // Good b a} = Fintype.card {a:F // ¬bad a} :=
+  have hcg : Nat.card {a:F // ¬bad a} = Fintype.card {a:F // ¬bad a} :=
     Nat.card_eq_fintype_card
+  change 2*Nat.card {a:F // ¬bad a}=Fintype.card F+3
   rw [hcg]
   omega
 

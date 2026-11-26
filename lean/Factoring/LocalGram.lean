@@ -19,6 +19,7 @@ def localCoeff (c : ι → κ) (s : ι → Bool) (e : ℕ) : Matrix ι ι ℝ :=
     if s i=s j then (e:ℝ)+1 else if e%2=0 then 1 else 0
   else 1
 
+omit [Fintype ι] in
 /-- The explicit sum of local coset blocks. -/
 theorem block_sum (c : ι → κ) (s : ι → Bool) (a b : ℝ) :
     (∑ t : κ, (fun i j =>
