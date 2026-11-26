@@ -20,3 +20,7 @@ IdealCancellation and PrimitiveFibre remain staged at this checkpoint; earlier c
 The exact modern QRH dependency build is still pending after the pinned upstream compatibility patch ([run 45836288815](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45836288815), [run 45837815223](https://github.com/JoseBrox/Factoring_after_Google/actions/runs/45837815223)). No passing project QRH build is claimed here. The earlier independently checked comparator endpoints do not substitute for this integration.
 
 No additional whole milestone is counted yet. See the [fixed completion register](../../docs/lean_completion.md).
+
+## Confirmed subsequent checks
+
+Both patched QRH builds (45836288815 and 45837815223) passed and all seven roots were audited. Candidate run 45844337004 also passed, including IdealCancellation and PrimitiveFibre. Their exact sources were promoted at 25b4191; the current named source theorem count is 277 in 39 modules, with the new aggregate receipt pending. The fixed milestone count is now 17/36; see the [comparison](../../docs/int_fac_comparison.md).

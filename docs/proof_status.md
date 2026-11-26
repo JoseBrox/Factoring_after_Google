@@ -57,7 +57,7 @@ Source pinning prevents a version mismatch. Hash verification proves identity of
 
 ## Quasi-RH and next-stage checkpoint
 
-The [quasi-RH audit](quasi_rh_audit.md) compares the actual OpenAI/math statements to the comparator targets and records independent default-kernel comparator acceptance. The [pinned Lean 4.34.1 import and adapters](../lean-qrh/README.md) are a new, separate integration target; a fresh project build has not yet been confirmed. The Lean 4.19 aggregate audit covers 266 named source theorems in 37 modules. The failed modern source build identified RellichKondrachov compatibility errors; the exact pinned upstream patch is now applied and its rebuild is pending. The separate PNT+ receipt is unchanged.
+The [quasi-RH audit](quasi_rh_audit.md) compares the actual OpenAI/math statements to the comparator targets and records independent default-kernel comparator acceptance. The [pinned Lean 4.34.1 import and adapters](../lean-qrh/README.md) are a new, separate integration target; two fresh project source builds and the seven-root axiom audit passed. The Lean 4.19 aggregate audit covers 266 named source theorems in 37 modules; 11 further named theorems in two strictly checked modules were promoted. The exact pinned upstream RellichKondrachov patch fixed the earlier compatibility errors. The separate PNT+ receipt is unchanged.
 
 A [written conditional consequence](quasi_rh_witnesses.md) of the Dirichlet and zeta seven-eighths zero-free theorem is a uniform prime detecting any nonprincipal Dirichlet character modulo \(q\), of size \(O_\varepsilon((\log(q+2))^{8+\varepsilon})\). Combined with the existing scalar splitting argument, it yields a route to polynomial-bit-time supplied-order splitting and prime nonresidue construction. The analytic argument and full bit-cost transfer are not yet Lean-certified, and a common order multiple is still required for splitting.
 
@@ -68,3 +68,5 @@ The five newly promoted Lean modules (binary arithmetic, Euler decay, unit-latti
 There is no completed proof here of an unconditional randomized $91.4/19$ factorer, a general deterministic $L_N[1/2,c]$ factorer, or a general classical factorer with first $L$-parameter below $1/3$. There is no benchmark showing practical superiority over GNFS. There is no completed end-to-end implementation of the asymptotic constructions.
 
 The retained-construction notes also record failures and restricted results. Their presence in the archive must not be read as endorsement of every earlier candidate statement. See [errata](errata.md) and [provenance](../provenance/README.md).
+
+See the [external int-fac comparison](int_fac_comparison.md) for the stronger full-Dirichlet-GRH deterministic endpoint, its reported verification, and the remaining differences from our randomized and independent constructions.
