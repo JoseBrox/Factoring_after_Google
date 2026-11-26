@@ -16,3 +16,7 @@ import Factoring.MultisetSaturation
 import Factoring.DensitySaturation
 import Factoring.Peeling
 import Factoring.SparseKernel
+import Factoring.UnitCertificates
+import Factoring.Prefix
+import Factoring.Smooth
+import Factoring.Curve
