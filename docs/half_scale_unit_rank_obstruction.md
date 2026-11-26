@@ -302,7 +302,7 @@ method of obtaining the target must fail.
 ## 6. A related reciprocal interpolation route is circular
 
 There is a tempting one-field alternative: construct a monic
-polynomial f of even degree d>=8 with f(m) a nonzero multiple
+polynomial f of even degree d>=12 with f(m) a nonzero multiple
 of N and d-1 independent units 1+a_j(theta-m) whose modular
 images are all 1. Suppose the a_j are distinct nonzero integers
 and all these units have norm ±1. Define F(t)=Norm(1+t(theta-m)),
@@ -312,12 +312,8 @@ coefficient Norm(theta-m)=f(m) (d even). If F takes both signs
 distance at most 2 since their difference divides ±2. Choosing
 one point of each sign shows that every point is in the union
 of two intervals of integer radius 2 around the two points;
-more precisely the total number is at most 6: each sign set
-has at most 5 points, and if one sign occurs at two or more
-points the opposite sign set lies in the intersection of the
-two intervals. To avoid any ambiguity in the bound, for the
-present assertion it suffices to take d>=12, since the crude
-bound is at most 10. For d>=12, all signs are therefore +1.
+each sign set has at most five points, so their union has
+at most ten. Since d>=12, all signs are therefore +1.
 Then F(t)-1 has the d distinct roots 0,a_1,...,a_(d-1),
 so it equals f(m) t prod_j(t-a_j). Every nonconstant
 coefficient is divisible by N. Reversing this norm polynomial
@@ -334,7 +330,7 @@ the same assertion by multiplicativity, provided its actual
 field norm is ±1. In particular a target unit with reduction
 ell would force ell^(2d)=1 mod N. By Section 1 this is
 impossible on the generic balanced inputs for polynomial
- d and ell. Thus this simple way of prescribing all kernel
+d and ell. Thus this simple way of prescribing all kernel
 units cannot be turned into a uniform target-unit constructor.
 This discards a specific interpolation strategy, not all
 one-field or higher-degree unit constructions.
