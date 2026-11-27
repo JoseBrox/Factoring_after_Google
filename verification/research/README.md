@@ -68,3 +68,7 @@ Run `python verification/research/two_primary_pool.py` and `python verification/
 ## Prime-primary and common-order extraction; batch-affine tests
 
 Run `python verification/research/primary_pool.py`, `python verification/research/common_order_factor.py` (SymPy required for this script), and `python verification/research/batch_affine_rank.py` with the earlier research scripts in the same directory. Exact checks cover 7,052 primary subgroups, 300 saturation indices, an odd-primary-only factor of 1333, three supplied-common-modulus LLL fixtures and a manufactured faithful-subgroup interface fixture, 250 affine-rank comparisons, and unsuccessful larger-pool checks. The [proof note](../../docs/primary_pool_extraction.md) gives the exact source hashes, tested outputs, local SymPy floor workaround, and proof boundary. These tests do not establish uniform relation coverage.
+
+## Squareclass pooling at known square multipliers
+
+Run `python verification/research/squareclass_pool.py` with the standard library and the prior primitive-ratio and two-primary scripts. It checks 2,066 squareclass memberships, 1,165 no-factor online prefixes and 92 factor exits, 480 incremental/batch comparisons, a two-ratio collision, and longer parity certificates at N=100160063 and N=1000036000099. The [proof and test receipt](../../docs/squareclass_ratio_pool.md) includes exact tested source hashes and a rigorous sparsity bound for the two-row criterion. Uniform coverage is not asserted.
