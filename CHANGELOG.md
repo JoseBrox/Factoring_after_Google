@@ -1,5 +1,9 @@
 # Changelog
 
+## KeyBreak primary-source audit and compressed descent — 27 November 2026
+
+Pinned and audited the supplied 144-page manuscript, correcting the reported unconditional constant to 10^13 and the source attribution. Derived the stronger large-sieve small-value bound, linear exceptional-mass transfer for concentrated semismooth incidences, subleading field pool and compressed U schedule, giving a conditional expected-time target L_N[1/3,40] without GRH in the proposed arithmetic route. The changed-range analytic transfer remains subject to verification. Executed exact finite schedule and content checks, matched the committed script blob, and repaired a duplicated README prefix. No new complete proof, unconditional complexity claim, or Lean milestone is counted.
+
 ## Research closure and new partial results — 27 November 2026
 
 Audited the depth-free labelled rank checkpoint and clarified its resource and randomness scope. Added a linear-total-advice half-scale transfer, an unconditional determinant-scale smooth-ratio support obstruction, selected-incidence and capped-restart lemmas, growing-depth cost accounting, and adaptive sealed-root CRT separation. Registered the reported Shanghai growing-descent manuscript with explicit source-access limitation. Exact standalone finite checks were run and matched to their committed blob; no full-suite rebuild, new Lean milestone, or stronger uniform general factoring bound is claimed.
