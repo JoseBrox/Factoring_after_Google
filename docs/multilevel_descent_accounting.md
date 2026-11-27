@@ -159,3 +159,28 @@ This is a concrete way to audit and potentially repair proofs with selected-fiel
 4. Prove the algebraic certification, reconstruction, and fruitfulness separately. The cost lemmas do not supply these or the missing arithmetic estimates.
 
 A one-third or better theorem would still need arithmetic control strong enough for these bounds on its actual incidence law. No such transfer from the Shanghai paper is made here. The next step after obtaining the exact PDF is to map each of its descent levels and retry events to (1)–(13) and check all uniformity and constant claims.
+
+## 5. Adaptive fruitfulness and complete CRT separation
+
+The predecessor's Theorem DD and the project's earlier [multi-dependency blindness](../provenance/notes/sparse-randomized-factorer.md#2-multi-dependency-blindness-proved) prove the uniformity of a fixed batch of verified independent dependencies. The following extension permits a restricted adaptive exposure process and shows how a single batch can separate *all* distinct prime powers, rather than just produce one proper divisor.
+
+Let \(N\) be odd, with \(\omega\) distinct prime divisors, and let \(H\) be the group of square roots of unity modulo \(N\). CRT identifies \(H\) with \(\{+1,-1\}^{\omega}\), also for repeated prime factors. Given the exposed squares of independent uniform private unit roots \(r_i\), fix one reference root \(\rho_i\) of each square. The hidden \(h_i=r_i/\rho_i\) are independent uniform elements of \(H\).
+
+A certificate consists of an integer exponent vector \(v\), and a unit \(Y\) for which
+\[
+Y^2\equiv\prod_i(r_i^2)^{v_i}\pmod N .
+\]
+The seal can return the exact quotient \(U_v=\prod_i r_i^{v_i}/Y\in H\), or a gcd derived from it, without exposing the individual private roots. Negative powers use modular inverses. Conditional on the public data and on the chosen certificate, its value is a fixed affine shift of the homomorphism \(h\mapsto\prod_i h_i^{v_i\bmod2}\).
+
+**Adaptive version.** At step \(j\), the next certificate and its root \(Y_j\) may be chosen using the original public transcript and all earlier sealed quotients, provided its parity row \(v_j\bmod2\) is outside the span of the earlier parity rows. No other function of the private roots may be consulted. Conditional on any particular earlier transcript with positive probability, the private signs are uniform on an affine fibre cut out by the earlier independent rows: all those choices are fixed by the transcript. The new independent row maps this affine fibre surjectively onto \(H\), by linear algebra over \(\mathbb F_2\) in each CRT coordinate. Its affine shift is fixed conditional on the transcript. Therefore the next sealed quotient is again conditionally uniform on \(H\). Extra independent coins may be fixed in the conditioning. The argument also applies when only a coarser function of each previous quotient was exposed, by conditioning on the full quotients for the proof and averaging.
+
+Thus for \(d\) successfully supplied independent certificates (with a fixed batch, or an adaptive process guaranteed to supply the next independent certificate on every history before \(d\) exposures), the probability that no exposure gives a proper divisor is at most \(2^{-(\omega-1)d}\). One must not condition this conclusion on the future event that a history-dependent certificate search happens to reach depth \(d\); such conditioning can bias the past. If a search stops early without a factor and without another certificate, that separate failure event must be charged. The result does not authorize exposing raw private roots and then continuing an allegedly blind relation search.
+
+**Complete CRT separation.** For a fixed batch of \(d\) independent certified parity rows, the \(\omega\) local sign signatures in \(\{+1,-1\}^d\) are independent uniform strings. The same holds for an adaptive process that supplies all \(d\) rows on every history and respects the above seal. Start with the block \(N\), and for each quotient \(U_j\) split every current block \(M\mid N\) by \(\gcd(U_j-1,M)\) when it is proper. Each prime-power component has sign \(+1\) or \(-1\); in the latter case \(U_j-1\) is a unit modulo that prime power since \(N\) is odd. Consequently the final blocks are exactly the products of prime powers sharing their full signatures. No factorization is needed to implement these gcds. Two distinct local components share a signature with probability \(2^{-d}\), so
+\[
+\Pr(\text{some distinct components remain together})
+ \le {\omega\choose2}2^{-d}.
+\]
+Since \(\omega\le\log_2 N\), \(d=2\lceil\log_2(\operatorname{bitlength}N)\rceil+\kappa\) yields failure at most \(2^{-\kappa}\) by this bound. Recognize and split perfect powers and certify prime bases at the end. A failed completeness check can be treated as a retry or additional factoring call; no incorrect factorization is returned.
+
+The gcd partition work is polynomial in the modulus bit length and \(d\), excluding production of the certified rows and evaluation of their private-root products (which must also be charged). The earlier square-class-dimension argument can provide \(O(\log\log N)\) independent good vectors at polynomial overhead when the residual obstruction dimension is bounded, with its original hypotheses. This offers an optional way to complete many-factor inputs without rebuilding the relation set for each split. It does not prove the Shanghai paper's square-certification claims, nor improve our present leading exponent without a complete ledger for generating the required batch.
