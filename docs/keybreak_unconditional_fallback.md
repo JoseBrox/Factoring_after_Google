@@ -120,3 +120,7 @@ Thus both \(17+2^{-1/3}C<C\) and \(49.59+(63/500)^{1/3}C<C\) are strict. The sam
 \]
 
 **Boundary of the result:** this proof target has the ordinary source covariance, upper semismooth pair moment, and source certificate machinery as remaining changed-range obligations. It no longer needs the new semismooth concentration or linear-incidence transfer of the 40 target. The sharper finite arithmetic and moment bounds are explicit, not a substitution into a fixed-parameter theorem. As this is an independent changed-range audit still in progress, it is not an unconditional theorem, and the numerical comparison with Cogentic 105 does not establish a record. The 100 target is a useful intermediate verification milestone even though 40 is more ambitious.
+
+## 6. Exact finite check receipt
+
+Run [`verification/research/verify_keybreak_fallback.py`](../verification/research/verify_keybreak_fallback.py) with the compression checker alongside it. Locally executed with Python 3.13.5. Tested Git blob `ce9361b129c86f87226d2c82e73e2ea46fd1af65` matches the committed file; SHA-256 `b497b0d76597f7bc46e31e98682e5484ab84a0714e927e2f3740fb00abc1cc19`. All exact rational leading-constant margins and 18 symbolic finite schedules passed (depth range 81–206). The logarithmic inequalities in §2 have written elementary proofs; the script checks their subsequent rational margins, not their asymptotic analytic consequences.
