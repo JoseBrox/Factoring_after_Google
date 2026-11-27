@@ -144,3 +144,10 @@ The [affine-core collision theorem](affine_core_collision_supply.md) gives exact
 - different relation-generation or factoring mechanisms.
 
 These are real changes of hypotheses, not a counterexample to the finite norm, ramification or masking theorems. In particular the new conic law provides additional public information that the ordinary-unit collision bound does not count; a purported use of that information still needs its own positive-mass rank theorem. The most attractive remaining interface is [square-resultant norm transport](square_resultant_norm_transport.md) with many correlated residual factors and **actual** known-square corrections, possibly combined with [correlated conic sampling](conic_masked_incidence_supply.md). No quarter-scale arithmetic core or new factoring exponent is established.
+
+
+## 6. Subsequent projected-parity extension
+
+The [rational norm parity collision theorem](projected_norm_parity_barrier.md) extends the obstruction to matching only projected rational norm squareclasses, without matching the exact individual ideal valuations. Its local even-total Euler product allows all cancellations of prime ideals over p and all even exponents. Under the fixed degree/log-height guards it has the same dominant negative scale, and gives a necessary extra norm-height budget of order \(L^{3/4}(\log L)^{1/4}\). It does not apply when a generator quotient discards the rational norm parity coordinates themselves or includes arbitrary independent square masks outside the actual tuple height.
+
+The [paired norm construction](paired_norm_affine_lift.md) supplies a positive exact mark-local square transport with a larger-height budget, including a fixed-offset specialization. Its remaining integer norm squareclasses were not compressed by the tested literal sampler.
