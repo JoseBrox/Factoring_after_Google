@@ -1,5 +1,9 @@
 # Changelog
 
+## Quarter-scale terminal relations and record comparison — 27 November 2026
+
+Proved a projective discriminant diameter bound excluding multiple low-height large-prime charts even after ramified content removal. Constructed shared exact norm-one units for arbitrary modular images and proved separated-linear-mark interpolation rigidity for correction degree below the mark count. Established a constructive ideal-norm reduction and a field-uniform bounded-element support theorem using Voutier's height bound. Added exact finite regression checks and recorded matched source hashes. Checked current public comparisons and added the 2.96 GRH-dependent transfer to the README table; 2.95 remains a changed-range candidate. No sub-one-third theorem, independent record certification, full implementation or Lean/PDF rebuild is claimed. Next target is joint modular-image transition and rank-compressing shared relation generation.
+
 ## U40 audit, U14.1 and scale-breaking continuation — 27 November 2026
 
 Critically reviewed U40's covariance and certificate imports; no fatal defect identified in the inspected arguments. Derived the reduced-degree/thin-box/smaller-window optimization with separate exact algebraic quotas and cubic root reconstruction, and tightened the expected-time constant to 14.1 with exact recursive margins. Proved an exact valuation-descent, ideal-refinement and saturated unit-log certificate removing factorial-in-degree probe length. Added explicit one-third architecture obstructions, a transformed-lattice quarter-scale research target, and sealed polynomial permutation extraction with positive and negative finite LLL fixtures. Tested and matched new standalone scripts; independent review, full implementation and Lean/PDF/whole-repository verification remain open. No sub-one-third factoring theorem, certified record or improved workspace claim.
