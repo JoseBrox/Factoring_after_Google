@@ -76,3 +76,7 @@ Run `python verification/research/squareclass_pool.py` with the standard library
 ## Character-lift ratio coverage
 
 Run `python verification/research/character_lift_pool.py` with the earlier `primitive_ratio_lattice.py` alongside it. The script checks 2,000 modular linear systems against brute force, 100 large-modulus solvable systems, 380 Jacobi-labelled root exits, and four seeded finite short-ratio searches at lifting depths one through four. The finite harness ignores already found coordinate gcd factors only to exercise the new character-lift extraction. See [proof, exact receipts and scope](../../docs/character_lift_ratio_coverage.md). No deterministic uniform coverage claim is made.
+
+## Depth-free labels and general rank increase
+
+Run `python verification/research/depth_free_labels.py` with the standard library and the previous lattice and pooled-rank scripts. The verified tests include 177 fibre/translate comparisons, 602 additional proper-factor exits, 300 primitive annihilator checks and five full-rank finite factoring runs. The harness uses seeded random queries; it is not a deterministic coverage proof. Exact tested hashes, output and the analytic proof scope are in [the depth-free note](../../docs/depth_free_character_rigidity.md).

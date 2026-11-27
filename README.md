@@ -271,3 +271,5 @@ The [support-budget and 2-saturation continuation](docs/support_budget_and_two_s
 [Factor-free squareclass pooling](docs/squareclass_ratio_pool.md) permits exact first-level square congruence extraction without rational cofactor cancellation, and succeeds on two previously difficult test inputs using longer parity dependencies. Uniform coverage remains open.
 
 [Character-lift ratio coverage](docs/character_lift_ratio_coverage.md) supplies a bounded constraint-progress mechanism using Jacobi-labelled torsion and proves uniform density of differently labelled short ratios for eligible inputs. Exact lattice queries and modular linear algebra are deterministic; the uniform selection of successful queries remains open.
+
+[Depth-independent character rigidity](docs/depth_free_character_rigidity.md) removes the earlier restriction on lifting depth and gives an unrestricted labelled short-ratio rank driver with a one-prime translate. Uniform deterministic selection remains unresolved.
