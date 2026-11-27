@@ -1,6 +1,8 @@
 # U14.2: a reduced-degree, thinner-box and two-quota optimization
 
-27 November 2026. **Status:** written changed-range proof and cost transfer from the U40 arithmetic mechanism, with the additional changes proved below. The constant 14.2 is not an independently reviewed or formally certified record. The original source's finite arithmetic/certification lemmas and the unconditional analytic imports in [U100](keybreak_u100_proof.md) and [U40](keybreak_u40_proof.md) are reused. The [critical U40 audit](keybreak_u40_critical_audit.md) records the source checks. This note changes the parameters, the coefficient windows, the sieve level, the search quotas and the exact reconstruction algorithm; none is silently substituted into a fixed-parameter theorem. No GRH or conjectural smoothness assertion is used in the written argument.
+27 November 2026. **Tightened conclusion:** the same schedule gives 14.1 by the exact stricter auxiliary-size guard in §8. The 14.2 ledger is retained for auditability.
+
+**Status:** written changed-range proof and cost transfer from the U40 arithmetic mechanism, with the additional changes proved below. The constant 14.2 is not an independently reviewed or formally certified record. The original source's finite arithmetic/certification lemmas and the unconditional analytic imports in [U100](keybreak_u100_proof.md) and [U40](keybreak_u40_proof.md) are reused. The [critical U40 audit](keybreak_u40_critical_audit.md) records the source checks. This note changes the parameters, the coefficient windows, the sieve level, the search quotas and the exact reconstruction algorithm; none is silently substituted into a fixed-parameter theorem. No GRH or conjectural smoothness assertion is used in the written argument.
 
 Source: The KeyBreak Cryptanalysis Agent, *Provable Integer Factorization via Multilevel Descent: Approaching Heuristic Bounds*, 26 Nov. 2026, 144 pp., [PDF](https://crypto.sjtu.edu.cn/factoring.pdf), SHA-256 2b534eaf77fb2b9712018879059d8d4667c40c0a4adf2fff90efc22fb356cfc9. Source lemma numbers below refer to that version.
 
@@ -147,3 +149,20 @@ The exact certified output and every-tape termination follow from the verified i
 ## 7. Numerical optimization and limitations
 
 The schedule was found by optimizing the displayed recurrence coefficients with c, \(\kappa,b,v\) varying, using floating-point search only for candidate generation. The proof uses the explicit rational constants above and exact checked margins, not an optimizer's assertion of a minimum. The tight terms are now the coordinate and raw-value recursion, rather than the huge field pool or probe cost. The smaller windows have been chosen conservatively to preserve relative individual-parent error estimates; further exact conditioning could reduce them slightly. A much stronger gain requires a new initialization or rational/algebraic descent mechanism. In particular changing fixed constants cannot make the first L-parameter less than 1/3. See the separate scale-breaking investigation.
+
+
+## 8. Tighten the same schedule to 14.1
+
+No arithmetic estimate or relation-supply hypothesis changes. Replace the raw-value size guard in §6 by
+\[
+ 18000(h_*dt+d\lceil ve_0\rceil)\le3011(n-1),
+ \qquad\theta'=3011/18000>301/1800 .
+\]
+This holds eventually by the same strict asymptotic height comparison. Require each actual raw-value factorization input to be at most \(\lceil N^{\theta'}\rceil\) and strictly smaller than N. The full direct ledger and the coefficients s and \(v_A\) are unchanged. For \(C'=141/10\), the two exact positive cube margins are
+\[
+ (1-s/C')^3-\tfrac12=9659059/87600656250>0,\quad
+ (1-v_A/C')^3-\theta'=135796037/700805250000>0.
+\]
+Thus the same recursive proof yields **\(L_N[1/3,14.1]\)**. This is the preferred leading constant from this schedule, with the same written-proof and independent-review qualifications. It is not asserted optimal over other designs.
+
+The standalone checker [verification/research/verify_keybreak_u142.py](../verification/research/verify_keybreak_u142.py) verifies both ledgers and the stronger integer size, window, cutoff, sieve, conductor and shape inequalities on 18 symbolic bit lengths. The local execution passed; the committed Git blob matches the tested file (25feb8ef6a81e29d013af7d89bed459863800e46, SHA-256 a0d5a22950ceaa19c01c74d5bfbd1cfe04bada768ea757245bf6b62ab0128c28). These tests do not independently prove the analytic estimates. See also the new [scale-breaking investigation](beyond_one_third_research.md) and [probe-free unit certificate](exact_descent_unit_certificate.md).
