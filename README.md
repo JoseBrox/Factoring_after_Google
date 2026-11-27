@@ -273,3 +273,13 @@ The [support-budget and 2-saturation continuation](docs/support_budget_and_two_s
 [Character-lift ratio coverage](docs/character_lift_ratio_coverage.md) supplies a bounded constraint-progress mechanism using Jacobi-labelled torsion and proves uniform density of differently labelled short ratios for eligible inputs. Exact lattice queries and modular linear algebra are deterministic; the uniform selection of successful queries remains open.
 
 [Depth-independent character rigidity](docs/depth_free_character_rigidity.md) removes the earlier restriction on lifting depth and gives an unrestricted labelled short-ratio rank driver with a one-prime translate. Uniform deterministic selection remains unresolved.
+
+### 27 November continuation
+
+[Closure and Shanghai manuscript intake](docs/2026-11-27_source_intake_and_closure.md) audits the previous labelled-rank checkpoint and records the newly announced growing-descent claims, with the primary PDF currently inaccessible. No theorem-level assessment of that paper is asserted.
+
+[Linear advice at half scale](docs/linear_advice_half_scale.md) improves the common-anchor nonuniform result to a single \(O(n)\)-bit advice string covering every input of bit length at most \(n\), including recursive subinputs. Uniform deterministic \(L_N[1/2,O(1)]\) remains open.
+
+[The volume–smoothness barrier](docs/short_ratio_scale_barrier.md) proves an unconditional support bound excluding dense uniform rational certificates below the half-scale exponent when the height and shift budgets remain determinant-scale. This is not a lower bound on factoring.
+
+[Growing-descent accounting](docs/multilevel_descent_accounting.md) proves matched selected-incidence transfer, a capped restart repair, a size-sensitive branching potential, and adaptive sealed-root CRT partitioning. The analytic incidence estimates and complete factoring proof remain open. [Exact finite test receipt](verification/research/README.md#descent-accounting-height-and-linear-advice-checks).
