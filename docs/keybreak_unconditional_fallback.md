@@ -1,5 +1,7 @@
 # An intermediate unconditional-route constant 100 without new semismooth concentration
 
+**Later proof checkpoint:** [U100 written proof](keybreak_u100_proof.md) supplies the changed-range argument, including the ordinary covariance and exact recurrence. The conditional statement below is retained as historical development. The new proof uses the pinned source's finite lemmas and unconditional published analytic inputs; independent review and formal verification remain open.
+
 **Status, 27 November 2026:** a conditional changed-parameter transfer and a smaller analytic verification target than [compressed U at 40](keybreak_unconditional_compression.md). It retains KeyBreak's *original* ordinary-count concentration theorem and square-root exceptional-mass recursion. In particular it does not depend on the new weighted semismooth **concentration** estimate proposed in §2 of the 40 note, or on GRH. The changed-range ordinary-count and incoming upper-moment estimates and the source's certificate/computation bounds still require full independent verification. This is not a new unconditional record.
 
 Source: The KeyBreak Cryptanalysis Agent, *Provable Integer Factorization via Multilevel Descent: Approaching Heuristic Bounds*, 26 Nov. 2026, 144 pp., [PDF](https://crypto.sjtu.edu.cn/factoring.pdf), SHA-256 2b534eaf77fb2b9712018879059d8d4667c40c0a4adf2fff90efc22fb356cfc9; see [pinned-source audit](keybreak_source_audit.md). All source lemma numbers refer to that version.
