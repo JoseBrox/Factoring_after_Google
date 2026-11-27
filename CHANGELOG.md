@@ -1,5 +1,9 @@
 # Changelog
 
+## Hensel-normalized norm lattices and multiway parity — 27 November 2026
+
+Proved a homogeneous fixed-algebra norm/image representation with prescribed N-adic depths and exact norm normalization. Derived the localized lattice equivalence and known-square masks for principal depth shifts, and the exact useful-target parity dimension for repeated representations. Extended determinant-scale projected norm parity collision bounds to arbitrary subsets of quarter-scale distinct-input pools and quantified the repeated-input limitation. Executed exact norm-lattice and pooled rank tests, with positive results on the smallest fixture and negative results on six larger fixtures, plus 384 depth-equivalence identities. Matched final tested script after verifying public correction before private-root exposure. No new complexity exponent, record, workspace claim, or full Lean/PDF/whole-repository build.
+
 ## Constructive paired norms and projected parity barrier — 27 November 2026
 
 Constructed uniform public-unit square-aware representations via base-digit polynomial norm forms and paired cofactor remainders, without supplied norm compatibility. Derived a fixed affine norm squareclass offset and reduction of the remaining term to one fixed monic algebra. Proved projector/resultant height restrictions and a rational norm parity collision bound allowing even exponents and relative ideal cancellations. The exact local suite passed all 380 paired lifts and 108 accepted fixed-offset lifts, but the variable squareclass ranks remain essentially full and no tested norm squareclass is supported at primes ≤101. Preserved negative supply results. No quarter-scale theorem, new record, or full Lean/PDF/whole-repository build.
