@@ -92,3 +92,15 @@ exact finite height/support checks: 60
 ```
 
 Tested Git blob: `0779cbb260806dbd029e1b998d05c523800314e9`; SHA-256: `fa337fb45b64ddc2dc8010bdb4753be06c48da60ae75b689065cb2dceb331f62`. The small-field checks compare exact Walsh eigenvalues with independent polynomial-root counts, then count walks by integer transitions. Incidence and caps use exact rational probabilities. The height tests enumerate finite smooth pairs, check support preservation under reduction, and use a rational upper bound on the finite Euler product. These checks do not establish the asymptotic estimates, uniform advice construction or the adaptive CRT extension. See [linear advice](../../docs/linear_advice_half_scale.md), [height barrier](../../docs/short_ratio_scale_barrier.md), and [descent accounting](../../docs/multilevel_descent_accounting.md).
+
+## KeyBreak compressed unconditional route
+
+Run `python3 verification/research/verify_keybreak_compression.py` (standard library). Executed with Python 3.13.5. Output:
+
+```
+exact leading constants: 801/100 306/25 direct 28 target 40
+finite schedules: 18 depth range: 333 833
+exact semismooth content identities: 72000
+```
+
+Tested Git blob `85231107645e41ed4b383cc564e543f9b95293f6` matches the committed file; SHA-256 `9f6d2e9f3475ac252961c6f12f0190272d1ffe1261b821c54cddcf882fd03128`. The finite schedules use enormous symbolic bit lengths without instantiating the input integers. They test exact cutoff/shape/height guards, exact rational constant inequalities, and the semismooth content dichotomy and capped valuation cases. They do not establish the analytic transfer, practical running time, or a full factoring theorem. See [the derivation](../../docs/keybreak_unconditional_compression.md).
