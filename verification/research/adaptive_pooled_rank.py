@@ -224,6 +224,6 @@ if __name__=='__main__':
         for N in (47053,100160063,1000036000099):
             P=primes(17);S=isqrt(N)+1
             run(N,P,3*S,40,dual=dual)
-        # Test local CRT choices on larger boxes without enumerating the boxes.
+        # Test local CRT choices on larger boxes without enumerating them.
         for N in (100160063,1000036000099):
             run(N,primes(7),min(N-1,5000*(isqrt(N)+1)),25,local=True,dual=dual)
