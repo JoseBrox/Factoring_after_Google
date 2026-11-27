@@ -54,3 +54,6 @@ The [compressed unconditional-route continuation](keybreak_unconditional_compres
 
 
 The [U100 intermediate target](keybreak_unconditional_fallback.md) uses the source's original exceptional-mass transfer and sharpened ordinary moment parameters; it is conditional on the changed-range source estimates, without GRH in the proposed arithmetic route. The [G2.96/2.95 cost transfer](keybreak_grh_constants.md) retains Dirichlet GRH. The former uses the original source geometry and changes only caps; the latter also requires a changed-range analytic audit. They are separate from the U40 target and do not establish unconditional records.
+
+
+**Written-proof continuation:** [U100](keybreak_u100_proof.md) and [U40](keybreak_u40_proof.md) supply the changed-range arguments that the above historical conditional ledgers isolated, including the weighted semismooth covariance and linear exceptional-mass transfer for 40. Their stated expected-time bounds are \(L_N[1/3,100]\) and \(L_N[1/3,40]\), using the pinned source's finite lemmas and classical unconditional analytic imports. They have not received independent review or complete formal verification. The source's claimed GRH 2.97 is a different result, and no new workspace bound or independently established record is claimed.
