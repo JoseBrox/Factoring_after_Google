@@ -164,3 +164,49 @@ The new mechanism simultaneously controls modular image introduction and ideal r
 The [shared-subfield construction](shared_base_norm_transport.md) supplies a particular family of genuine joint transitions without requiring the base ideal to be principal or the separate reduction images to coincide. It gives exact rank savings for full-extension packets and a norm-projected version for partial packets. Their usefulness for a complete algorithm depends on the incidence of such correlated requests among the accepted rows.
 
 The U40 common-determinant covariance estimates and upper moments were for a different ordinary/semismooth descent law. They do not prove an anchor intersection of the necessary size in this new two-sided scheme. In particular the existence of enough new anchors at quarter-scale cost is not established by linear algebra, LLL or Smith saturation. No replacement first L-parameter or improvement of the previous U14.1 written bound follows. The next priority is a generation theorem for the genuinely new old-target component in (11), with the terminal support and parity budget in (10), rather than a bound on the norm of each image separately.
+
+
+## 7. Exact binary quotient and a parity-progress target
+
+The rational rank in (11) is useful but need not track the actual odd-coefficient gain: an even Smith factor can obstruct an otherwise nonzero rational dependency. There is a simpler exact invariant for the adaptive driver.
+
+For fixed sealed columns V and current unsealed anchors C, use the integer sublattices
+\[
+ A_0=V\mathbb Z^k,\qquad E=C\mathbb Z^\ell,\qquad
+ Q_2=(A_0+E)/(2A_0+E).
+\]
+The latter is an elementary abelian 2-group: every element is represented by a sealed combination and twice that combination belongs to the denominator. The map
+\[
+ \mathbb F_2^k\longrightarrow Q_2,\qquad b\longmapsto Vb
+\]
+is surjective. A binary vector b is the parity of some integral joint active-kernel vector exactly when
+\[
+ Vb\in 2A_0+E . \tag{12}
+\]
+Indeed an integer lift has the form \(b+2z\); asking that its active vector be canceled by integer anchor coefficients is exactly (12). This gives the exact active parity capacity
+\[
+ \boxed{\mathcal B=\dim_{\mathbb F_2}\ker(\mathbb F_2^k\to Q_2)
+              =k-\dim_{\mathbb F_2}Q_2.}\tag{13}
+\]
+It equals the mod-two rank of the sealed-coordinate projection of a saturated integer basis of \(\ker_{\mathbb Z}[V\ C]\). In particular \(\mathcal B\ge k-r-e\) by (9), but it can be strictly larger. It can be computed without enumerating binary vectors: form the two indicated integer column lattices by Hermite normal form, use the coordinate inclusion matrix and Smith normal form, or compute the joint kernel directly. All matrix multipliers have polynomial bit bounds as in §4.
+
+For an incoming anchor batch, split its active columns into the old and genuinely new coordinates \(A_o,A_n\), now **over the integers**, without taking a rational quotient first. Form
+\[
+ H=A_o(\ker_{\mathbb Z} A_n)\subseteq P.
+\]
+Use a saturated integer basis of the kernel, not arbitrary cleared rational basis columns. The exact new projection lattice of feasible sealed coefficients is \(\{x:Vx\in E+H\}\). Hence the new quotient in (13) is
+\((A_0+E+H)/(2A_0+E+H)\). There is a surjection from the old quotient to this quotient whose kernel is precisely the image of
+\[
+ H\cap(A_0+E)\quad\text{modulo }2A_0+E.
+\]
+To see this, intersect the new denominator with the old numerator and use \(2A_0+E\subseteq A_0+E\). Therefore the necessary and sufficient condition for strict **parity** progress is
+\[
+ \boxed{H\cap(A_0+E)\not\subseteq 2A_0+E.}\tag{14}
+\]
+Both membership and intersection are exact integer-lattice calculations. This handles new residual labels that disappear only in a batch combination, and handles a rational-rank plateau during which an even invariant factor is repaired. In particular an anchor whose old projection belongs to \(2A_0+E\) cannot by itself contribute a new odd direction. Conversely a batch that does not change the rational quotient rank can still be useful if it changes its integral parity obstruction. The capacity is monotone when adding anchors (including extension by new labels with zeros in old columns), because every earlier feasible lift remains feasible.
+
+For a concrete adaptive prescription, choose an old binary vector b not in the kernel of (12). An unsealed batch whose integer-canceled old projection contains \(Vb\) modulo \(2A_0+E\) makes that missing parity available. This is a more precise target than forcing one individually smooth cofactor, or even forcing a rational residual-span dependency. The shared-base packet reductions supply candidate correlated blocks for this purpose; their actual projected images must still be checked in (14).
+
+**Conditional quarter-scale reduction.** Write \(\Lambda=L^{1/4}(\log L)^{3/4}\), \(L=\log N\). Suppose a public initialization produces \(k=\exp(O(\Lambda))\) independently sealed rows, with compatible shared fields and a fixed terminal/logarithmic rank bound \(T\le k-2\), in \(\exp(O(\Lambda))\) expected bit work. Suppose further that, at every reached public state with \(\mathcal B\le T+1\), one can generate a capped verified anchor batch in \(\exp(O(\Lambda))\) bit work that either factors N or satisfies (14), with conditional probability at least \(\exp(-O(\Lambda))\), uniformly in the history. New labels may be introduced; each successful batch has at most its charged bit size, and the bound T on remaining terminal and logarithmic rank must be maintained. All tests are public, including failures and rejection. Then retaining only strict-progress batches gives the desired certificate in \(\exp(O(\Lambda))\) expected work: at most k strict gains are needed, each conditional waiting time is geometric with the stated lower bound, and the total successful data and all polynomial exact operations still cost \(\exp(O(\Lambda))\). Once \(\mathcal B>T+1\), the saturated terminal/log kernel and one sign constraint leave an odd sealed coefficient, by the proof of §4 with \(\mathcal B\) in place of its lower bound. The private-root split succeeds with probability at least one half. Fresh epochs and the usual verified factor tree preserve the scale; a capped epoch plus persistent trial-divisor backup gives every-tape termination if desired.
+
+This is an exact conditional reduction, **not** a proof of either of its relation-generation hypotheses. It isolates the outstanding arithmetic statement as a uniform probability of (14) for a prescribed actual missing parity, with a common rank budget, rather than a uniform smoothness assertion for every isolated request. A theorem about unconditioned average rank gains that fails on adaptively selected histories would not suffice.
