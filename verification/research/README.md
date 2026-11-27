@@ -60,3 +60,7 @@ Run `python verification/research/target_power_balance.py` and `python verificat
 ## Adaptive exponent separation and residual recycling
 
 Run `python verification/research/adaptive_pooled_rank.py` with the earlier primitive-ratio, balancing and pooled-shift scripts in the same directory. The local run checks 100 exact dependencies, a verified factor of 47053, and several intentionally retained unsuccessful searches showing residual rank growth without base rank growth even with shared CRT prescriptions. See [the proof and test scope](../../docs/adaptive_rank_or_residual.md).
+
+## Support-aware selection and 2-primary saturation
+
+Run `python verification/research/two_primary_pool.py` and `python verification/research/support_budget.py` with the existing primitive-ratio, balancing, pooled-shift and adaptive rank scripts in the same directory. The tests verify 998 perfect-power cases, 4,832 independent 2-group comparisons, 150 saturation-index comparisons, a zero-pure-rank square root of unity giving factor 101, and 1,199 factor-free residual-span membership comparisons. The support-aware all-shifts search records both factors and unsuccessful pools, including full pure rank seven on the smaller prior stalled fixture. See [the proof and exact test hashes](../../docs/support_budget_and_two_saturation.md). Uniform support bounds are not established by these experiments.
