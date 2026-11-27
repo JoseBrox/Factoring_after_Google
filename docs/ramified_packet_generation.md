@@ -95,6 +95,20 @@ This gives an additional **joint image/ideal reduction** for diagonal correlated
 \]
 The base ideal of the right side is \(\operatorname{Norm}\mathfrak a\,\operatorname{Norm}\mathfrak b\); its exact norm-down residual is shared, not d unrelated rational residues. For \(F=\mathbb Q\) the right side is simply the signed integer norm, computable by an exact determinant, even if \(\mathfrak b\) has not been factored. Combined with (5), any balanced combination of these diagonal requests cancels that same residual exactly. With an explicit base norm reduction the graph argument of [correlated transport](joint_ideal_image_transport.md) applies as before. In contrast with separate field reductions, this move uses a proved arithmetic identity coupling all the evaluation maps.
 
+### Combining the two norm projections
+
+If a field \(K_j/F\) of odd relative degree \(d_j\) has all its \(d_j\) compatible modular maps known, first apply the relative normalization (4) of [shared-base transport](shared_base_norm_transport.md) to each copy, with one common odd exponent. The resulting field components have relative norm one. The product of their modular images for a *common* relative norm-one factor is 1 by the complete-map norm identity (4) above. Consequently applying (5) to these normalized components drops one copy without any additional base norm factor. The remaining ratios are again relative norm one.
+
+On a full base-prime fibre with \(m_j\) distinct primes above it in \(K_j\), the two operations leave ambient dimension
+\[
+ 1+\sum_j(d_j-1)(m_j-1)
+\]
+instead of \(1+\sum_j d_j m_j\). The first 1 is the shared base valuation, each relative vector is in a codimension-one residue-degree kernel, and the complete-map diagonal removes one such vector for each j. The analogous log-unit bound is
+\[
+ u(F)+\sum_j(d_j-1)(u(K_j)-u(F)).
+\]
+As before, the actual savings are the intersection with the actual incidence span, not the ambient dimension difference. Charge all terminal coordinates introduced by norm and extension, including any other prime ideals over a base prime in the original terminal support. No savings are inferred from absent copies padded by identity.
+
 ## 4. A capacity obstruction for principal ramified packets
 
 Total ramification is not a way to principalize arbitrarily many independent target primes at zero archimedean rank cost. There is a sharp algebraic accounting rule for the totally real construction.
@@ -133,6 +147,11 @@ At a totally ramified base prime \(\mathfrak p\), the relative discriminant of t
  \log|\Delta_{A[\vartheta]}|
  \ge d\log|\Delta_A|+(d-1)\sum_i\log \operatorname{Norm}_{F/\mathbb Q}\mathfrak p_i .
 \]
-This is a *lower bound on the order discriminant*, not on every actual residual norm. In particular a generic discriminant-based LLL norm ceiling for a degree of order \(L^{1/2}\) and even a single large request of log-size \(L^{1/4}\) will not certify a half-scale residual. The exact norms (2)–(3) avoid that particular ceiling for the chosen mark. The construction does not show comparable bounds for many other useful marks.
+This is a *lower bound on the order discriminant*, not on every actual residual norm. In particular a generic discriminant-based LLL norm ceiling for a relative degree of order \(L^{1/2}\) over a fixed-degree base and even a single large request of log-size \(L^{1/4}\) will not certify a half-scale residual. The exact norms (2)–(3) avoid that particular ceiling for the chosen mark. The construction does not show comparable bounds for many other useful marks.
 
 The new positive facts are that one can force relative valuation packets for all currently supplied large primes, without a random split-pattern assumption, and impose complete known modular maps with exact norm coupling. The limitations are equally concrete: the norm of a single constructed mark represents one prescribed principal packet, independent principal ramified directions obey (6), and creating fields or copying rows must not be counted as novel quotient rank. The constructive next target is therefore a family of additional nonlinear norm-controlled marks and old/new-label incidences that achieves a strict saving in the actual quotient of [correlated transport](joint_ideal_image_transport.md), without increasing the relative unit/finite rank by the same amount. The quarter-scale goal remains open.
+
+
+## 6. Exact finite check receipt
+
+Run [verify_ramified_packets.py](../verification/research/verify_ramified_packets.py) with Python 3.13.5 and SymPy 1.14.0. Tested and committed blob `8226685aba49fa128a2f2d37dd3d2bf57aa0d340`, SHA-256 `0555cb84d8b4c10b92ab14e3e0afee0ec48ca9f3b4d7ffc2b985e7516d4ad423`. The executed tests check 25 constructed fields (including a repeated-root modular example), 49 local Eisenstein/discriminant guards, 289 exact norm evaluations, 144 cross-map transitions, and 200 exact rank identities. The totally real subfamily also has verified rational sign brackets. The manufactured four-square fixture modulo 1189 has public squares 4,9,535,236, relation (1,1,1,-1), and all 256 private-root fibre tuples checked; 128 give proper factors 29 or 41. This deliberately correlated example illustrates the exact gluing and parity readout, not the frequency of such rows on arbitrary inputs. The theorem is not inferred from the finite checks. No full repository, PDF or Lean rebuild was performed.
