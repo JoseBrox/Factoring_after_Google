@@ -142,3 +142,15 @@ Run the following standalone scripts (Python 3.13.5; SymPy 1.14.0 for the last t
 - `verify_sealed_polynomial.py`: 144 exact CRT coverage patterns including prime powers; 1,775 public lattice candidates in 30 sampled fixtures, 179 reducible, 123 sufficient certificates, 121 certificate splits, six fixtures producing verified proper factors. Candidates within a fixture are correlated, and most larger fixtures failed. Tested blob `671e0d2d69d10db5dbf9a5e966f420f1edbf78c7`; SHA-256 `0a797339071a0ccee20c4c7eae43ef5d9a8703041829d6234bef5031e9bea50f`. See [complete per-fixture results and scope](../../docs/sealed_polynomial_certificate.md).
 
 All three committed blobs match the locally executed scripts. The earlier U100/U40 and covariance scripts were rerun successfully (36 schedules, 72,000 semismooth content identities, 170,723 determinant inequalities, 36 projection and 90 induction checks). These checks verify exact finite identities and numerical inequalities, not the general analytic proof or asymptotic witness supply. No full repository, PDF or Lean rebuild was performed.
+
+## Quarter-scale terminal interpolation and discriminant checks
+
+Run `python3 verification/research/verify_terminal_interpolation.py` (Python 3.13.5, SymPy 1.14.0). Executed locally, with the tested Git blob `f1fc1142ce24b34632a84a66d69ac600c54ded6a` matching the committed file; SHA-256 `8eb4bb71e2a2be43393472507560aae91917b2201bf1427eb877b3145b8a414b`.
+
+```
+primitive binary transformations: 1061 local inequalities: 1927 sharp even-degree local fixtures: 27
+arbitrary-image odd-degree fields: 24 exact norm/image/bracket checks: 144
+rigidity finite fixtures: {'compact exponent checks': 3500, 'explicit multiplicity relations': 3, 'nonproduct correction fixtures': 5, 'product correction fixtures': 3}
+``
+
+The first part checks the exact discriminant scaling, local content valuations, squared rational diameter inequality and equality examples, including degree-drop/infinity handling. The second verifies modular root, irreducibility, integer norm and half-integer real-root sign brackets. The last uses exact polynomial remainders for bounded exponent combinations and verifies the explicit multiplicity relations in product-correction fixtures. It does not certify general numerical log rank or the asymptotic relation supply; those statements have separate proofs. See [discriminant bound](../../docs/projective_discriminant_barrier.md), [interpolation rigidity](../../docs/norm_one_terminal_interpolation.md), and [ideal reduction and support](../../docs/terminal_ideal_reduction_and_support.md). No full repository, PDF or Lean rebuild was performed.
