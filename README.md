@@ -6,7 +6,7 @@ This repository develops and audits improvements to the November 2026 Cogentic f
 
 **Start here:** [results and proof status](docs/proof_status.md) · [manuscripts](manuscripts/README.md) · [Lean proofs](lean/README.md) · [reproduce the checks](docs/reproducibility.md) · [sources and comparisons](docs/comparison_sources.md).
 
-**New KeyBreak continuation:** [source audit](docs/keybreak_source_audit.md) and [unconditional descent compression](docs/keybreak_unconditional_compression.md). The latter gives a conditional expected-time transfer at $`L_N[1/3,40]`$, with no GRH in the proposed arithmetic route; the transferred semismooth and ordinary covariance estimates and certificate inputs still require independent verification. This is not a new unconditional theorem. The source's $`L_N[1/3,2.97]`$ result assumes Dirichlet GRH.
+**New KeyBreak continuation:** [source audit](docs/keybreak_source_audit.md) and [unconditional descent compression](docs/keybreak_unconditional_compression.md). The latter gives a conditional expected-time transfer at $`L_N[1/3,40]`$, with no GRH in the proposed arithmetic route; the transferred semismooth and ordinary covariance estimates and certificate inputs still require independent verification. This is not a new unconditional theorem. A [simpler conditional 100 transfer](docs/keybreak_unconditional_fallback.md) retains the source's original square-root exceptional-mass recursion. The [GRH constant audit](docs/keybreak_grh_constants.md) gives a same-geometry 2.96 transfer and changed-range 2.95 target, conditional on the source/changed analytic estimates and GRH; the source itself claims 2.97.
 
 ## Results at a glance
 
