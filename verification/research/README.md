@@ -80,3 +80,15 @@ Run `python verification/research/character_lift_pool.py` with the earlier `prim
 ## Depth-free labels and general rank increase
 
 Run `python verification/research/depth_free_labels.py` with the standard library and the previous lattice and pooled-rank scripts. The verified tests include 177 fibre/translate comparisons, 602 additional proper-factor exits, 300 primitive annihilator checks and five full-rank finite factoring runs. The harness uses seeded random queries; it is not a deterministic coverage proof. Exact tested hashes, output and the analytic proof scope are in [the depth-free note](../../docs/depth_free_character_rigidity.md).
+
+## Descent accounting, height and linear advice checks
+
+Run `python verification/research/descent_and_advice_checks.py` (standard library only). Executed locally with Python 3.13.5. The committed blob matches the tested source.
+
+```
+exact small-bias eigenvalues: 80 walk survival bounds: 480
+exact incidence, cost cancellation and capped-restart identities: 4
+exact finite height/support checks: 60
+```
+
+Tested Git blob: `0779cbb260806dbd029e1b998d05c523800314e9`; SHA-256: `fa337fb45b64ddc2dc8010bdb4753be06c48da60ae75b689065cb2dceb331f62`. The small-field checks compare exact Walsh eigenvalues with independent polynomial-root counts, then count walks by integer transitions. Incidence and caps use exact rational probabilities. The height tests enumerate finite smooth pairs, check support preservation under reduction, and use a rational upper bound on the finite Euler product. These checks do not establish the asymptotic estimates, uniform advice construction or the adaptive CRT extension. See [linear advice](../../docs/linear_advice_half_scale.md), [height barrier](../../docs/short_ratio_scale_barrier.md), and [descent accounting](../../docs/multilevel_descent_accounting.md).
