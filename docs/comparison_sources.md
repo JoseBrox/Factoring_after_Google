@@ -51,3 +51,6 @@ The accessible precursor, Kasper Nielsen, *Theorem U-MF: a Las Vegas factoring a
 
 
 The [compressed unconditional-route continuation](keybreak_unconditional_compression.md) gives a new proposed expected-time transfer \(L_N[1/3,40]\) conditional on the explicitly stated ordinary and semismooth covariance transfer and source certificate/computation bounds. The arithmetic route is intended to be unconditional (no GRH); the independent proof audit is incomplete. This does not supersede the source's claimed GRH constant or establish a new unconditional record.
+
+
+The [U100 intermediate target](keybreak_unconditional_fallback.md) uses the source's original exceptional-mass transfer and sharpened ordinary moment parameters; it is conditional on the changed-range source estimates, without GRH in the proposed arithmetic route. The [G2.96/2.95 cost transfer](keybreak_grh_constants.md) retains Dirichlet GRH. The former uses the original source geometry and changes only caps; the latter also requires a changed-range analytic audit. They are separate from the U40 target and do not establish unconditional records.
