@@ -1,6 +1,6 @@
 # Comparison sources and scope
 
-Comparison date: 25 November 2026. The README's predecessor column identifies the exact bounds that the new constructions seek to improve. It does not promote a newly posted claim into an independently established literature record.
+Comparison date: 27 November 2026 (pinned Google baseline dated 25 November). The README's predecessor column identifies the exact bounds that the new constructions seek to improve. It does not promote a newly posted claim into an independently established literature record.
 
 ## Pinned recent predecessors
 
@@ -35,3 +35,16 @@ The comparison table uses the source's explicit exponential expression. The new 
 ## Citation policy
 
 Cite the theorem actually used, its hypotheses, and a stable version. For recent manuscripts, distinguish a written claim from independent review and from a checked formalization. For an improved parameter choice, check the proof at that choice rather than substituting new constants into a theorem that only states fixed old constants.
+
+## Additional reported November 2026 result: growing descent
+
+Kasper Nielsen and the KeyBreak Cryptanalysis Agent (Shanghai Jiao Tong University), *Provable Integer Factorization via Multilevel Descent: Approaching Heuristic Bounds* (2026; title and attribution provisional pending the primary PDF), [manuscript](https://crypto.sjtu.edu.cn/factoring.pdf). The [Big O Speedrun board](https://bigospeedrun.com/integer-factoring-randomized) reports:
+
+| Reported theorem | Expected time | Hypothesis/evidence |
+|---|---|---|
+| 1.1 | \(L_N[1/3,1013]\) | Claimed unconditional written proof |
+| 1.2 | \(L_N[1/3,2.97]\) | Claimed proof using Dirichlet GRH |
+
+Retrieved the board and [announcement/republication](https://cn-sec.com/archives/5619552.html) on 27 November. The primary PDF could not be retrieved, so its bytes, theorem hypotheses, proof, and exact constant computation have not been independently checked. The board's reported verification of an external GRH result is not a checked formalization of either factoring theorem. The claimed \(2.97\) is smaller than the source's \(105\) and our conditional \(91.4\), but no unconditional record or direct improvement is inferred from unverified claims.
+
+The accessible precursor, Kasper Nielsen, *Theorem U-MF: a Las Vegas factoring algorithm in expected time L_N[2/5]* (28 October 2026), [pinned manuscript](https://github.com/kasper0406/factoring-connection/blob/351e8eeee142b2b13790cf67c3e8e2e35aaf1f0d/notes/mfU_theorem.md), is the source for the generalized accounting arguments in [this note](multilevel_descent_accounting.md). It is a distinct manuscript. See the [source-intake audit](2026-11-27_source_intake_and_closure.md) for the missing evidence and the proof-level checklist. The README's pinned baseline column remains unchanged.
