@@ -56,3 +56,7 @@ Run `python verification/research/primitive_ratio_lattice.py` with the standard 
 ## Dyadic balancing and pooled relation rank
 
 Run `python verification/research/target_power_balance.py` and `python verification/research/pooled_shift_relations.py` with the standard library and the earlier `primitive_ratio_lattice.py` in the same directory. The former checks 2,496 balanced lattices, 16,425 primitive local CRT completions, additional 201-bit examples, and a cycle that succeeds only across shifts. The latter verifies full pooled rank seven at N=100160063 although all separate-target ranks vanish, and independently checks the integer coordinate certificates and factor 10007. Tested source hashes, complete output and the scope of the exact checks are recorded in [the power-shift note](../../docs/power_shift_pooled_relations.md). These tests do not prove uniform cofactor coverage.
+
+## Adaptive exponent separation and residual recycling
+
+Run `python verification/research/adaptive_pooled_rank.py` with the earlier primitive-ratio, balancing and pooled-shift scripts in the same directory. The local run checks 100 exact dependencies, a verified factor of 47053, and several intentionally retained unsuccessful searches showing residual rank growth without base rank growth even with shared CRT prescriptions. See [the proof and test scope](../../docs/adaptive_rank_or_residual.md).

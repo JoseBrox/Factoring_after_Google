@@ -261,3 +261,5 @@ The [shared AP/lattice counting continuation](docs/ap_lattice_conditional_counti
 [Primitive-ratio lattice aggregation](docs/primitive_ratio_lattice_aggregation.md) now gives exact compressed enumeration of smooth suffix pairs in determinant-scale boxes and a factor-free graph method for cancelling large residual cofactors. Dense short-ratio coverage is proved, but uniform deterministic selection at the required target powers remains open.
 
 [Dyadic balancing and pooled cofactor relations](docs/power_shift_pooled_relations.md) removes collinear target-lattice obstructions by admissible smooth shifts, and permits exact global cancellation across distinct target primes. Uniform successful rank increase within the half-scale budget is still open.
+
+[Adaptive rank-or-residual theorem](docs/adaptive_rank_or_residual.md) makes every residual dependence yield strict base-rank progress by exact exponent separation. Uniform control of new independent residual directions remains open; finite negative experiments are included.
