@@ -178,3 +178,15 @@ Three standalone scripts were executed locally with Python 3.13.5 (SymPy 1.14.0 
 The rational fixtures deliberately factor tiny integer representatives and enumerate masks; they verify the finite identities and actual integer-span correction witnesses, not the cost or density of a general factoring sampler. The conic script checks the exact distribution rather than statistically estimating it. The interpolation test checks compatible supplied norm/image data, not an algorithm for finding unknown square corrections. The asymptotic large-residual collision bound has a written proof using a published height theorem; its main conclusion is not inferred from these experiments. No full repository, PDF or Lean rebuild was performed.
 
 See [masked anchor theorem](../../docs/uniform_masked_anchor_supply.md), [square-resultant norm transport](../../docs/square_resultant_norm_transport.md), [conic refresh](../../docs/conic_masked_incidence_supply.md), [affine-core collision theorem](../../docs/affine_core_collision_supply.md) and [height barrier](../../docs/affine_tag_height_barrier.md).
+
+
+## Projected norm parity and paired affine lifts
+
+Run `python3 verification/research/verify_projected_norm_supply.py` with Python 3.13.5 and SymPy 1.14.0. Locally executed; committed blob `ee01ccbd26b0a74f57b0aabe5c7518fda6644ad2` matches the tested file, SHA-256 `09d2630d978d676775c494cdd0fb7dce8fc57e12f455632ddb6a39d37b080896`.
+
+- 160 weighted Euler coefficient cases, 1,760 coefficients, 60 even-energy generating function/Taylor checks.
+- 380 verified public-unit paired lifts, all exact polynomial, resultant and modular identities passed. Five tested batches (60, 80, 80, 80, 80 rows) all have **full rational squareclass rank**.
+- 108 accepted fixed-offset lifts, 12 nonunit-w guard cases, exact constant norm squareclass and fixed-polynomial norm projection. The five projected ranks are 14/15, 20/21, 23/24, 24/24 and 24/24; these samples are with replacement.
+- None of the 488 accepted signed norm products or projected norms has absolute squareclass supported at primes at most 101 (or 31 or 13). This is an exact finite negative result: divide out the small primes and test the residual for a perfect square. The squareclass rank calculations use gcd-free refinement and deletion of square bases, with no factorization of large norm products.
+
+The first construction uses a prescribed public difference of squares and paired remainders modulo a modular polynomial cofactor, not a private square root. Small fixtures skip gcd exits to isolate the transport. The fixed-offset construction is exact across the varying f's, but leaves one large variable integer norm. Neither its correctness nor the finite ranks establish an asymptotic low-rank core. See [construction, proof and per-fixture receipts](../../docs/paired_norm_affine_lift.md) and [projected norm parity collision bound](../../docs/projected_norm_parity_barrier.md). No full repository, PDF or Lean rebuild was performed.
