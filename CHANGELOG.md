@@ -1,5 +1,9 @@
 # Changelog
 
+## Correlated ideal-image transport and parity progress — 27 November 2026
+
+Proved joint ideal/image graph coupling, exact anchor-intersection rank savings and Smith-aware odd-coefficient extraction. Constructed shared-base packet reductions for nonprincipal ideals, relative-norm compression and prescribed ramified fields with complete modular roots and exact norm packets; proved cross-map gluing and a principal-packet capacity bound. Derived an exact integer parity quotient and conditional quarter-scale stopping implication. Three locally executed, blob-matched scripts check the exact integer, ideal, norm and parity identities, including two deliberately correlated factoring fixtures. Uniform anchor supply and initialization remain open; no new factoring exponent, record, workspace claim, or Lean/PDF/whole-repository build.
+
 ## Quarter-scale terminal relations and record comparison — 27 November 2026
 
 Proved a projective discriminant diameter bound excluding multiple low-height large-prime charts even after ramified content removal. Constructed shared exact norm-one units for arbitrary modular images and proved separated-linear-mark interpolation rigidity for correction degree below the mark count. Established a constructive ideal-norm reduction and a field-uniform bounded-element support theorem and an adaptive sealed-batch rank-deficit bound using Voutier's height bound. Added exact finite regression checks and recorded matched source hashes. Checked current public comparisons and added the 2.96 GRH-dependent transfer to the README table; 2.95 remains a changed-range candidate. No sub-one-third theorem, independent record certification, full implementation or Lean/PDF rebuild is claimed. Next target is joint modular-image transition and rank-compressing shared relation generation.
