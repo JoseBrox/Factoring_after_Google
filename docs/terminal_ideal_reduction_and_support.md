@@ -105,3 +105,45 @@ For a balanced odd semiprime the square group has cardinality \(\asymp N\). Henc
 This explains why the norm-one lifts in [the interpolation construction](norm_one_terminal_interpolation.md) can encode arbitrary modular targets despite having zero finite norm support: their field is selected *from those targets*. Its archimedean unit directions then contribute to the certificate's rank. One cannot silently use a fixed-menu density argument for such a target-dependent family. Compact powers with archimedean log height much larger than polynomial in L are not ruled out by the quarter-scale corollary.
 
 **Next mathematical interface:** construct a joint ideal-reduction and modular-image transition with a genuinely compressed support/rank budget, rather than a norm-only reduction or a rank-neutral unit lift. The exact support theorem and constructive ideal move can be used together to screen candidate shared fields. No sub-one-third complexity result follows yet.
+
+
+## 4. An adaptive unit-rank compression bound
+
+The fixed-menu assumption of §3 cannot be used against a field constructed from the current public squares. There is nevertheless a useful rank-deficit bound that applies even to arbitrary such adaptive field choices and nonlinear units.
+
+Let \(N=p_1p_2\) be an odd balanced semiprime with distinct primes, and let \(s_1,\ldots,s_k\) be independent uniform elements of the unit-square group modulo N. Suppose an arbitrary construction, after seeing the s's, produces a finite collection of odd-degree number fields with specified modular evaluation maps on the required localized orders. For each i it represents \(s_i\) as a product of the evaluations of algebraic units \(\gamma_{ia}\) in these fields. Rational sign factors can be included, and all needed evaluations must be defined and units. Let \(w_i\) be the concatenated archimedean log-unit vector, with \(\|w_i\|_2\le A\), and assume every field degree is at most D. Define \(r=\dim_{\mathbb R}\operatorname{span}(w_1,\ldots,w_k)\). Let \(1\le h\le k\) be a proposed rank deficit, so \(r\le k-h\).
+
+Put \(\epsilon=2/(\sqrt D(\log(3D))^3)\) from §2. The direct product of the log-unit lattices has the same lower separation bound \(\epsilon\), regardless of the number of fields: a nonzero vector has a nonzero component. Put \(K_0=1+2kA/\epsilon\) and choose an integer
+\[
+ Q=1+\lceil K_0^{(k-h)/h}\rceil .
+\]
+This choice depends only on the proposed public upper bounds, not on the actual field or rank.
+
+There are \((Q+1)^k\) integer coefficient vectors with every coordinate in \([0,Q]\). Their sums of w's have norm at most \(kQA\) in an r-dimensional span, and their distinct values are separated by \(\epsilon\). By the same volume packing as in §2, the number of distinct sums is at most
+\[
+ (1+2kQA/\epsilon)^r\le (QK_0)^r < Q^k .
+\]
+The strict inequality follows from \(Q^h>K_0^{k-h}\) and \(r\le k-h\); it also holds for r=0. Thus there exist two coefficient vectors with the same sum. Their difference is a nonzero integer vector c with \(|c_i|\le Q\) and \(\sum_i c_iw_i=0\). In every field the resulting unit product has zero log vector, hence is a root of unity, necessarily \(+1\) or \(-1\) in odd degree. Consequently the supplied modular row identities imply
+\[
+ \prod_i s_i^{2c_i}=1\bmod N .
+\]
+This last consequence is a counting device; doubling c here is **not** a fruitful odd-coefficient certificate. If all the field units have positive norm and the rational sign contribution is trivial, the factor 2 can be omitted.
+
+For any fixed nonzero c with \(|c_i|\le Q\), condition on all s's except a coordinate with \(c_i\ne0\). The cyclic square groups modulo \(p_1,p_2\) show that the power map with exponent \(2c_i\) has at most \(4Q^2\) elements in any nonempty fibre. Since the uniform square group has size \(\asymp N\), a union bound gives
+\[
+ \boxed{
+ \Pr\big(\text{there exists such an adaptive lift with deficit}\ge h\big)
+ \ \le\ \min\{1,\ O((2Q+1)^kQ^2/N)\}.
+ } \tag{4}
+\]
+The existential event allows arbitrary choices of the fields and nonlinear units after viewing the s's; no union over field coefficients or evaluation roots is needed. It is contained in the event of a bounded modular multiplicative relation. This argument also allows many fields, provided the actual concatenated log vector has the stated bound. It is not a statement about generic modular relations with unbounded coefficients.
+
+For \(k,D,A\) polynomially bounded in \(L=\log N\), \(\log K_0=O(\log L)\). In particular:
+
+- If \(k=o(L/\log L)\) and the desired deficit is a fixed positive fraction of k, Q is polynomial in L and (4) is \(\exp(-L+o(L))\).
+- If \(k=O(L^{1/2})\) and \(h/\log L\to\infty\), then \(\log((2Q+1)^k Q^2)=O((k+2)(1+k/h)\log L)=o(L)\); the same exponential rarity follows.
+- These conclusions survive \(\exp(o(L))\) fresh independent batches. They do not automatically survive selecting a subset from a much larger already exposed list; such a subset search needs its own accounting.
+
+Thus a direct batch of \(O(\sqrt L)\) fresh uniform squares cannot usually be compressed by a large number of unit-log directions into even adaptively chosen odd-degree fields with polynomial actual log heights. This is not confined to the separated-linear-mark interpolation of the earlier theorem. It does **not** rule out a deficit of one or two (the coefficient bound Q may then be too large for the union bound), compact exponents with very large actual logarithmic heights, a large relation matrix, non-unit finite support, or the correlated rational-prime incidence laws of a descent. Those exceptions are essential: the [exact unit certificate](exact_descent_unit_certificate.md) only requires a small strict rank surplus, not a constant fractional deficit.
+
+The practical research implication is to seek a few new shared dependencies or compression of the *correlated* terminal incidence ranks, rather than expecting a wholesale rank reduction of arbitrary independent sealed-square batches by choosing fields after observing them.
