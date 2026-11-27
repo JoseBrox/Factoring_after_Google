@@ -148,9 +148,10 @@ modulo 2M and never enumerates the powers t used in the proof.
 Their bit length is e+1.
 
 In particular the former requirement M^2=o(L) is removed.
-For every e of at most polynomial bit-size in the algorithm's
-resource bound, the exact linear-system and fibre operations
-retain their cost. To get the previous direct Jacobi root
+For every e whose numerical value is at most polynomial in the
+algorithm's resource bound, the exact linear-system and fibre
+operations retain their cost: a label modulo 2^(e+1) occupies
+at most e+1 bits. To get the previous direct Jacobi root
 split, its separate necessary extraction hypothesis
 e<v_2(N-1) is still imposed. We have not changed that
 hypothesis or asserted that a Jacobi-negative faithful
@@ -354,8 +355,8 @@ by the adjugate identity, and the character bound
 (5) proves that P generates G. The previous order
 chain then factors a composite with two distinct prime
 factors, with primes and perfect powers preprocessed.
-As usual deterministic recursion gives complete
-factorization. This is a uniform randomized half-scale
+Recursive completion using these randomized splitting calls gives
+complete factorization. This is a uniform randomized half-scale
 algorithm with a bounded rank resource, using only two
 short-ratio fibres and a one-prime shift.
 
