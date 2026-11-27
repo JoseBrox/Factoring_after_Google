@@ -200,3 +200,22 @@ Run `python3 verification/research/verify_normalized_norm_lattice.py single`, th
 - Pool: 25,344 exact candidate checks, 22,279 unit-guarded candidates and 22,229 distinct guarded (target,norm) pairs in eight fixtures. Useful target dimensions 1 and 3 only at N=899; one first witness gives factor 31 and the other trivial gcd 1. Six larger fixtures have full norm rank and no useful target direction. Independent augmented-rank comparison verifies each useful dimension. Earlier proper gcds from failed unit guards are deliberately recorded but not used to stop or select the relation pool. The final script checks the square correction on public square products before opening private roots; all modes were rerun after that guard refinement.
 
 See the [full mathematical note and per-fixture table](../../docs/normalized_norm_lattice_supply.md). These are exact finite experiments, not a practical factoring benchmark or an asymptotic density result. The separate [multiway counting obstruction](../../docs/multiway_norm_parity_barrier.md) is a written proof using the earlier generator-multiplicity bound. No full repository, PDF or Lean rebuild was performed.
+
+
+## Definite quadratic packet reduction and compact walks
+
+Run `python3 verification/research/verify_quadratic_packet_walk.py` and the same command with argument `pool`. Both ran locally to completion with Python 3.13.5 and SymPy 1.14.0. Tested and committed Git blob `6218d890ff2beeac662169776d300c64b415cbff`; SHA-256 `a95b1d5c54f2e2fcdf32656e837aaae2431f55fe8c2ed0e36bcf20b6810281fa`. The rank-two integer HNF code is independently checked against SymPy. Exact output:
+
+```
+independent HNF checks: 300 packet reductions: 258 128-bit exponent cases: 222 guard factors: 10
+exact square-coset fixture: generator orders [21, 7, 21] subgroup classes 21 equal multiplicity 147
+N 899 twists [1, 67] direct 12 (7, 5, [1, 31, 899]) pooled 44 (7, 8, [1, 31, 899]) walk steps 192 public guards [31]
+N 10403 twists [1, 87, 3] direct 12 (9, 3, [1, 103]) pooled 70 (14, 6, [1, 103, 10403]) walk steps 192 public guards [103]
+N 1022117 twists [1, 77, 15] direct 12 (12, 0, []) pooled 91 (48, 7, [1, 1009, 1013, 1022117]) walk steps 227 public guards [1009, 1013]
+N 100160063 twists [1, 107, 2] direct 12 (12, 0, []) pooled 555 (308, 12, [1, 10007, 10009, 100160063]) walk steps 835 public guards [10007, 10009]
+N 1000036000099 twists [1, 19, 74] direct 12 (12, 0, []) pooled 588 (579, 6, [1, 1000003, 1000036000099]) walk steps 1056 public guards []
+```
+
+All reductions check exact ideal conjugate products, integral quotient, norm index, squared Hermite bound and known square correction. The class-coset test exhausts the small generator groups only for an independent finite uniformity check. The pooled matrix uses explicit small fixture factorizations, not a general packet recognition algorithm; all witness roots within each certificate readout are verified against public square products before their private-root comparison. The pooled selection is fixed by public data independently of the direct certificate readout. Public guard factors are recorded but not used to select the rows. The last fixture genuinely has useful pooled directions without a public guard exit. These results do not prove asymptotic useful rank or density, or a full class-group implementation. See [the complete proof and scope](../../docs/compact_quadratic_packet_walks.md).
+
+The preceding interrupted fixed-field checkpoint also committed `verify_glued_norm_reduction.py`, `verify_fixed_cubic_packets.py`, and `verify_cubic_packet_prescriptions.py`. Their source is retained; their full execution was not rerun in this continuation. See [fixed-field glued reduction](../../docs/fixed_field_glued_packet_reduction.md), including the newly documented CRT simple-root construction. The square-constant cubic alternative is analyzed exactly in [linear norm-pairing budget](../../docs/linear_norm_pairing_budget.md), but not given a full comparative numerical experiment. No full repository, Lean or PDF rebuild was performed.
