@@ -145,3 +145,7 @@ Each is strictly less than \(59/20=2.95\). In particular the algebraic recogniti
 **Conditional changed-range conclusion:** if the source's arithmetic and certificate arguments are transferred with the guards above, the verified program has expected cost \(L_N[1/3,2.95]\) under Dirichlet GRH. The original termination and correctness checks apply unconditionally. The exact numerical schedule and margins are verified separately. Completing the independent analytic range check is required before claiming that this improves the source theorem, rather than its cost model. The same-geometry 2.96 transfer in §1 is preferable as the first rigorous continuation of the source.
 
 No first-parameter improvement below 1/3 is established. Both improvements use fixed constants; they do not address the separate uniform deterministic half-scale search problem.
+
+## 3. Exact finite check receipt
+
+Run [`verification/research/verify_keybreak_grh.py`](../verification/research/verify_keybreak_grh.py) (standard library). Locally executed with Python 3.13.5; its tested Git blob `6cb2c6d8e2543662f6d29b2494f454c4920c1de8` matches the committed source. SHA-256 `596a5e465ea8da00c3679e1cf156bfedf4c48385dbca3ac28d9dc1160f1e6d31`. The two rational/radical ledgers passed, as did 18 symbolic finite bit-length schedules (depth range 111–274). The checks certify the listed numerical inequalities and sampled finite guards, not the analytic transfer, factoring implementation or a Lean theorem.
