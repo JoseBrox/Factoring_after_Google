@@ -1,5 +1,9 @@
 # Changelog
 
+## Constructive paired norms and projected parity barrier — 27 November 2026
+
+Constructed uniform public-unit square-aware representations via base-digit polynomial norm forms and paired cofactor remainders, without supplied norm compatibility. Derived a fixed affine norm squareclass offset and reduction of the remaining term to one fixed monic algebra. Proved projector/resultant height restrictions and a rational norm parity collision bound allowing even exponents and relative ideal cancellations. The exact local suite passed all 380 paired lifts and 108 accepted fixed-offset lifts, but the variable squareclass ranks remain essentially full and no tested norm squareclass is supported at primes ≤101. Preserved negative supply results. No quarter-scale theorem, new record, or full Lean/PDF/whole-repository build.
+
 ## Uniform masked and affine-core anchor supply — 27 November 2026
 
 Proved uniform missing-parity anchor generation from a positive-mass bounded-novelty core using known-square anchors, integer lattice coverage and reusable square masks. Derived an ordinary-unit affine-core collision theorem, requiring only low-rank differences within matched same-square-coset tags. Established square-resultant norm transport with exact compatible interpolation, discriminant/resultant height obstructions, and exact conic-law refresh preserving sealed private fibres. Proved a determinant-scale fixed-field collision barrier even for coarse tags with low-rank true valuation differences. Three standalone exact suites were locally executed and their committed blobs matched. The remaining arithmetic core supply is open; no new factoring exponent, certified record, workspace claim, or full Lean/PDF/whole-repository build.
