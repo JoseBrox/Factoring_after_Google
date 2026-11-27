@@ -1,5 +1,9 @@
 # Changelog
 
+## Research closure and new partial results — 27 November 2026
+
+Audited the depth-free labelled rank checkpoint and clarified its resource and randomness scope. Added a linear-total-advice half-scale transfer, an unconditional determinant-scale smooth-ratio support obstruction, selected-incidence and capped-restart lemmas, growing-depth cost accounting, and adaptive sealed-root CRT separation. Registered the reported Shanghai growing-descent manuscript with explicit source-access limitation. Exact standalone finite checks were run and matched to their committed blob; no full-suite rebuild, new Lean milestone, or stronger uniform general factoring bound is claimed.
+
 ## Verified scalar supplied-order splitter — 26 November 2026
 
 Added ten checked theorems for the executable scalar scan, exact Euler stage and proper-gcd extraction, including equal-valuation opposite signs and unequal-valuation nonsquare success. Core total: 195 named theorems in 23 modules, 473 audited declarations. The witness-search complexity is not established by these results.
