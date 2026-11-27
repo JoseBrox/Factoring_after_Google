@@ -245,11 +245,11 @@ def parity_pool(N,ss,hs,data):
             else:aug[j]=z;break
     assert len(aug)-len(piv)==len(pp)
     if witness is None:return len(piv),len(pp),None
-    w=1;pr=1;sign=0;counts={};xp={}
+    w=1;expected=1;sign=0;counts={};xp={}
     for j,(i,n,c) in enumerate(data):
         if not (witness>>j)&1:continue
         sign^=int(n<0);counts[i]=counts.get(i,0)+1
-        w=w*pow(c,-1,N)%N;pr=pr*hs[i]%N
+        w=w*pow(c,-1,N)%N;expected=expected*ss[i]%N
         for k,e in exps[j].items():xp[k]=xp.get(k,0)+e
     assert sign==0 and any(e%2 for e in counts.values())
     for k,e in xp.items():
@@ -257,7 +257,11 @@ def parity_pool(N,ss,hs,data):
         if r*r==a:w=w*pow(r,e,N)%N
         else:
             assert e%2==0;w=w*pow(a,e//2,N)%N
-    assert w*w%N==pr*pr%N
+    assert w*w%N==expected
+    # Only now use the private roots, after public verification.
+    pr=1
+    for i,e in counts.items():pr=pr*pow(hs[i],e,N)%N
+    assert pr*pr%N==expected
     g=gcd((pr*pow(w,-1,N)-1)%N,N)
     assert N%g==0
     return len(piv),len(pp),g
