@@ -1,6 +1,6 @@
 # Claim and proof-status register
 
-Updated 26 November 2026. A status describes the evidence in this repository. The complete algorithmic claims and the Lean-verified components have separate statuses below.
+Updated 27 November 2026. A status describes the evidence in this repository. The complete algorithmic claims and the Lean-verified components have separate statuses below.
 
 ## Main claims
 
@@ -159,3 +159,13 @@ strategies must not be assumed to supply the missing relations.
 ### Depth-independent character rigidity
 
 [Depth-free character rigidity](depth_free_character_rigidity.md) proves that if more than half the powers of a label function approximate Dirichlet characters, their character approximations extend to a genuine homomorphism. This removes the M^2=o(L) limitation in the preceding Jacobi-labelled ratio coverage proof. A balanced ratio and its one-prime translate also give a uniform dense label-disagreement theorem for arbitrary primitive integer annihilators, without the Jacobi input restriction. Each successful query strictly increases ordinary rational relation rank, and the exact finite driver reaches full rank on five fixtures. Deterministic uniform target selection remains open; the existing randomized complexity and polynomial-advice result are not improved. No new Lean milestone is counted.
+
+### 27 November: closure, linear advice, architecture barrier and descent
+
+- [Closure and source intake](2026-11-27_source_intake_and_closure.md): the previous finite-group labelled-rank argument was audited and its label-storage and randomized-recursion wording clarified. The Shanghai PDF was not accessible, so only source metadata, reported claims, and precursor notes were reviewed. No source-proof validation.
+- [Linear advice](linear_advice_half_scale.md): a proved elementary expander-walk transfer from the common-anchor analytic input reduces total advice to \(O(n)\) bits for all inputs of length at most \(n\). It is **nonuniform**, not a uniform deterministic half-scale theorem.
+- [Volume–smoothness support bound](short_ratio_scale_barrier.md): unconditional counting theorem for arbitrary signed smooth rational certificates with bounded reduced height and a bounded shift menu; below half scale the direct dense-fibre architecture cannot retain its previous height/time parameters. No algorithm-independent lower bound.
+- [Descent accounting](multilevel_descent_accounting.md): proved abstract incidence, restart and recursion lemmas, plus adaptive independent sealed-root exposure and CRT separation. No Shanghai arithmetic estimate has been established or transferred.
+- [Exact finite checks](../verification/research/README.md#descent-accounting-height-and-linear-advice-checks): standalone Python script run locally, with its tested Git blob matched after commit. The full repository suite, PDFs and Lean artifacts were not rebuilt in this continuation. No new Lean milestone or upgraded general complexity exponent is counted.
+
+Priority: uniform deterministic \(L_N[1/2,O(1)]\) via an arithmetic-specific hitter. In parallel, obtain and audit the growing-descent manuscript and pursue a genuinely scale-changing randomized descent. The claimed and conditional bounds in the main table are unchanged.
