@@ -8,7 +8,7 @@ This repository develops and audits improvements to the November 2026 Cogentic f
 
 **KeyBreak continuation:** [source audit](docs/keybreak_source_audit.md), [U100](docs/keybreak_u100_proof.md), [U40](docs/keybreak_u40_proof.md), [critical U40 audit](docs/keybreak_u40_critical_audit.md) and [optimized U14.1 written proof](docs/keybreak_u142_proof.md#8-tighten-the-same-schedule-to-141). The new parameter schedule and separate recursive call quotas give expected-time $`L_N[1/3,14.1]`$ using the pinned manuscript's finite lemmas and classical unconditional analytic inputs, without GRH or a new semismooth conjecture. These are written research proofs, not independently certified records or complete Lean formalizations. The [GRH constant audit](docs/keybreak_grh_constants.md) remains separate (2.96 original-geometry and 2.95 changed-range conditional transfers).
 
-**Beyond one-third:** [probe-free exact valuation descent and unit certificate](docs/exact_descent_unit_certificate.md) removes the factorial-in-degree probe cost; [scale barriers and transformed-lattice quarter-scale target](docs/beyond_one_third_research.md) isolate the remaining relation-generation problem. [Sealed polynomial fibres](docs/sealed_polynomial_certificate.md) give an alternative smoothness-free extraction theorem with finite positive and negative experiments. No sub-one-third complexity theorem is claimed.
+**Beyond one-third:** [probe-free exact valuation descent and unit certificate](docs/exact_descent_unit_certificate.md) removes factorial-in-degree probes. The [projective discriminant diameter bound](docs/projective_discriminant_barrier.md) excludes shared low-height projective charts at distinct large primes. [Norm-one terminal interpolation](docs/norm_one_terminal_interpolation.md) constructs arbitrary-image shared units but proves rank rigidity for separated linear marks. [Terminal ideal reduction and support](docs/terminal_ideal_reduction_and_support.md) gives an alternative norm-reduction mechanism and a field-uniform counting bound. The remaining target is genuinely rank-compressing shared algebraic/rational relation generation at quarter scale. No sub-one-third complexity theorem is claimed.
 
 ## Results at a glance
 
@@ -18,7 +18,7 @@ All logarithms in the asymptotic expressions are natural. The standard subexpone
 L_N[\alpha,c]=\exp\!\bigl((c+o(1))(\log N)^\alpha(\log\log N)^{1-\alpha}\bigr).
 ```
 
-The table compares like-for-like inputs and computational models. **“Previous” means the bound in the pinned source being improved** (25 November 2026); historical benchmarks appear below. These are research manuscripts, not independently certified world records.
+The table compares like-for-like inputs and computational models. **“Previous” means the comparable bound in the pinned source or the earlier repository proof being improved**; historical benchmarks appear below. These are research manuscripts, not independently certified world records.
 
 | Problem / manuscript (PDF) | New complexity | Previous bound and source | Proof status |
 |:---|:---|:---|:---|
@@ -27,6 +27,7 @@ The table compares like-for-like inputs and computational models. **“Previous�
 | **[Deterministic quadratic nonresidues](papers/quadratic_nonresidues.pdf)** | $`\exp(O(\sqrt{\log p\,\log\log p}))`$ | $`\exp(O(\sqrt{\log p}\,\log\log p))`$ [D, Thm. 1.2][D] | Written proof; prime input. [LaTeX](manuscripts/quadratic_nonresidues/) |
 | **[Randomized factoring](papers/randomized_factoring.pdf)** — expected time | $`L_N[1/3,91.4]`$ | $`L_N[1/3,105]`$ [R, Thm. 1.1][R] | **Conditional.** [LaTeX](manuscripts/randomized_factoring/) |
 | **[KeyBreak-route randomized factoring](docs/keybreak_u142_proof.md)** — expected time | $`L_N[1/3,14.1]`$ | $`L_N[1/3,40]`$ (our U40; KeyBreak source states $`L_N[1/3,10^{13}]`$) | Written proof by changed-range transfer, source finite lemmas and published unconditional inputs; independent review and formal verification open. No new workspace bound. |
+| **[GRH-dependent KeyBreak transfer](docs/keybreak_grh_constants.md)** — expected time | $`L_N[1/3,2.96]`$ | $`L_N[1/3,2.97]`$ (KeyBreak, Theorem 1.2) | Conditional on Dirichlet GRH and source arithmetic/certificate estimates; original geometry. 2.95 is a separate changed-range candidate, not an established bound. |
 | Randomized factoring — workspace | $`L_N[1/3,19]`$ | $`L_N[1/3,40]`$ [R, Thm. 1.1][R] | **Conditional** for the full factorer. |
 | **[Quadratic relation chain](papers/quadratic_relations.pdf)** | $`O(\log M)`$ ring multiplications per trial | Auxiliary routine; retained construction [N1101][H] | Single-trial correctness and probability certified in Lean under mixed-sign promise; [code](src/factoring_after_google/quadratic_relations.py). |
 
