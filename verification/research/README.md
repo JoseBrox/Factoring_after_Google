@@ -104,3 +104,17 @@ exact semismooth content identities: 72000
 ```
 
 Tested Git blob `85231107645e41ed4b383cc564e543f9b95293f6` matches the committed file; SHA-256 `9f6d2e9f3475ac252961c6f12f0190272d1ffe1261b821c54cddcf882fd03128`. The finite schedules use enormous symbolic bit lengths without instantiating the input integers. They test exact cutoff/shape/height guards, exact rational constant inequalities, and the semismooth content dichotomy and capped valuation cases. They do not establish the analytic transfer, practical running time, or a full factoring theorem. See [the derivation](../../docs/keybreak_unconditional_compression.md).
+
+## KeyBreak fallback and GRH constants
+
+Run `python3 verification/research/verify_keybreak_fallback.py` and `python3 verification/research/verify_keybreak_grh.py` (standard library). Executed with Python 3.13.5. Output:
+
+```
+fallback exact leading constants: 17 4959/100 target 100
+fallback finite schedules: 18 depth range: 81 206
+original geometry: exact target 74/25
+revised geometry: exact target 59/20
+revised finite schedules: 18 depth range: 111 274
+```
+
+Fallback tested blob `ce9361b129c86f87226d2c82e73e2ea46fd1af65`; SHA-256 `b497b0d76597f7bc46e31e98682e5484ab84a0714e927e2f3740fb00abc1cc19`. GRH tested blob `6cb2c6d8e2543662f6d29b2494f454c4920c1de8`; SHA-256 `596a5e465ea8da00c3679e1cf156bfedf4c48385dbca3ac28d9dc1160f1e6d31`. Both match their committed source. These are exact checks of rational parameter inequalities, squared positive margins for radicals, and the specified finite exponent guards at symbolic bit lengths; they do not prove the full source or changed-range analytic estimates. See [U100](../../docs/keybreak_unconditional_fallback.md) and [G2.96/2.95](../../docs/keybreak_grh_constants.md).
