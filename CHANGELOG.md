@@ -1,5 +1,9 @@
 # Changelog
 
+## U40 audit, U14.1 and scale-breaking continuation — 27 November 2026
+
+Critically reviewed U40's covariance and certificate imports; no fatal defect identified in the inspected arguments. Derived the reduced-degree/thin-box/smaller-window optimization with separate exact algebraic quotas and cubic root reconstruction, and tightened the expected-time constant to 14.1 with exact recursive margins. Proved an exact valuation-descent, ideal-refinement and saturated unit-log certificate removing factorial-in-degree probe length. Added explicit one-third architecture obstructions, a transformed-lattice quarter-scale research target, and sealed polynomial permutation extraction with positive and negative finite LLL fixtures. Tested and matched new standalone scripts; independent review, full implementation and Lean/PDF/whole-repository verification remain open. No sub-one-third factoring theorem, certified record or improved workspace claim.
+
 ## KeyBreak U100 and U40 written proofs — 27 November 2026
 
 Derived the changed-range ordinary local-density and covariance estimates for U100, including exceptional-character and common-determinant bounds, then the weighted semismooth concentration and linear exceptional-mass transfer for U40. Closed the two expected-time recurrences in written proofs using the pinned source's finite lemmas and published unconditional analytic results. No GRH or new semismooth conjecture is an explicit hypothesis of the written derivations. Added and executed exact full-content, conditional projection, determinant and weighted imprimitive induction checks; reran the U100/U40 schedule scripts. Updated proof status and linked the historical conditional checkpoints to the new proofs. Independent review, full formal verification and implementation remain open; no certified record, new workspace claim or new Lean milestone is asserted.
