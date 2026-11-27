@@ -45,8 +45,8 @@ prime-character estimates. The following are the key checks.
 * The rank driver is randomized. The recursion has deterministic
   control, with randomized splitting calls; the phrase "deterministic
   recursion" is not a claim of deterministic factoring. When the label
-  modulus is \(2^{e+1}\), it is **the value \(e+1\)** (the bit length of
-  that modulus), not the bit length of the integer \(e\), that must fit
+  modulus is \(2^{e+1}\), it is **the value \(e+1\)** (the maximum bit length of
+  a canonical label), not the bit length of the integer \(e\), that must fit
   the stated resource budget.
 
 The analytic dependency is the exact externally comparator-accepted
