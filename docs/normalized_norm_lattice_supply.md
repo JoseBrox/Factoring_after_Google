@@ -164,7 +164,7 @@ Equivalently, subtract one representative for each target from all its other rep
 
 ## 6. Exact experiments and limitations
 
-Run [verify_normalized_norm_lattice.py](../verification/research/verify_normalized_norm_lattice.py), Python 3.13.5, SymPy 1.14.0. Tested and committed blob 3a642a6a2efeafca6b1b2757271b9bb8422d9797, SHA-256 d03314a39abe14f70de01555bf7b8da0bcf21251c4d2f478e34148e637ba398f. Modes single, principal, and pool (optionally with explicit fixture moduli) allow separately bounded runs. We verified Hensel lifts, actual integer resultants, HNF index/equalities, exact modular corrections, LLL lattice preservation and independent augmented-rank comparison. No numerical root/rank tolerance was used.
+Run [verify_normalized_norm_lattice.py](../verification/research/verify_normalized_norm_lattice.py), Python 3.13.5, SymPy 1.14.0. Tested and committed blob c3b7913fad720b5ea3b66cd0528ea92a0acbb7b0, SHA-256 bcdc2d3b83c1d2c7349ffc778374a04f3aa0ae172a2beaf5ca8db8c845d09aec. Modes single, principal, and pool (optionally with explicit fixture moduli) allow separately bounded runs. We verified Hensel lifts, actual integer resultants, HNF index/equalities, exact modular corrections, LLL lattice preservation and independent augmented-rank comparison. No numerical root/rank tolerance was used. The final script verifies the square-root correction against the public square product before accessing any private root. All modes were rerun after this guard refinement; all exited successfully.
 
 ### Single selected norms
 
