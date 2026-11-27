@@ -1,5 +1,9 @@
 # Changelog
 
+## Definite quadratic packet reduction and compact class-coset walks — 28 November 2026
+
+Recovered the interrupted fixed-cubic checkpoint and documented its CRT simple-root prescription. Derived a shared short-twist bank and a simultaneous-sign sparse-packet reduction with explicit known-square corrections, improving the individual residual norm ceiling to O(N^0.58) for supplied primes at most N. Proved compact class-preserving norm reduction, square-step composition and uniform abstract class-coset sampling without class number or order computation. Established a general linear norm-pairing determinant budget and analyzed the cubic square-coefficient slice. Locally executed exact quadratic tests with matched blob and positive repeated-target parity gains on five finite fixtures, including a 40-bit modulus without a public guard exit. The initial packet recognition and asymptotic residual-rank supply remain open; no new factoring exponent, constant, certified record, or full Lean/PDF/whole-repository build.
+
 ## Hensel-normalized norm lattices and multiway parity — 27 November 2026
 
 Proved a homogeneous fixed-algebra norm/image representation with prescribed N-adic depths and exact norm normalization. Derived the localized lattice equivalence and known-square masks for principal depth shifts, and the exact useful-target parity dimension for repeated representations. Extended determinant-scale projected norm parity collision bounds to arbitrary subsets of quarter-scale distinct-input pools and quantified the repeated-input limitation. Executed exact norm-lattice and pooled rank tests, with positive results on the smallest fixture and negative results on six larger fixtures, plus 384 depth-equivalence identities. Matched final tested script after verifying public correction before private-root exposure. No new complexity exponent, record, workspace claim, or full Lean/PDF/whole-repository build.
