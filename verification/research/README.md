@@ -118,3 +118,16 @@ revised finite schedules: 18 depth range: 111 274
 ```
 
 Fallback tested blob `ce9361b129c86f87226d2c82e73e2ea46fd1af65`; SHA-256 `b497b0d76597f7bc46e31e98682e5484ab84a0714e927e2f3740fb00abc1cc19`. GRH tested blob `6cb2c6d8e2543662f6d29b2494f454c4920c1de8`; SHA-256 `596a5e465ea8da00c3679e1cf156bfedf4c48385dbca3ac28d9dc1160f1e6d31`. Both match their committed source. These are exact checks of rational parameter inequalities, squared positive margins for radicals, and the specified finite exponent guards at symbolic bit lengths; they do not prove the full source or changed-range analytic estimates. See [U100](../../docs/keybreak_unconditional_fallback.md) and [G2.96/2.95](../../docs/keybreak_grh_constants.md).
+
+## KeyBreak ordinary and semismooth proof checks
+
+Run `python3 verification/research/verify_keybreak_covariance.py` (standard library). Executed with Python 3.13.5. Output:
+
+```
+full-content cases: {'capped-parent': 78, 'exact-parent': 24, 'excluded-content': 126, 'unit-parent': 84, 'weighted-content': 156}
+conditional projection identities: 36
+common-determinant inequalities: 170723
+weighted imprimitive induction identities: 90
+```
+
+Tested Git blob `cb46a73f00871b5b4be8296df61a9353385be5b8` matches the committed script; SHA-256 `510142605c0f0777dafbae8211579b1a78607d3e545b5ca1a48174afcee46abe`. The finite checks compare exact odd content numerators with the divided-cell counts, including both cap-one and higher-cap parent valuations; verify the ideal CRT full-content law, conditional independence and projection identities; check the squared lcm inequality; and compare weighted imprimitive character induction with direct sums. The earlier U100 and U40 schedule scripts were also rerun successfully (36 schedules and 72,000 semismooth content identities). These exact checks do not certify the asymptotic covariance, analytic imports, bit-complexity proof or practical runtime. See [U100 written proof](../../docs/keybreak_u100_proof.md) and [U40 written proof](../../docs/keybreak_u40_proof.md).
