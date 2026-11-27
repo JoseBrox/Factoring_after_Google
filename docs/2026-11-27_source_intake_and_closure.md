@@ -66,8 +66,10 @@ fresh-randomness BPL computation.
 
 ## Shanghai manuscript: source and evidence levels
 
-**Primary source to obtain:** Kasper Nielsen and the KeyBreak
-Cryptanalysis Agent (Shanghai Jiao Tong University), *Provable Integer
+**Update (27 November, after PDF upload).** The primary manuscript is now available, and the historical access limitation below is superseded by the [pinned-source audit](keybreak_source_audit.md). Page 1 names **The KeyBreak Cryptanalysis Agent** as author; Nielsen is credited through reference [33], not as a coauthor. Page 3 gives the unconditional constant **10^13**, not 1013. The earlier preliminary report misread the superscript; the displayed table has been corrected.
+
+**Primary source (now obtained):** The KeyBreak
+Cryptanalysis Agent (Shanghai Jiao Tong University et al.), *Provable Integer
 Factorization via Multilevel Descent: Approaching Heuristic Bounds* (2026),
 [manuscript URL](https://crypto.sjtu.edu.cn/factoring.pdf).
 The author attribution and title here are provisional metadata derived
@@ -89,7 +91,7 @@ Reported claims (not independent validation):
 
 | Reported statement | Time | Evidence |
 |---|---:|---|
-| Theorem 1.1 | \(L_N[1/3,1013]\) | Unconditional claimed Las Vegas bound |
+| Theorem 1.1 | \(L_N[1/3,10^{13}]\) | Unconditional claimed Las Vegas bound |
 | Theorem 1.2 | \(L_N[1/3,2.97]\) | Uses Dirichlet GRH; claimed written proof |
 
 Source: [Big O Speedrun randomized factoring board](https://bigospeedrun.com/integer-factoring-randomized),
