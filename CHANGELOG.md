@@ -1,5 +1,9 @@
 # Changelog
 
+## Uniform masked and affine-core anchor supply — 27 November 2026
+
+Proved uniform missing-parity anchor generation from a positive-mass bounded-novelty core using known-square anchors, integer lattice coverage and reusable square masks. Derived an ordinary-unit affine-core collision theorem, requiring only low-rank differences within matched same-square-coset tags. Established square-resultant norm transport with exact compatible interpolation, discriminant/resultant height obstructions, and exact conic-law refresh preserving sealed private fibres. Proved a determinant-scale fixed-field collision barrier even for coarse tags with low-rank true valuation differences. Three standalone exact suites were locally executed and their committed blobs matched. The remaining arithmetic core supply is open; no new factoring exponent, certified record, workspace claim, or full Lean/PDF/whole-repository build.
+
 ## Correlated ideal-image transport and parity progress — 27 November 2026
 
 Proved joint ideal/image graph coupling, exact anchor-intersection rank savings and Smith-aware odd-coefficient extraction. Constructed shared-base packet reductions for nonprincipal ideals, relative-norm compression and prescribed ramified fields with complete modular roots and exact norm packets; proved cross-map gluing and a principal-packet capacity bound. Derived an exact integer parity quotient and conditional quarter-scale stopping implication. Three locally executed, blob-matched scripts check the exact integer, ideal, norm and parity identities, including two deliberately correlated factoring fixtures. Uniform anchor supply and initialization remain open; no new factoring exponent, record, workspace claim, or Lean/PDF/whole-repository build.
