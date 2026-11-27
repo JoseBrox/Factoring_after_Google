@@ -38,6 +38,13 @@ def check_constants():
     print('strict cube margins:', (1-s/target)**3-Q(1,2), (1-va/target)**3-theta)
 
 
+def check_tighter_target():
+    s, va, C, shrink = Q(727,250), Q(791,125), Q(141,10), Q(3011,18000)
+    assert Q(301,1800) < shrink
+    assert (1-s/C)**3 > Q(1,2) and (1-va/C)**3 > shrink
+    print('U14.1 strict cube margins:', (1-s/C)**3-Q(1,2), (1-va/C)**3-shrink)
+
+
 def degree(n, mb):
     threshold = c**3*n
     lo, hi = 1, 1
@@ -72,6 +79,7 @@ def schedule(n):
     assert he+mhi+2+(32*(d+2)).bit_length() <= hstar*d*t
     assert he+mhi+4 < n-1
     assert 125*(hstar*d*t+d*ve(e0)) <= 21*(n-1)
+    assert 18000*(hstar*d*t+d*ve(e0)) <= 3011*(n-1)
     assert 2*ve(e0)+2 <= mlo
     assert 5*ve(e1)+e1+20 <= mlo
     e, levels = e0, 0
@@ -97,6 +105,7 @@ def schedule(n):
 
 if __name__ == '__main__':
     check_constants()
+    check_tighter_target()
     lengths = [2**a+j for a in (1000,1100,1200,1500,2000,2500) for j in (0,1,19)]
     levels = [schedule(n) for n in lengths]
     print('finite schedules:', len(levels), 'depth range:', min(levels), max(levels))
