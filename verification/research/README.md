@@ -72,3 +72,7 @@ Run `python verification/research/primary_pool.py`, `python verification/researc
 ## Squareclass pooling at known square multipliers
 
 Run `python verification/research/squareclass_pool.py` with the standard library and the prior primitive-ratio and two-primary scripts. It checks 2,066 squareclass memberships, 1,165 no-factor online prefixes and 92 factor exits, 480 incremental/batch comparisons, a two-ratio collision, and longer parity certificates at N=100160063 and N=1000036000099. The [proof and test receipt](../../docs/squareclass_ratio_pool.md) includes exact tested source hashes and a rigorous sparsity bound for the two-row criterion. Uniform coverage is not asserted.
+
+## Character-lift ratio coverage
+
+Run `python verification/research/character_lift_pool.py` with the earlier `primitive_ratio_lattice.py` alongside it. The script checks 2,000 modular linear systems against brute force, 100 large-modulus solvable systems, 380 Jacobi-labelled root exits, and four seeded finite short-ratio searches at lifting depths one through four. The finite harness ignores already found coordinate gcd factors only to exercise the new character-lift extraction. See [proof, exact receipts and scope](../../docs/character_lift_ratio_coverage.md). No deterministic uniform coverage claim is made.
