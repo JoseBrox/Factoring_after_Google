@@ -37,7 +37,7 @@ These are nonnegative subprobabilities. The total core mass of the ordinary-unit
  p=\frac1g\sum_D\sum_\tau p_{D,\tau}.
 \]
 
-**Theorem (correlated collision law).** Under uniform s in S, the raw ratio sampler has a core of mass
+**Theorem (correlated collision law).** Under uniform s in S, the raw ratio sampler (retaining its pair data) has a core event of mass
 \[
  \boxed{
  \Gamma=\frac1g\sum_D\sum_\tau p_{D,\tau}^{\,2}
@@ -93,3 +93,7 @@ For ordinary rational representations take, for example, the integer representat
 The difficulty is the collision mass, not the validity of the cancellation. The [large-residual collision theorem](affine_tag_height_barrier.md) proves that for these rational tags with determinant-scale heights, the uniform same-square-coset collision mass is much smaller than the quarter-scale budget on balanced semiprimes. Its more general fixed-field version also excludes matching the entire outside-base ideal vector in the small-degree, bounded-log-height regime. Consequently the next viable use of (2) must exploit a *coarser* shared offset whose cancellation leaves a genuinely controlled residual **span**, or allow a materially different height/field-family budget. Counting all newly introduced primes separately is not necessary for the new rank hypothesis, but assuming their dependence without proof would be unsound.
 
 The exact finite tests and their scope are recorded in [the verification guide](../verification/research/README.md). No uniform lower bound on \(\Gamma\) for the general number-field descent has been established.
+
+## 5. Exact finite check
+
+The [tested script and receipt](../verification/research/README.md#uniform-masked-anchors-and-affine-core-collision-supply) enumerate 986,984 same-coset pairs in eight small rational fixtures. All 23,188 matched tags give verified rational representations supported on the small base, and the same-coset collision formula agrees exactly with the enumeration. For example, at N=1189 and B=7 the ordinary representation vectors have rank 193, but the matched difference space has rank 4; its collision mass is 4819/156800. Unsealed sampled banks and exact integer membership give uniform masked-mass checks on all 986,984 mask/target pairs and 1,046 verified roots. The tests use deliberately tiny integer factorizations and exhaustive mask choices, not a practical or asymptotic core-generation algorithm. The barrier in the companion note shows why this literal tag method is not a quarter-scale supply theorem.
