@@ -265,3 +265,5 @@ The [shared AP/lattice counting continuation](docs/ap_lattice_conditional_counti
 [Adaptive rank-or-residual theorem](docs/adaptive_rank_or_residual.md) makes every residual dependence yield strict base-rank progress by exact exponent separation. Uniform control of new independent residual directions remains open; finite negative experiments are included.
 
 The [support-budget and 2-saturation continuation](docs/support_budget_and_two_saturation.md) gives exact factor-free residual-span membership, support-growth accounting and complete 2-primary readout from the full pooled relation lattice. A factor can now be recovered even with zero pure rank. Uniform support-budget control and uniform deterministic half-scale factoring remain open.
+
+[Primary pooling and batch-affine separation](docs/primary_pool_extraction.md) extends the exact readout beyond square roots of unity, gives a half-scale LLL exit from a sufficiently large certified common order, and makes signed affine residual dependencies rank-increasing. Uniform success remains open.
