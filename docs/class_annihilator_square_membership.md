@@ -86,3 +86,10 @@ Run [verify_class_annihilator_readout.py](../verification/research/verify_class_
 Three finite quadratic fixtures use supplied class numbers by exhaustive form enumeration (not a fast class-number procedure), and explicitly factored small public square representatives. For N=899,10403,1022117 the supplied class numbers are 42,90,928; the generated 2-ranks are 0,0,1 respectively. All three constructed verified public square roots before private comparison and returned factors 29,103,1013, with no public guard exit. These tests are small examples of the conditional readout, not evidence that the smooth-annihilator hypothesis holds at quarter scale.
 
 The necessary future arithmetic advance is thus different from a full-coset norm-rank bound: obtain a sufficiently cheap **witnessed class square preimage**, or generate enough genuine odd class relations/annihilators in a shared group. The raw genus rank does not supply these witnesses. Neither a uniform such generation theorem nor a sub-one-third factoring bound is proved. No full repository, PDF or Lean build was performed.
+
+
+## Subsequent polynomial readout and partial annihilator generation
+
+The [unitary-divisor theorem](partial_class_annihilators.md) replaces the top-element table by exact gcd-refined binary divisor coordinates for every odd \(D>4\), including nonmaximal orders. The earlier exponential dependence on the 2-rank is unnecessary in this case. For \(D=kN\) with odd coprime k, a mixed ambiguous divisor is a proper factor; absent such an exit, the actual constructed subgroup has 2-rank at most \(\omega(k)+\mathbf1_{D\equiv1\bmod4}\).
+
+The same note constructs verified annihilators from collisions in \(G^E\) with sample count \(O(s+\sqrt{s|G^E|})\), and useful partial annihilated words with only one or two independent sealed parities needed at k=1 after killing the 2-primary part. The input-sensitive cost need not involve the entire original odd group. No assumption of small residual group size is inferred from this construction, and initialization remains a separate open problem.
