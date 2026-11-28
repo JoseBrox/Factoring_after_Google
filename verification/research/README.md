@@ -219,3 +219,36 @@ N 1000036000099 twists [1, 19, 74] direct 12 (12, 0, []) pooled 588 (579, 6, [1,
 All reductions check exact ideal conjugate products, integral quotient, norm index, squared Hermite bound and known square correction. The class-coset test exhausts the small generator groups only for an independent finite uniformity check. The pooled matrix uses explicit small fixture factorizations, not a general packet recognition algorithm; all witness roots within each certificate readout are verified against public square products before their private-root comparison. The pooled selection is fixed by public data independently of the direct certificate readout. Public guard factors are recorded but not used to select the rows. The last fixture genuinely has useful pooled directions without a public guard exit. These results do not prove asymptotic useful rank or density, or a full class-group implementation. See [the complete proof and scope](../../docs/compact_quadratic_packet_walks.md).
 
 The preceding interrupted fixed-field checkpoint also committed `verify_glued_norm_reduction.py`, `verify_fixed_cubic_packets.py`, and `verify_cubic_packet_prescriptions.py`. Their source is retained; their full execution was not rerun in this continuation. See [fixed-field glued reduction](../../docs/fixed_field_glued_packet_reduction.md), including the newly documented CRT simple-root construction. The square-constant cubic alternative is analyzed exactly in [linear norm-pairing budget](../../docs/linear_norm_pairing_budget.md), but not given a full comparative numerical experiment. No full repository, Lean or PDF rebuild was performed.
+
+
+## Quadratic class-coset rank obstruction and small-subgroup readout
+
+Run `python3 verification/research/verify_class_coset_rank.py` with Python 3.13.5, SymPy 1.14.0, using the earlier exact rank-two ideal arithmetic module. Local execution of the final script succeeded; committed Git blob `7d19ed8603f87b52c387305bc3dba8a29bf9c882` matches the tested file (SHA-256 `f92c1d3517d849ba071c07f81bb9de029e1addbc9790d68d8bb6054108b2f8b0`).
+
+The program exhaustively enumerates 11,000 primitive reduced forms across nine discriminants \(-4D\), including nonmaximal orders; checks 2,116 good and 96 bad prime-power root bounds, all 34 full squared class cosets, and 102 affine-support containments. The smaller form lists are independently compared with direct enumeration of the middle coefficient. Squaring every class and checking the canonical boundary forms verifies the 2-torsion count; explicit ideal compositions partition the full group. In all nine fixtures the first four small split-prime ideals' squared classes generate the **entire** squared subgroup. This is measured in these finite cases, not asserted uniformly for large N. Short products of these ideal generators are also checked to retain their distinct minimal norm whenever the size guard holds.
+
+For \(D=100160063\), the class number is 8,460 and the two squared cosets have 4,230 classes each. The complete rational norm parity ranks are 396 and 401, and their affine ranks are 396 and 400. Forty-eight independent class draws per coset give bank ranks 34 and 39; their spans cover respectively 1,619 and 1,896 of the 4,230 classes. These are exact finite coverage counts, not asymptotic probabilities.
+
+The small-group readout explicitly factors tiny public square representatives as supplied input data. It enumerates the generated squared subgroup and verifies a witnessed equal-class square correction before private-root access. The three fixtures yield:
+
+- N=899: squared subgroup 21, dictionary 21, odd target mask 1, gcd 31.
+- N=10403: squared subgroup 45, dictionary 45, odd target mask 1, gcd 101.
+- N=1022117: public guard factor 1009 during the composition search.
+
+See [the uniform counting theorem and small-group alternative](../../docs/quadratic_coset_rank_obstruction.md). Tatuzawa's effective lower-bound theorem was checked against the actual primary page, as was the principal-genus application in Hopkins–Stopple. Cox's ring-class-number formula was checked in the extracted primary text; its large PDF screenshot fetch failed with HTTP 400. The written proof is independent of the finite tests.
+
+## Witnessed square membership from a supplied class annihilator
+
+Run `python3 verification/research/verify_class_annihilator_readout.py` (same Python/SymPy versions; imports the two previous class modules). Executed final script with matching committed blob `502cd9dc8c146d2ce45c5e091501254f28a0f90e`; SHA-256 `6283d20325b7f5282da9c7f7ace1516fb7476196bcef5c54c0150fb6be6993f2`.
+
+Exact output:
+
+```
+abstract-group certificates: 250 order-lowering repairs: 1502 exhaustive coordinate checks: 4753
+class fixture: 899 supplied h: 42 2-rank: 0 odd mask: 1 gcd: 29
+class fixture: 10403 supplied h: 90 2-rank: 0 odd mask: 1 gcd: 103
+class fixture: 1022117 supplied h: 928 2-rank: 1 odd mask: 1 gcd: 1013
+class certificates: 3 guard exits: 0
+```
+
+The abstract 2-primary subgroups are independently enumerated for order/basis/top-table comparisons. The three actual quadratic fixtures obtain their supplied annihilator from exhaustive small form enumeration, and use explicitly factored small packet representatives. The algorithm checks the annihilator on the generators, recovers exact cyclic 2-primary coordinates, and verifies the explicit class square word and corresponding public modular square correction before comparing hidden roots. See [the conditional proof and scope](../../docs/class_annihilator_square_membership.md). These are not algorithms for supplying a class number, smooth annihilator, or general initial factored packets at quarter scale. No full repository, PDF or Lean rebuild was performed.
