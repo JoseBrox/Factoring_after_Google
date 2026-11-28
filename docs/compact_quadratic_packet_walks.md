@@ -123,3 +123,15 @@ The last fixture has no public guard factor; its six independent useful directio
 **Next mathematical target.** The new compact class walk solves the repeated-target *generation* and uniformity part for a fixed squared subgroup, rather than relying on repeated short-vector searches in nearly equivalent lattices. It still leaves the distribution of projected residual norm squareclasses in those class cosets. A quarter-scale theorem needs a joint bound on useful parity rank or low-rank core mass at that scale, together with a charged initial packet recognition procedure. The classical discriminant-size envelope alone cannot reach this scale. The separate [linear norm-pairing budget theorem](linear_norm_pairing_budget.md) explains why simply replacing the definite quadratic order by a larger square-norm algebra does not solve the envelope problem.
 
 No full repository, manuscript PDF or Lean rebuild was performed. No new best general factoring constant or exponent is claimed.
+
+
+## 7. Subsequent coset-rank obstruction and witnessed readout
+
+The [class-coset norm-rank theorem](quadratic_coset_rank_obstruction.md) resolves the proposed unrestricted rank question negatively for large, independently mixed square subgroups. For minimum norms \(n(x)\) with \(X=\lfloor\sqrt{4kN/3}\rfloor\), every affine parity space of quarter-scale dimension has uniform coset mass at most
+\[
+ (X/|H|)\exp(-(1-o(1))U\log U),\qquad
+ U\asymp(\log N)^{3/4}(\log\log N)^{-3/4}.
+\]
+The bound includes even exponents, arbitrary shared rational prime labels and adaptive offsets. Tatuzawa's effective class-size theorem and an elementary order-2 form count imply that for nonexceptional squarefree inputs with the stated small prime-count guard, full squared cosets and near-full squared subgroups have exponentially negligible mass in such spaces. It also excludes rank gains from a capped sequence of fresh uniform class draws even if the same sealed target is reused. Intermediate class guard factors, deliberately dependent class moves, and sufficiently small or high-index subgroups are not ruled out.
+
+In finite checks the first four small split generators give the entire squared subgroup in nine discriminants. The new [small-subgroup dictionary](quadratic_coset_rank_obstruction.md#5-a-constructive-alternative-for-genuinely-small-squared-subgroups) supplies explicit square-correction witnesses when the generated squared subgroup times its 2-torsion budget is small enough. More generally the [supplied-annihilator theorem](class_annihilator_square_membership.md) computes witnessed class square preimages without enumerating the squared subgroup or factoring reduced norms. Both are conditional algorithms requiring their stated input supply; no general quarter-scale bound follows. The next viable class route is genuinely correlated generation or cheap witnessed class-square/annihilator supply, not unrestricted uniform mixing.
