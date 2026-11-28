@@ -1,5 +1,9 @@
 # Changelog
 
+## Partial class annihilators and polynomial ambiguous-form coordinates — 28 November 2026
+
+Proved exact unitary-divisor coordinates for order-two classes of odd quadratic orders, including nonmaximal/nonsquarefree cases, removing exponential top-table enumeration. Derived the stronger factoring-specific no-exit 2-rank bound. Constructed verified annihilators via powered-subgroup collision matrices and useful odd sealed relations via a few independent partial-annihilator words, with input-sensitive birthday sample bounds. Locally executed three exact test modes and matched the committed blob; four finite public root certificates include three trivial comparisons, plus one proper public guard exit. Initial packet supply and uniform inexpensive residual-order generation remain open. No new factoring complexity record or full repository/Lean/PDF build.
+
 ## Class-coset norm-rank obstruction and witnessed square membership — 28 November 2026
 
 Proved a uniform affine support count for reduced quadratic class norms, including all even prime powers and nonmaximal-order local multiplicities. Combined it with a checked effective class-number estimate and elementary 2-torsion bound to exclude low-rank quarter-scale cores in sufficiently large independently sampled class cosets, including repeated targets. Constructed exact small-subgroup dictionary readout and a supplied-annihilator square-preimage procedure avoiding residual norm factorization; the latter charges the binary annihilator and 2-rank rather than the odd subgroup size. Added locally executed, blob-matched tests of full coset ranks, actual step subgroups, abstract 2-primary coordinates and finite class witnesses. Initial packets and uniform useful class relations/annihilators remain open. No new general factoring complexity bound or full Lean/PDF/whole-repository build.
