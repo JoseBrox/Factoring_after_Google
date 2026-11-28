@@ -243,12 +243,10 @@ def actual_classes():
             assert T[1]==prod(pow(s,e,N) for s,e in zip(ss,v))%N
             hp=prod(pow(h,e,N) for h,e in zip(hs,v))%N;assert hp*hp%N==T[1]
             g=gcd(hp*pow(root,-1,N)-1,N);assert N%g==0;certs+=1
-            print('class fixture',N,'E kills',killed,'of',len(gs),'draws',draws,'matches',matches,
-                  '2-rank',r,'gcd',g,'init guards',sorted(initguard),flush=True)
+            print('class fixture',N,'E kills',killed,'of',len(gs),'draws',draws,'matches',matches,'2-rank',r,'gcd',g,'init guards',sorted(initguard),flush=True)
         except FactorFound as f:
             g=f.args[0];assert 1<g<N and N%g==0;guards+=1
-            print('class fixture',N,'E kills',killed,'of',len(gs),'draws',draws,'matches',matches,
-                  'public guard',g,'init guards',sorted(initguard),flush=True)
+            print('class fixture',N,'E kills',killed,'of',len(gs),'draws',draws,'matches',matches,'public guard',g,'init guards',sorted(initguard),flush=True)
     print('class certificates:',certs,'public guard exits:',guards,'cap failures:',fail,flush=True)
 
 if __name__=='__main__':
