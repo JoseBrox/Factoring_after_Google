@@ -252,3 +252,22 @@ class certificates: 3 guard exits: 0
 ```
 
 The abstract 2-primary subgroups are independently enumerated for order/basis/top-table comparisons. The three actual quadratic fixtures obtain their supplied annihilator from exhaustive small form enumeration, and use explicitly factored small packet representatives. The algorithm checks the annihilator on the generators, recovers exact cyclic 2-primary coordinates, and verifies the explicit class square word and corresponding public modular square correction before comparing hidden roots. See [the conditional proof and scope](../../docs/class_annihilator_square_membership.md). These are not algorithms for supplying a class number, smooth annihilator, or general initial factored packets at quarter scale. No full repository, PDF or Lean rebuild was performed.
+
+
+## Partial annihilator collision harvest and divisor coordinates
+
+Run `python3 verification/research/verify_partial_annihilator.py divisors`, then modes `abstract` and `class`. All three executed locally to completion with Python 3.13.5 and SymPy 1.14.0; committed Git blob `a7d7206d03067234a177f1283d208c875a07ef22`, SHA-256 `22e2ebd78774ef1841d12d9cc2e933292b39ee2d9361d5a8673e38f63ea28eaa` match the tested file. The first streaming attempt failed before writing the file; tests used non-streaming calls. An initial committed formatting discrepancy in two wrapped print statements was corrected and the blob rechecked.
+
+Exact output:
+```
+ambiguous divisor classes: 85 pair products: 1241 linear coordinate checks: 790
+abstract full annihilators: 100 partial certificates: 100 nontrivial residual groups: 92 word draws: 7929
+class fixture 899 E kills 0 of 4 draws 3 matches 1 2-rank 0 gcd 31 init guards []
+class fixture 10403 E kills 1 of 4 draws 3 matches 1 2-rank 0 gcd 1 init guards []
+class fixture 1022117 E kills 1 of 4 draws 12 matches 3 public guard 1009 init guards []
+class fixture 100160063 E kills 0 of 4 draws 15 matches 1 2-rank 0 gcd 100160063 init guards []
+class fixture 1000036000099 E kills 0 of 4 draws 323 matches 1 2-rank 0 gcd 1 init guards []
+class certificates: 4 public guard exits: 1 cap failures: 0
+```
+
+The first mode includes 17 odd discriminant parameters, with nonmaximal/nonsquarefree orders and a 32-element 2-torsion group. The abstract tests set caps by independent exhaustive small group enumeration; the actual class tests use a fixed cap of 1600 and the class-number upper bound, not a supplied class number or residual order. Tiny packet factorizations are explicit test inputs. All valid public roots and odd original parity vectors are verified before comparing hidden roots. Three trivial private-comparison gcds are not counted as factors. The proofs of the uniform sampling bounds and optional bounded-order BSGS branch are in [partial class annihilators](../../docs/partial_class_annihilators.md); the optional BSGS branch is not separately implemented. No full repository, PDF or Lean rebuild was performed.
